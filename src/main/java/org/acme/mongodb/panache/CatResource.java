@@ -26,7 +26,7 @@ public class CatResource {
     @POST
     public Response create(Cat cat) {
         cat.persist();
-        return Response.status(201).build();
+        return Response.status(201).entity(cat.id).build();
     }
 
     @PUT
