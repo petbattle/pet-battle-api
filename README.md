@@ -1,0 +1,1 @@
+# mongodb-panache-quickstart
