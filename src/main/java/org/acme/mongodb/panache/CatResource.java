@@ -32,7 +32,7 @@ public class CatResource {
     }
 
     @POST
-    public Response create(Cat cat) {
+    public synchronized Response create(Cat cat) {
         cat.vote();
         cat.persistOrUpdate();
         return Response.status(201).entity(cat.id).build();
