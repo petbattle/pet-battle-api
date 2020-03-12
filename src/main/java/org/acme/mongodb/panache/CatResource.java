@@ -1,6 +1,7 @@
 package org.acme.mongodb.panache;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntityBase;
+import io.quarkus.panache.common.Sort;
 import org.bson.types.ObjectId;
 import org.jboss.resteasy.annotations.Body;
 
@@ -16,6 +17,12 @@ public class CatResource {
     @GET
     public List<Cat> list() {
         return Cat.listAll();
+    }
+
+    @GET
+    @Path("/topcats")
+    public List<Cat> topcats() {
+        return Cat.listAll(Sort.by("count").descending());
     }
 
     @GET
