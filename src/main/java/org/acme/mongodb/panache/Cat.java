@@ -18,7 +18,6 @@ public class Cat extends PanacheMongoEntity {
         this.image = image;
     }
 
-
     public Integer getVotes() {
         return votes;
     }
