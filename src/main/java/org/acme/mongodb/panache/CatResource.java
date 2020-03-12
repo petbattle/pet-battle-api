@@ -2,6 +2,7 @@ package org.acme.mongodb.panache;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntityBase;
 import org.bson.types.ObjectId;
+import org.jboss.resteasy.annotations.Body;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
@@ -49,8 +50,8 @@ public class CatResource {
     }
 
     @PUT
-    @Path("/{id}/{vote}")
-    public void vote(@PathParam("id") String id, @PathParam("vote") Boolean vote) {
+    @Path("/{id}")
+    public void vote(@PathParam("id") String id, Boolean vote) {
         Cat cat = Cat.findById(new ObjectId(id));
         cat.vote(vote);
         cat.update();
