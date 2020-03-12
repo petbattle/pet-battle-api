@@ -26,7 +26,8 @@ public class CatResource {
 
     @POST
     public Response create(Cat cat) {
-        cat.persist();
+        cat.vote();
+        cat.persistOrUpdate();
         return Response.status(201).entity(cat.id).build();
     }
 
@@ -49,11 +50,4 @@ public class CatResource {
         return Cat.count();
     }
 
-    @PUT
-    @Path("/{id}")
-    public void vote(@PathParam("id") String id, Boolean vote) {
-        Cat cat = Cat.findById(new ObjectId(id));
-        cat.vote(vote);
-        cat.update();
-    }
 }

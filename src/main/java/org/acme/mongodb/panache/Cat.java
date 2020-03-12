@@ -6,9 +6,27 @@ import io.quarkus.mongodb.panache.PanacheMongoEntity;
 @MongoEntity(collection = "cats")
 public class Cat extends PanacheMongoEntity {
 
-    public Integer votes;
+    public Integer count;
+
+    public Boolean vote;
 
     public String image;
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
+    }
+
+    public Boolean getVote() {
+        return vote;
+    }
+
+    public void setVote(Boolean vote) {
+        this.vote = vote;
+    }
 
     public String getImage() {
         return image;
@@ -18,19 +36,11 @@ public class Cat extends PanacheMongoEntity {
         this.image = image;
     }
 
-    public Integer getVotes() {
-        return votes;
-    }
-
-    public void setVotes(Integer votes) {
-        this.votes = votes;
-    }
-
-    public void vote(Boolean vote) {
+    public void vote() {
         if (vote) {
-            setVotes(getVotes()+1);
+            setCount(getCount() + 1);
         } else {
-            setVotes(getVotes()-1);
+            setCount(getCount() - 1);
         }
     }
 }
