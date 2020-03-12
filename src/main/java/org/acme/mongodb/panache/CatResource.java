@@ -57,4 +57,10 @@ public class CatResource {
         return Cat.count();
     }
 
+    @DELETE
+    @Path("/kittykiller")
+    public void deleteAll() {
+        Cat.deleteAll();
+    }
+
 }
