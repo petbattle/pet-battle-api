@@ -1,5 +1,6 @@
 package org.acme.mongodb.panache;
 
+import io.quarkus.mongodb.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -23,6 +24,17 @@ public class CatResource {
         return Cat.listAll();
     }
 
+    @GET
+    @Path("/ids")
+    @Operation(operationId = "ids",
+            summary = "get all cat ids",
+            description = "This operation retrieves all cat ids from the database",
+            deprecated = false,
+            hidden = false)
+    public List<CatId> catids() {
+        PanacheQuery<CatId> query = Cat.findAll().project(CatId.class);
+        return query.list();
+    }
     @GET
     @Path("/topcats")
     @Operation(operationId = "topcats",
