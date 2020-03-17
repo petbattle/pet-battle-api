@@ -1,6 +1,7 @@
 package org.acme.mongodb.panache;
 
 import io.quarkus.mongodb.panache.PanacheQuery;
+import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -35,15 +36,17 @@ public class CatResource {
         PanacheQuery<CatId> query = Cat.findAll().project(CatId.class);
         return query.list();
     }
+
     @GET
     @Path("/topcats")
     @Operation(operationId = "topcats",
-            summary = "get sorted list of cats by count descending",
-            description = "This operation retrieves all cats from the database sorted by count descending",
+            summary = "get sorted list of top 3 cats by count descending",
+            description = "This operation retrieves top 3 cats from the database sorted by count descending",
             deprecated = false,
             hidden = false)
     public List<Cat> topcats() {
-        return Cat.listAll(Sort.by("count").descending());
+        PanacheQuery<Cat> query = Cat.findAll(Sort.by("count").descending()).page(Page.ofSize(3));
+        return query.list();
     }
 
     @GET
