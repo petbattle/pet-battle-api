@@ -1,7 +1,7 @@
-# mongodb-panache-quickstart
+# pet-battle-api
 
 ```bash
-oc new-build --name=cats quay.io/quarkus/ubi-quarkus-native-s2i:19.3.1-java8~https://github.com/eformat/mongodb-panache-quickstart
+oc new-build --name=cats quay.io/quarkus/ubi-quarkus-native-s2i:19.3.1-java8~https://github.com/eformat/pet-battle-api
 oc new-app imagestream.image.openshift.io/cats
 oc new-app cats
 oc expose svc cats
