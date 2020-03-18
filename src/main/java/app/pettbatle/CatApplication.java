@@ -1,4 +1,4 @@
-package org.acme.mongodb.panache;
+package app.pettbatle;
 
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Contact;

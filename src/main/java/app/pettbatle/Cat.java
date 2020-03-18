@@ -1,4 +1,4 @@
-package org.acme.mongodb.panache;
+package app.pettbatle;
 
 import io.quarkus.mongodb.panache.MongoEntity;
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
