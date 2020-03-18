@@ -13,3 +13,23 @@ If local nexus deployed to OpenShift
 ```
 oc set env bc/cats MAVEN_MIRROR_URL=http://nexus.nexus.svc.cluster.local:8081/repository/maven-public/
 ```
+
+Swagger available at
+```
+http://cats-cats.apps.<cluster-domain>/swagger-ui
+```
+
+Test
+```
+curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats | jq .
+curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats/ids | jq .
+curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats/count | jq .
+curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats/${CATID} | jq .
+curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats/${CATID} | jq ".id"
+curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats/${CATID} | jq ".count"
+curl -s -H "Content-Type: application/json" -X DELETE http://${HOST}/cats/${CATID}
+curl -s -H "Content-Type: application/json" -X PUT http://${HOST}/cats/${CATID}
+curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats/${CATID} | jq ".image" | sed -e 's|"||g' | base64 -d > ~/Pictures/foo.png
+curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats/topcats | jq ".[].count"
+curl -s -H "Content-Type: application/json" -X DELETE http://${HOST}/cats/kittykiller
+```
