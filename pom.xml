@@ -64,7 +64,7 @@
             <version>1.12.2</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-kubernetes</artifactId>
         </dependency>
@@ -72,7 +72,7 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-container-image-s2i</artifactId>
             <exclusions>
-                <exclusion>  <!-- declare the exclusion here -->
+                <exclusion>  &lt;!&ndash; declare the exclusion here &ndash;&gt;
                     <groupId>io.dekorate</groupId>
                     <artifactId>dekorate-core</artifactId>
                 </exclusion>
@@ -82,7 +82,7 @@
             <groupId>io.dekorate</groupId>
             <artifactId>dekorate-core</artifactId>
             <version>0.11.3</version>
-        </dependency>
+        </dependency>-->
     </dependencies>
     <build>
         <plugins>
