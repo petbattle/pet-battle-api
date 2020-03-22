@@ -1,10 +1,11 @@
 # pet-battle-api
 
 ```bash
+oc new-project cats
+oc new-app mongodb-persistent -p MONGODB_DATABASE=cats
 oc new-build --name=cats quay.io/quarkus/ubi-quarkus-native-s2i:20.0.0-java8~https://github.com/eformat/pet-battle-api
 oc new-app cats
 oc expose svc cats
-oc new-app mongodb-persistent -p MONGODB_DATABASE=cats 
 oc set env --from=secret/mongodb dc/cats
 ```
 
