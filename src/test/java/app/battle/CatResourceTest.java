@@ -1,14 +1,25 @@
 package app.battle;
 
+import app.pettbatle.CatResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
 
 import static io.restassured.RestAssured.given;
 
 //@QuarkusTestResource(DatabaseResource.class) - wont work on fedora with podman cgroups v2
 @QuarkusTest
 public class CatResourceTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger("CatResourceTest");
+
+    @Inject
+    CatResource service;
 
     @Test
     public void testCatEndpoint() {
@@ -21,11 +32,7 @@ public class CatResourceTest {
 
     @Test
     public void testCoutEndpoint() {
-        given()
-                .when().get("/cats/count")
-                .then()
-                .statusCode(200);
-        //.body(is("hello"));
+        Assertions.assertTrue(service.count().equals(3L));
     }
 
     @Test
