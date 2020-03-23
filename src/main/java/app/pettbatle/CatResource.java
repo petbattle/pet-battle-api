@@ -140,12 +140,13 @@ public class CatResource {
         // Filter based on search
         PanacheQuery<Cat> filteredCats;
 
-        if (searchVal != null && !searchVal.isEmpty()) {
-            filteredCats = Cat.<Cat>find("id like :search}",
-                    Parameters.with("search", "%" + searchVal + "%"));
-        } else {
+        // FIXME Search busted with ID
+        /*if (searchVal != null && !searchVal.isEmpty()) {
+            String s = "{\"_id\": ObjectId(\":search\")}";
+            filteredCats = Cat.<Cat>find(s, Parameters.with("search", searchVal));
+        } else {*/
             filteredCats = Cat.findAll();
-        }
+        //}
         // Page and return
         int page_number = start / length;
         filteredCats.page(page_number, length);
