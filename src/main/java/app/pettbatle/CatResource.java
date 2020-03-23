@@ -128,9 +128,9 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public DataTable datatable(
-            @QueryParam(value = "draw") int draw,
-            @QueryParam(value = "start") int start,
-            @QueryParam(value = "length") int length,
+            @QueryParam(value = "draw") @DefaultValue("1") int draw,
+            @QueryParam(value = "start") @DefaultValue("0") int start,
+            @QueryParam(value = "length") @DefaultValue("10") int length,
             @QueryParam(value = "search[value]") String searchVal
     ) {
         // Begin result
