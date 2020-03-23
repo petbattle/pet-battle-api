@@ -2,11 +2,13 @@ package app.pettbatle;
 
 import io.quarkus.mongodb.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
+import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
@@ -115,6 +117,44 @@ public class CatResource {
             hidden = false)
     public void deleteAll() {
         Cat.deleteAll();
+    }
+
+    @GET
+    @Path("/datatable")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Operation(operationId = "datatable",
+            summary = "datatable cats by id",
+            description = "This operation returns a datatable of cats - https://www.datatables.net/",
+            deprecated = false,
+            hidden = false)
+    public DataTable datatable(
+            @QueryParam(value = "draw") int draw,
+            @QueryParam(value = "start") int start,
+            @QueryParam(value = "length") int length,
+            @QueryParam(value = "search[value]") String searchVal
+    ) {
+        // Begin result
+        DataTable result = new DataTable();
+        result.setDraw(draw);
+
+        // Filter based on search
+        PanacheQuery<Cat> filteredCats;
+
+        if (searchVal != null && !searchVal.isEmpty()) {
+            filteredCats = Cat.<Cat>find("id like :search}",
+                    Parameters.with("search", "%" + searchVal + "%"));
+        } else {
+            filteredCats = Cat.findAll();
+        }
+        // Page and return
+        int page_number = start / length;
+        filteredCats.page(page_number, length);
+
+        result.setRecordsFiltered(filteredCats.count());
+        result.setData(filteredCats.list());
+        result.setRecordsTotal(Cat.count());
+
+        return result;
     }
 
 }
