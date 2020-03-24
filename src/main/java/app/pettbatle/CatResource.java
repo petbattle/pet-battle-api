@@ -2,9 +2,10 @@ package app.pettbatle;
 
 import io.quarkus.mongodb.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
-import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.metrics.MetricUnits;
+import org.eclipse.microprofile.metrics.annotation.Metered;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 
 import javax.ws.rs.*;
@@ -68,6 +69,7 @@ public class CatResource {
             description = "This operation creates or updates a cat (if id supplied)",
             deprecated = false,
             hidden = false)
+    @Metered(unit = MetricUnits.PER_SECOND, name = "cats-uploaded", description = "Frequency of cats uploaded")
     public synchronized Response create(Cat cat) {
         cat.vote();
         cat.persistOrUpdate();
