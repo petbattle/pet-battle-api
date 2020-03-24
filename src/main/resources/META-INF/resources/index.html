@@ -178,7 +178,10 @@
     // initialize datatable
     $('#queuetable').DataTable({
       serverSide: true,
-      ajax: '/cats/datatable',
+      ajax: {
+        url: '/cats/datatable',
+        timeout: 10000
+      },
       language: {
         search: ""
       },
