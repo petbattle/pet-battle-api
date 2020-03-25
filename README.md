@@ -72,6 +72,7 @@ curl http://${HOST}/metrics/application
 
 ```bash
 oc create configmap prom --from-file=prometheus.yml=src/main/kubernetes/prometheus.yml
+oc apply -f src/main/kubernetes/prom-rbac.yaml
 oc new-app prom/prometheus && oc expose svc/prometheus
 oc set volume dc/prometheus --add -t configmap --configmap-name=prom -m /etc/prometheus/prometheus.yml --sub-path=prometheus.yml
 oc rollout status -w dc/prometheus

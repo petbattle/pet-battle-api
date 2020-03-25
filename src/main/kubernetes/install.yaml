@@ -43,6 +43,10 @@ items:
       type: Rolling
     template:
       metadata:
+        annotations:
+          prometheus.io/scrape: 'true'
+          prometheus.io/path: '/metrics'
+          prometheus.io/port: '8080'
         creationTimestamp: null
         labels:
           deploymentconfig: cats
