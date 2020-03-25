@@ -1,5 +1,27 @@
 # pet-battle-api
 
+### Develop locally
+
+Database
+```
+podman run --name mongo -p 27017:27017 mongo:latest
+```
+
+Application
+```bash
+mvn compile quarkus:dev -Ddebug=true -Dquarkus.mongodb.connection-string=mongodb://localhost:27017
+```
+
+See Makefile for container targets
+
+### Deploy mongodb and prebuilt application on OpenShift
+```bash
+oc new-project cats
+oc new-app mongodb-persistent -p MONGODB_DATABASE=cats
+oc apply -f src/main/kubernetes/install.yaml
+```
+
+### Build and Deploy on OpenShift using s2i.
 ```bash
 oc new-project cats
 oc new-app mongodb-persistent -p MONGODB_DATABASE=cats
@@ -9,18 +31,23 @@ oc expose svc cats
 oc set env --from=secret/mongodb dc/cats
 ```
 
-If local nexus deployed to OpenShift
+Note: the latest quarkus nightly build is available here https://oss.sonatype.org/content/repositories/snapshots - you may want to use a released version
+```bash
+<quarkus.version>999-SNAPSHOT</quarkus.version>
 ```
+
+If local nexus deployed to OpenShift
+```bash
 oc set env bc/cats MAVEN_MIRROR_URL=http://nexus.nexus.svc.cluster.local:8081/repository/maven-public/
 ```
 
-Swagger available at
-```
+### Swagger available at
+```bash
 http://cats-cats.apps.<cluster-domain>/swagger-ui
 ```
 
 Test
-```
+```bash
 export CATID=5e69e003a765314bf6d04281
 export HOST=0.0.0.0:8080
 
@@ -38,16 +65,21 @@ curl -s -H "Content-Type: application/json" -X DELETE http://${HOST}/cats/kittyk
 curl -s -s -H "Content-Type: application/json" -X GET "http://${HOST}/cats/datatable?draw=1&start=0&length=10&search\[value\]=" | jq
 ```
 
-Prometheus & Grafana metrics endpoint
-```git exclude
+### Prometheus & Grafana metrics endpoint
+```bash
 curl http://${HOST}/metrics/application
 ```
 
-```
+```bash
 oc create configmap prom --from-file=prometheus.yml=src/main/kubernetes/prometheus.yml
 oc new-app prom/prometheus && oc expose svc/prometheus
 oc set volume dc/prometheus --add -t configmap --configmap-name=prom -m /etc/prometheus/prometheus.yml --sub-path=prometheus.yml
 oc rollout status -w dc/prometheus
 oc new-app grafana/grafana && oc expose svc/grafana
 oc rollout status -w dc/grafana
+```
+
+### Delete application (not mongodb)
+```bash
+oc delete dc,svc,route,is -lapp=cats
 ```
