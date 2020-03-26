@@ -14,6 +14,17 @@ mvn compile quarkus:dev -Ddebug=true -Dquarkus.mongodb.connection-string=mongodb
 
 See Makefile for container targets
 
+### Helm3
+
+```
+helm template cats -f chart/values.yaml chart | oc apply -f-
+```
+
+```bash
+helm template foobar -f chart/values.yaml --set mongodb-replicaset.securityContext.fsGroup=1000580000 --set mongodb-replicaset.securityContext.runAsUser=1000580000 --set mongodb-replicaset.persistentVolume.storageClass=gp2 --set mongodb-replicaset.persistentVolume.size=1Gi chart | oc apply -f-
+```
+
+
 ### Deploy mongodb and prebuilt application on OpenShift
 ```bash
 oc new-project cats
