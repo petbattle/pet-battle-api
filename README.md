@@ -74,7 +74,7 @@ curl -s -H "Content-Type: application/json" -X PUT http://${HOST}/cats/${CATID}
 curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats/${CATID} | jq ".image" | sed -e 's|"||g' | base64 -d > ~/Pictures/foo.png
 curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats/topcats | jq ".[].count"
 curl -s -H "Content-Type: application/json" -X DELETE http://${HOST}/cats/kittykiller
-curl -s -s -H "Content-Type: application/json" -X GET "http://${HOST}/cats/datatable?draw=1&start=0&length=10&search\[value\]=" | jq
+curl -s -H "Content-Type: application/json" -X GET "http://${HOST}/cats/datatable?draw=1&start=0&length=10&search\[value\]=" | jq
 ```
 
 ### Prometheus & Grafana metrics endpoint

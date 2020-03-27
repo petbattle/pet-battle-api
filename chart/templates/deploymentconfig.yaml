@@ -34,6 +34,7 @@ spec:
         deploymentconfig: {{ .Values.appName }}
     spec:
       containers:
+{{- if .Values.mongodbTemplate.enabled }}
         - env:
             - name: DATABASE_ADMIN_PASSWORD
               valueFrom:
@@ -55,6 +56,30 @@ spec:
                 secretKeyRef:
                   key: database-user
                   name: mongodb
+{{- else }}
+        - env:
+            - name: DATABASE_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: cats-mongodb-replicaset-admin
+            - name: DATABASE_NAME
+              value: "test"
+            - name: MONGODB_SERVICE_HOST
+              value: {{ printf "%s-%s" .Values.appName "mongodb-replicaset" | quote }}
+            - name: MONGODB_SERVICE_PORT
+              value: '27017'
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: cats-mongodb-replicaset-admin
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  key: user
+                  name: cats-mongodb-replicaset-admin
+{{- end }}
           image: ''
           imagePullPolicy: Always
           name: {{ .Values.appName }}

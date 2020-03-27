@@ -20,12 +20,9 @@ version: 0.0.1
 # incremented each time you make changes to the application.
 appVersion: 1.0.0
 
-#dependencies:
-#  - name: mongodb-replicaset
-#    version: "3.14.0"
-#    repository: "https://kubernetes-charts.storage.googleapis.com"
-#
-#mongodb-replicaset:
-#  securityContext:
-#    runAsUser: 1000580000
-#    fsGroup: 1000580000
+# no way to conditionally include subchart yet ? https://github.com/helm/helm/issues/7650
+# comment this dep out if you deployed mongodb via a template
+dependencies:
+  - name: mongodb-replicaset
+    version: "3.14.0"
+    repository: "https://kubernetes-charts.storage.googleapis.com"
