@@ -7,11 +7,18 @@ appName: &name cats
 route: true
 deploymentConfig: true
 
-# did we deploy mongodb from separate template (no helm subchart)
+# do we deploy mongodb from a template (not helm chart)
 mongodbTemplate:
-    enabled: false
+    enabled: true
+    database:
+      name: *name
+      adminPassword: password
+      user: user
+      password: password
+    image: mongodb:3.6
+    storage: 1Gi
 
-# subchart values
+# mongodb subchart values
 mongodb-replicaset:
   securityContext:
     runAsUser: '1000850000'

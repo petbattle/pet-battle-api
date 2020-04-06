@@ -11,15 +11,18 @@ Application
 ```bash
 mvn compile quarkus:dev -Ddebug=true -Dquarkus.mongodb.connection-string=mongodb://localhost:27017
 ```
+```
+./target/pet-battle-api-1.0-SNAPSHOT-runner -Dquarkus.mongodb.connection-string=mongodb://localhost:27017 -Dquarkus.http.ssl.certificate.key-store-file=$HOME/git/pet-battle-api/src/main/resources/keystore.jks
+```
 
 See Makefile for container targets
 
 ### Helm3
 
-`Without mongodb`
+`Using mongo-persistent template`
 ```
 oc new-project cats
-helm template cats -f chart/values.yaml chart | oc apply -f-
+helm template --dependency-update cats -f chart/values.yaml chart | oc apply -f-
 ```
 
 `With mongodb replicaset`

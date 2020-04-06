@@ -35,3 +35,4 @@ pom.xml.versionsBackup
 release.properties
 
 Chart.lock
+*.tgz
