@@ -5,17 +5,13 @@ metadata:
   name: pet-battle-api
   labels:
     app: {{ .Values.appName }}
+  creationTimestamp: null
 spec:
-  lookupPolicy:
-    local: false
   tags:
     - annotations:
-        openshift.io/imported-from: quay.io/eformat/pet-battle-api:latest
+        openshift.io/imported-from: eformat/pet-battle-api
       from:
         kind: DockerImage
         name: quay.io/eformat/pet-battle-api:latest
-      generation: 2
       importPolicy: {}
       name: latest
-      referencePolicy:
-        type: Source
