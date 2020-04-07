@@ -9,10 +9,12 @@ spec:
   lookupPolicy:
     local: false
   tags:
-    - annotations: null
+    - annotations:
+        openshift.io/imported-from: quay.io/eformat/pet-battle-api:latest
       from:
         kind: DockerImage
-        name: quay.io/eformat/pet-battle-api
+        name: quay.io/eformat/pet-battle-api:latest
+      generation: 2
       importPolicy: {}
       name: latest
       referencePolicy:
