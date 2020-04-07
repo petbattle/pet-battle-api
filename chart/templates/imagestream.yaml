@@ -1,0 +1,19 @@
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: pet-battle-api
+  labels:
+    app: {{ .Values.appName }}
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: quay.io/eformat/pet-battle-api
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: Source
