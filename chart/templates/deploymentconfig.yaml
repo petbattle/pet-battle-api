@@ -108,5 +108,4 @@ spec:
           name: pet-battle-api:latest
         lastTriggeredImage: {{ .Values.appName }}/pet-battle-api:latest
       type: ImageChange
-status: {}
 {{ end }}
