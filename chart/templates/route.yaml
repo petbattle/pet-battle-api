@@ -16,5 +16,9 @@ spec:
     name: {{ .Values.appName }}
     weight: 100
   wildcardPolicy: None
-status: {}
+status:
+  ingress:
+    - conditions:
+        - status: 'True'
+          type: Admitted
 {{ end }}
