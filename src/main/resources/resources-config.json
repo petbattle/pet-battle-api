@@ -1,0 +1,10 @@
+{
+  "resources": [
+    {
+      "pattern": ".*\\.jpeg$"
+    },
+    {
+      "pattern": ".*\\.jks$"
+    }
+  ]
+}

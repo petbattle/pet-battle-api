@@ -3,6 +3,7 @@ package app.pettbatle;
 import io.quarkus.mongodb.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
+import org.apache.commons.io.FileUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Metered;
@@ -11,7 +12,16 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
+import java.util.Random;
 
 @Path("/cats")
 @Consumes("application/json")
@@ -147,7 +157,7 @@ public class CatResource {
             String s = "{\"_id\": ObjectId(\":search\")}";
             filteredCats = Cat.<Cat>find(s, Parameters.with("search", searchVal));
         } else {*/
-            filteredCats = Cat.findAll();
+        filteredCats = Cat.findAll();
         //}
         // Page and return
         int page_number = start / length;
@@ -158,6 +168,37 @@ public class CatResource {
         result.setRecordsTotal(Cat.count());
 
         return result;
+    }
+
+    @GET
+    @Path("/loadlitter")
+    @Operation(operationId = "loadlitter",
+            summary = "preload db with cats",
+            description = "This operation adds some cats to the database if it is empty",
+            deprecated = false,
+            hidden = false)
+    public static void loadlitter() {
+        if (Cat.count() > 0)
+            return;
+        final List<String> catList = Arrays.asList("cat1.jpeg", "cat2.jpeg", "cat3.jpeg", "cat4.jpeg", "cat5.jpeg", "cat6.jpeg", "cat7.jpeg", "cat8.jpeg", "cat9.jpeg", "cat10.jpeg", "cat11.jpeg");
+        for (String tc : catList) {
+            try {
+                InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(tc);
+                Cat cat = new Cat();
+                cat.setCount(new Random().nextInt(5) + 1);
+                cat.setVote(false);
+                byte[] fileContent = new byte[0];
+                fileContent = is.readAllBytes();
+                String encodedString = Base64
+                        .getEncoder()
+                        .encodeToString(fileContent);
+                cat.setImage("data:image/jpeg;base64," + encodedString);
+                cat.persistOrUpdate();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

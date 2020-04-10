@@ -2,12 +2,12 @@
 
 ### Develop locally
 
-Database
+Database:
 ```
 podman run --name mongo -p 27017:27017 mongo:latest
 ```
 
-Application
+Application:
 ```bash
 mvn compile quarkus:dev -Ddebug=true -Dquarkus.mongodb.connection-string=mongodb://localhost:27017
 ```
@@ -15,17 +15,23 @@ mvn compile quarkus:dev -Ddebug=true -Dquarkus.mongodb.connection-string=mongodb
 ./target/pet-battle-api-1.0-SNAPSHOT-runner -Dquarkus.mongodb.connection-string=mongodb://localhost:27017 -Dquarkus.http.ssl.certificate.key-store-file=$HOME/git/pet-battle-api/src/main/resources/keystore.jks
 ```
 
-See Makefile for container targets
+See Makefile for container targets:
+```
+make podman-build
+make podman-run
+make podman-stop
+make podman-push
+```
 
 ### Helm3
 
-`Using mongo-persistent template`
+`Using the mongo-persistent template`
 ```
 oc new-project cats
 helm template --dependency-update cats -f chart/values.yaml chart | oc apply -f-
 ```
 
-`With mongodb replicaset`
+`With mongodb replicaset` (TODO: replicaset commented out for now)
 
 Get SCC UID for project
 ```bash
@@ -85,6 +91,7 @@ curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats/${CATID} 
 curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats/topcats | jq ".[].count"
 curl -s -H "Content-Type: application/json" -X DELETE http://${HOST}/cats/kittykiller
 curl -s -H "Content-Type: application/json" -X GET "http://${HOST}/cats/datatable?draw=1&start=0&length=10&search\[value\]=" | jq
+curl -s -H "Content-Type: application/json" -X GET http://${HOST}/cats/loadlitter
 ```
 
 ### Prometheus & Grafana metrics endpoint

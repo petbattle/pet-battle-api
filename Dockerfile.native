@@ -1,8 +1,7 @@
 FROM registry.access.redhat.com/ubi8/ubi-minimal
 WORKDIR /work/
 COPY ./target/*-runner /work/application
-COPY ./target/classes/keystore.jks /work/keystore.jks
-RUN chmod 775 /work /work/application /work/keystore.jks
+RUN chmod 775 /work /work/application
 EXPOSE 8080 8443
 # "-Dquarkus.mongodb.connection-string=mongodb://localhost:27017",
 CMD ["./application", "-Dquarkus.http.host=0.0.0.0", "-Dquarkus.http.ssl.certificate.key-store-file=keystore.jks"]
