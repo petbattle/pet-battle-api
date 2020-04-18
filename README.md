@@ -1,6 +1,14 @@
 # pet-battle-api
 
-### Develop locally
+### Develop
+
+#### for the impatient
+
+```
+make podman-run
+```
+ 
+#### local commands
 
 Database:
 ```
@@ -11,8 +19,13 @@ Application:
 ```bash
 mvn compile quarkus:dev -Ddebug=true -Dquarkus.mongodb.connection-string=mongodb://localhost:27017
 ```
+OR
 ```
 ./target/pet-battle-api-1.0-SNAPSHOT-runner -Dquarkus.mongodb.connection-string=mongodb://localhost:27017 -Dquarkus.http.ssl.certificate.key-store-file=$HOME/git/pet-battle-api/src/main/resources/keystore.jks
+```
+OR
+```
+podman run -d --pod pb -e quarkus.mongodb.connection-string=mongodb://localhost:27017 quay.io/eformat/pet-battle-api:latest
 ```
 
 See Makefile for container targets:
@@ -25,13 +38,23 @@ make podman-push
 
 ### Helm3
 
-`Using the mongo-persistent template`
+New project
 ```
 oc new-project cats
+```
+
+`Using the mongo-persistent template` on OpenShift
+```
 helm template --dependency-update cats -f chart/values.yaml chart | oc apply -f-
 ```
 
-`With mongodb replicaset` (TODO: replicaset commented out for now)
+OR from deployed chart
+```
+helm repo add https://eformat.github.io/helm-charts
+helm install pet-battle-api https://eformat.github.io/helm-charts/pet-battle-api-0.0.2.tgz 
+```
+
+`With mongodb replicaset` (TODO: replicaset commented out for now but works ok)
 
 Get SCC UID for project
 ```bash
@@ -112,4 +135,8 @@ oc rollout status -w dc/grafana
 ### Delete application (not mongodb)
 ```bash
 oc delete dc,svc,route,is -lapp=cats
+```
+OR
+```git exclude
+helm uninstall pet-battle-api
 ```

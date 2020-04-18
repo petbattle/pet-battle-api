@@ -33,9 +33,7 @@ podman-push-nobuild:
 	podman push ${IMG}
 
 podman-run:
-	podman run -d --pod new:pb -p 27017:27017 -p8080:8080 -p8443:8443 --name mongo mongo:latest
-	podman run -d --pod pb -e quarkus.mongodb.connection-string=mongodb://localhost:27017 --name pet-battle-api quay.io/eformat/pet-battle-api:latest
+	podman-compose -f docker-compose.yml up -d
 
 podman-stop:
-	podman pod stop pb
-	podman pod rm pb
+	podman-compose -f docker-compose.yml down

@@ -16,7 +16,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
                 contact = @Contact(
                         name = "Pet Battle Support",
                         url = "https://petbattle.app/contact",
-                        email = "techsupport@petbattel.app"),
+                        email = "techsupport@petbattle.app"),
                 license = @License(
                         name = "Apache 2.0",
                         url = "http://www.apache.org/licenses/LICENSE-2.0.html"))

@@ -1,0 +1,15 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    hostname: mongo
+  pet-battle-api:
+    image: "quay.io/eformat/pet-battle-api:latest"
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    hostname: materalize
+    environment:
+      - quarkus.mongodb.connection-string=mongodb://localhost:27017
