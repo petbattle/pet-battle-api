@@ -8,10 +8,10 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
 @OpenAPIDefinition(
         tags = {
-                @Tag(name="cats", description="Cat Operations.")
+                @Tag(name = "cats", description = "Cat Operations.")
         },
         info = @Info(
-                title="Cat API",
+                title = "Cat API",
                 version = "0.0.1",
                 contact = @Contact(
                         name = "Pet Battle Support",
