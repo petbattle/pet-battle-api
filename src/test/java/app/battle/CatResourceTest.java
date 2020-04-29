@@ -1,7 +1,6 @@
 package app.battle;
 
-import app.pettbatle.CatResource;
-import io.quarkus.test.common.QuarkusTestResource;
+import app.petbattle.CatResource;
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

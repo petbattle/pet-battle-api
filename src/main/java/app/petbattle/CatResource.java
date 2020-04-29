@@ -1,9 +1,8 @@
-package app.pettbatle;
+package app.petbattle;
 
 import io.quarkus.mongodb.panache.PanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
-import org.apache.commons.io.FileUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Metered;
@@ -12,12 +11,8 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -82,6 +77,7 @@ public class CatResource {
     @Metered(unit = MetricUnits.PER_SECOND, name = "cats-uploaded", description = "Frequency of cats uploaded")
     public synchronized Response create(Cat cat) {
         cat.vote();
+        cat.resizeCat();
         cat.persistOrUpdate();
         return Response.status(201).entity(cat.id).build();
     }
@@ -193,6 +189,7 @@ public class CatResource {
                         .getEncoder()
                         .encodeToString(fileContent);
                 cat.setImage("data:image/jpeg;base64," + encodedString);
+                cat.resizeCat();
                 cat.persistOrUpdate();
 
             } catch (IOException e) {

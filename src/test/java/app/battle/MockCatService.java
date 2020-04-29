@@ -1,6 +1,6 @@
 package app.battle;
 
-import app.pettbatle.CatResource;
+import app.petbattle.CatResource;
 import io.quarkus.test.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package app.pettbatle;
+package app.petbattle;
 
 import java.io.Serializable;
 import java.util.List;

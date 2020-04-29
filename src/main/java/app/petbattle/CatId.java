@@ -1,4 +1,4 @@
-package app.pettbatle;
+package app.petbattle;
 
 import io.quarkus.mongodb.panache.ProjectionFor;
 

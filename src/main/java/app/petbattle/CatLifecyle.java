@@ -1,4 +1,4 @@
-package app.pettbatle;
+package app.petbattle;
 
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
@@ -10,7 +10,7 @@ import javax.enterprise.event.Observes;
 public class CatLifecyle {
 
     void onStart(@Observes StartupEvent ev) {
-        CatResource.loadlitter();
+        //CatResource.loadlitter();
     }
 
     void onStop(@Observes ShutdownEvent ev) {

@@ -1,4 +1,4 @@
-package app.pettbatle;
+package app.petbattle;
 
 import org.eclipse.microprofile.openapi.annotations.OpenAPIDefinition;
 import org.eclipse.microprofile.openapi.annotations.info.Contact;
