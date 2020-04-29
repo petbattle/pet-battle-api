@@ -4,9 +4,16 @@ REPOSITORY ?= $(REGISTRY)/eformat/pet-battle-api
 
 IMG := $(REPOSITORY):latest
 
+# Native image compile - FIXME
+# Image Scaling (Scalr.java)
+# native compile works, but does not run
+# broken because Image.io not in graal yet - https://github.com/quarkusio/quarkus/issues/8605
+# -P native
+# Dockerfile.native
+
 # clean compile
 compile:
-	mvn clean package -Pnative -DskipTests
+	mvn clean package -DskipTests
 
 # Podman Login
 podman-login:
@@ -14,11 +21,11 @@ podman-login:
 
 # Build the oci image no compile
 podman-build-nocompile:
-	podman build --no-cache . -t ${IMG} -f Dockerfile.native
+	podman build --no-cache . -t ${IMG} -f Dockerfile.jvm
 
 # Build the oci image
 podman-build: compile
-	podman build . -t ${IMG} -f Dockerfile.native
+	podman build . -t ${IMG} -f Dockerfile.jvm
 
 # Push the oci image
 podman-push: podman-build
