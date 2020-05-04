@@ -104,7 +104,7 @@ spec:
           - {{ .Values.appName }}
         from:
           kind: ImageStreamTag
-          name: {{ .Values.image_repository }}/{{ .Values.image_namespace }}/{{ .Values.image_name }}:{{ .Chart.AppVersion }}
+          name: {{ include "pet-battle-api.fullname" . }}:{{ .Chart.AppVersion }}
         lastTriggeredImage: ""
       type: ImageChange
 {{ end }}
