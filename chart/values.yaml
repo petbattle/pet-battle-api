@@ -7,7 +7,7 @@ appName: &name pet-battle-api
 route: true
 deploymentConfig: true
 
-replicas: 2
+replicas: 1
 
 # do we deploy mongodb from a template (not helm chart)
 mongodbTemplate:
