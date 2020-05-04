@@ -12,13 +12,10 @@ description: A Helm chart for Kubernetes
 type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 0.0.2
+version: 0.0.3
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
 appVersion: latest
-# no way to conditionally include subchart yet ? https://github.com/helm/helm/issues/7650
-# comment this dep out if you deployed mongodb via a template
-#dependencies:
-#  - name: mongodb-replicaset
-#    version: "3.14.0"
-#    repository: "https://kubernetes-charts.storage.googleapis.com"
+home: https://eformat.github.io/helm-charts
+maintainers:
+  - name: eformat

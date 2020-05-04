@@ -14,14 +14,14 @@ image_namespace: eformat
 
 # do we deploy mongodb from a template (not helm chart)
 mongodbTemplate:
-    enabled: true
-    database:
-      name: cats
-      adminPassword: password
-      user: user
-      password: password
-    image: mongodb:3.6
-    storage: 1Gi
+  enabled: true
+  database:
+    name: cats
+    adminPassword: password
+    user: user
+    password: password
+  image: mongodb:3.6
+  storage: 1Gi
 
 # mongodb subchart values
 mongodb-replicaset:
@@ -36,8 +36,6 @@ mongodb-replicaset:
     enabled: true
     adminUser: admin
     adminPassword: password
-    #metricsUser: metrics
-    #metricsPassword: password
     key: |+
       EQa74ITas01uOJarj5rAcmkVIIpsOGRd+tFXwiB02R9ilY1zUvSHYK/+yicvlDr4
       YdvHaK+cVU3SuiLA4BJ5ASK4Y9nbU/RNCZeTGHCdzD+B3IG2bFdt6MyTSfdo/evO
@@ -55,4 +53,3 @@ mongodb-replicaset:
       ozWr6NJqdmSvpENuf25uQggl6/GzDGgsWXesdu5orrjYZy8SfMjA1284vvpxYayu
       VMJ1b4KUtqwWMG1WKCoe1GJThjFKq0JDEboWxUmvmU5ng9LttdjfKu8vdDOjSImO
       GZHXvHfvLMq/FWBETJ0I23qFtSN888LZNXsu6odwk/19aYmL
-
