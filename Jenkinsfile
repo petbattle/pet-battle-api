@@ -91,6 +91,11 @@ pipeline {
                 sh 'printenv'
 
                 script {
+                    // these should be in base image - https://github.com/openshift/jenkins/blob/master/agent-maven-3.5/Dockerfile.localdev
+                    env.BASH_ENV=/usr/local/bin/scl_enable
+                    env.ENV=/usr/local/bin/scl_enable
+                    env.PROMPT_COMMAND=". /usr/local/bin/scl_enable"
+
                     echo '### set package versions ###'
                     env.VERSION = "mvn help:evaluate -Dexpression=project.version -q -DforceStdout".execute()
                     env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
