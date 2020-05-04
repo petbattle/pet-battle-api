@@ -65,12 +65,12 @@ spec:
             - name: DATABASE_NAME
               value: "test"
             - name: MONGODB_SERVICE_HOST
-              value: {{ printf "%s-%s" .Values.appName "mongodb-replicaset" | quote }}
+              value: {{ printf "%s-%s" "pet-battle-api" "mongodb-replicaset" | quote }}
             - name: MONGODB_SERVICE_PORT
               value: '27017'
             - name: DATABASE_PASSWORD
               valueFrom:
-                secretKeyRef:
+                secretKeyRef:.Values.appName
                   key: password
                   name: cats-mongodb-replicaset-admin
             - name: DATABASE_USER
@@ -101,7 +101,7 @@ spec:
     - imageChangeParams:
         automatic: true
         containerNames:
-          - {{ .Values.appName }}
+          - {{ include "pet-battle-api.name" . }}
         from:
           kind: ImageStreamTag
           name: {{ include "pet-battle-api.fullname" . }}:{{ .Chart.AppVersion }}
