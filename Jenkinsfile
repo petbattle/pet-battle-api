@@ -14,9 +14,9 @@ pipeline {
         JOB_NAME = "${JOB_NAME}".replace("/", "-")
 
         GIT_SSL_NO_VERIFY = true
-        GIT_CREDENTIALS = credentials("${PIPELINES_NAMESPACE}-git-auth-ds")
-        NEXUS_CREDS = credentials("${PIPELINES_NAMESPACE}-nexus-password-ds")
-        ARGOCD_CREDS = credentials("${PIPELINES_NAMESPACE}-argocd-token-ds")
+        GIT_CREDENTIALS = credentials("${PIPELINES_NAMESPACE}-git-auth")
+        NEXUS_CREDS = credentials("${PIPELINES_NAMESPACE}-nexus-password")
+        ARGOCD_CREDS = credentials("${PIPELINES_NAMESPACE}-argocd-token")
         NEXUS_REPO_NAME="labs-static"
     }
 
