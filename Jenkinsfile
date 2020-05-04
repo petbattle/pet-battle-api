@@ -42,8 +42,6 @@ pipeline {
                 script {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
-                    env.VERSION = "mvn help:evaluate -Dexpression=project.version -q -DforceStdout".execute()
-                    env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
                     env.E2E_TEST_ROUTE = "oc get route/${APP_NAME} --template='{{.spec.host}}' -n ${PROJECT_NAMESPACE}".execute().text.minus("'").minus("'")
                 }
             }
@@ -61,8 +59,6 @@ pipeline {
                 script {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
-                    env.VERSION = "mvn help:evaluate -Dexpression=project.version -q -DforceStdout".execute()
-                    env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
                     env.E2E_TEST_ROUTE = "oc get route/${APP_NAME} --template='{{.spec.host}}' -n ${PROJECT_NAMESPACE}".execute().text.minus("'").minus("'")
                 }
             }
@@ -93,6 +89,10 @@ pipeline {
             steps {
                 git url: "https://github.com/eformat/pet-battle-api.git"
                 sh 'printenv'
+
+                echo '### set package versions ###'
+                env.VERSION = "mvn help:evaluate -Dexpression=project.version -q -DforceStdout".execute()
+                env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
 
                 echo '### Running tests ###'
                 // sh 'mvn test'
