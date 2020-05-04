@@ -36,3 +36,4 @@ release.properties
 
 Chart.lock
 *.tgz
+*.tar.gz
