@@ -153,13 +153,16 @@ pipeline {
                 echo '### Commit new image tag to git ###'
                 sh  '''
                     git clone https://github.com/eformat/pet-battle-api.git
+                    git checkout test/jenkins                    
                     cd pet-battle-api
                     yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
+                    yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
+                    yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
                     git config --global user.email "jenkins@rht-labs.bot.com"
                     git config --global user.name "Jenkins"
-                    git add chart/Chart.yaml
+                    git add chart/Chart.yaml chart/values.yaml
                     git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${JENKINS_TAG} 🚀"
-                    git push https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
+                    git push --set-upstream origin test/jenkins https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
                 '''
 
                 echo '### Ask ArgoCD to Sync the changes and roll it out ###'
