@@ -100,9 +100,8 @@ pipeline {
 
                 echo '### Running build ###'
                 // scl_enable should be in base image - https://github.com/openshift/jenkins/blob/master/agent-maven-3.5/Dockerfile.localdev
-                sh '''
-                    . /usr/local/bin/scl_enable
-                    mvn package -DskipTests
+                sh '''                    
+                    /opt/rh/rh-maven35/root/usr/bin/mvn package -DskipTests
                 '''
 
                 echo '### Packaging App for Nexus ###'
