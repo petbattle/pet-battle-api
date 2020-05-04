@@ -124,7 +124,7 @@ pipeline {
         stage("Bake (OpenShift Build)") {
             agent {
                 node {
-                    label "master"
+                    label "jenkins-slave-argocd"
                 }
             }
             steps {
