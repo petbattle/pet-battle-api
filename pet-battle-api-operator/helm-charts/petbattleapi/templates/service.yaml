@@ -1,0 +1,25 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.appName }}
+    app.kubernetes.io/component: {{ .Values.appName }}
+    app.kubernetes.io/instance: {{ .Values.appName }}
+  name: {{ .Values.appName }}
+spec:
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+      name: 8080-tcp
+    - port: 8443
+      protocol: TCP
+      targetPort: 8443
+      name: 8443-tcp
+  selector:
+    deploymentconfig: {{ .Values.appName }}
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
