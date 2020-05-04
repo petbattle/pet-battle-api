@@ -43,9 +43,6 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.E2E_TEST_ROUTE = "oc get route/${APP_NAME} --template='{{.spec.host}}' -n ${PROJECT_NAMESPACE}".execute().text.minus("'").minus("'")
-                    settings = readFile("/home/jenkins/.m2/settings.xml")
-                    def newsettings = settings.replace("<url>http://nexus:8081/repository/maven-public/</url>","<url>http://nexus-service:8081/repository/maven-public/</url>")
-                    writeFile file: "/home/jenkins/.m2/settings.xml", text: "${newsettings}"
                 }
             }
         }
@@ -63,9 +60,6 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.E2E_TEST_ROUTE = "oc get route/${APP_NAME} --template='{{.spec.host}}' -n ${PROJECT_NAMESPACE}".execute().text.minus("'").minus("'")
-                    settings = readFile("/home/jenkins/.m2/settings.xml")
-                    def newsettings = settings.replace("<url>http://nexus:8081/repository/maven-public/</url>","<url>http://nexus-service:8081/repository/maven-public/</url>")
-                    writeFile file: "/home/jenkins/.m2/settings.xml", text: "${newsettings}"
                 }
             }
         }
@@ -95,10 +89,15 @@ pipeline {
             steps {
                 git url: "https://github.com/eformat/pet-battle-api.git"
 
-                echo '### set package versions ###'
+                echo '### configure ###'
                 script {
+                    // versions
                     def VERSION = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
                     env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
+                    // repoint nexus
+                    settings = readFile("/home/jenkins/.m2/settings.xml")
+                    def newsettings = settings.replace("<url>http://nexus:8081/repository/maven-public/</url>","<url>http://nexus-service:8081/repository/maven-public/</url>")
+                    writeFile file: "/home/jenkins/.m2/settings.xml", text: "${newsettings}"
                 }
                 sh 'printenv'
 
