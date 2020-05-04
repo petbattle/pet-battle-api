@@ -92,6 +92,7 @@ pipeline {
                     echo '### set package versions ###'
                     env.VERSION = "mvn help:evaluate -Dexpression=project.version -q -DforceStdout".execute()
                     env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
+                    env.M2_HOME=/opt/rh/rh-maven35/root/usr/share/maven
                 }
                 sh 'printenv'
 
@@ -101,7 +102,7 @@ pipeline {
                 echo '### Running build ###'
                 // scl_enable should be in base image - https://github.com/openshift/jenkins/blob/master/agent-maven-3.5/Dockerfile.localdev
                 sh '''                    
-                    /opt/rh/rh-maven35/root/usr/bin/mvn package -DskipTests
+                    mvn package -DskipTests
                 '''
 
                 echo '### Packaging App for Nexus ###'
