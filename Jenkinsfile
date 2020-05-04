@@ -152,9 +152,8 @@ pipeline {
             steps {
                 echo '### Commit new image tag to git ###'
                 sh  '''
-                    git clone https://github.com/eformat/pet-battle-api.git
-                    git checkout test/jenkins                    
-                    cd pet-battle-api
+                    git clone https://github.com/eformat/pet-battle-api.git && cd pet-battle-api
+                    git checkout test/jenkins
                     yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
                     yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
                     yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
