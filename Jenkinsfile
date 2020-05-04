@@ -154,7 +154,7 @@ pipeline {
                 sh  '''
                     git clone https://github.com/eformat/pet-battle-api.git
                     cd pet-battle-api
-                    yq w -i chart/Chart.yaml 'version' ${JENKINS_TAG}
+                    yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
                     git config --global user.email "jenkins@rht-labs.bot.com"
                     git config --global user.name "Jenkins"
                     git add chart/Chart.yaml
