@@ -91,13 +91,13 @@ pipeline {
 
                 echo '### configure ###'
                 script {
-                    // versions
-                    def VERSION = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
-                    env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
                     // repoint nexus
                     settings = readFile("/home/jenkins/.m2/settings.xml")
                     def newsettings = settings.replace("<url>http://nexus:8081/repository/maven-public/</url>","<url>http://nexus-service:8081/repository/maven-public/</url>")
                     writeFile file: "/home/jenkins/.m2/settings.xml", text: "${newsettings}"
+                    // versions
+                    def VERSION = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
+                    env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
                 }
                 sh 'printenv'
 
