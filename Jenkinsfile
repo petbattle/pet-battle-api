@@ -88,11 +88,10 @@ pipeline {
             }
             steps {
                 git url: "https://github.com/eformat/pet-battle-api.git"
-                script {
-                    echo '### set package versions ###'
-                    env.VERSION = "/opt/rh/rh-maven35/root/usr/bin/mvn help:evaluate -Dexpression=project.version -q -DforceStdout".execute()
-                    env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
-                }
+
+                echo '### set package versions ###'
+                def VERSION = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
+                env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
                 sh 'printenv'
 
                 echo '### Running tests ###'
@@ -100,7 +99,7 @@ pipeline {
 
                 echo '### Running build ###'
                 sh '''                    
-                    /opt/rh/rh-maven35/root/usr/bin/mvn package -DskipTests
+                    mvn package -DskipTests
                 '''
 
                 echo '### Packaging App for Nexus ###'
