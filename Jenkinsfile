@@ -91,7 +91,9 @@ pipeline {
 
                 echo '### set package versions ###'
                 def VERSION = sh script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true
-                env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
+                script {
+                    env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
+                }
                 sh 'printenv'
 
                 echo '### Running tests ###'
