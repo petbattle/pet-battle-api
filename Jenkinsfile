@@ -90,9 +90,8 @@ pipeline {
                 git url: "https://github.com/eformat/pet-battle-api.git"
                 script {
                     echo '### set package versions ###'
-                    env.VERSION = "mvn help:evaluate -Dexpression=project.version -q -DforceStdout".execute()
+                    env.VERSION = "/opt/rh/rh-maven35/root/usr/bin/mvn help:evaluate -Dexpression=project.version -q -DforceStdout".execute()
                     env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
-                    env.M2_HOME=/opt/rh/rh-maven35/root/usr/share/maven
                 }
                 sh 'printenv'
 
@@ -100,9 +99,8 @@ pipeline {
                 // sh 'mvn test'
 
                 echo '### Running build ###'
-                // scl_enable should be in base image - https://github.com/openshift/jenkins/blob/master/agent-maven-3.5/Dockerfile.localdev
                 sh '''                    
-                    mvn package -DskipTests
+                    /opt/rh/rh-maven35/root/usr/bin/mvn package -DskipTests
                 '''
 
                 echo '### Packaging App for Nexus ###'
