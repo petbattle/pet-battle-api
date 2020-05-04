@@ -3,16 +3,14 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
+  name: {{ include "pet-battle-api.fullname" . }}
   labels:
-    app: {{ .Values.appName }}
-    app.kubernetes.io/component: {{ .Values.appName }}
-    app.kubernetes.io/instance: {{ .Values.appName }}
-  name: {{ .Values.appName }}
+    {{- include "pet-battle-api.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas }}
   revisionHistoryLimit: 10
   selector:
-    deploymentconfig: {{ .Values.appName }}
+    {{- include "pet-battle-api.selectorLabels" . | nindent 4 }}
   strategy:
     activeDeadlineSeconds: 21600
     resources: {}
@@ -32,7 +30,7 @@ spec:
         rollme: {{ randAlphaNum 5 | quote }}
       creationTimestamp: null
       labels:
-        deploymentconfig: {{ .Values.appName }}
+        {{- include "pet-battle-api.selectorLabels" . | nindent 8 }}
     spec:
       containers:
 {{- if .Values.mongodbTemplate.enabled }}
@@ -83,7 +81,7 @@ spec:
 {{- end }}
           image: ''
           imagePullPolicy: Always
-          name: {{ .Values.appName }}
+          name: {{ include "pet-battle-api.name" . }}
           ports:
             - containerPort: 8080
               protocol: TCP
@@ -106,7 +104,7 @@ spec:
           - {{ .Values.appName }}
         from:
           kind: ImageStreamTag
-          name: pet-battle-api:latest
-        lastTriggeredImage: {{ .Values.appName }}/pet-battle-api:{{ .Chart.AppVersion }}
+          name: {{ .Values.image_repository }}/{{ .Values.image_namespace }}/{{ .Values.image_name }}:{{ .Chart.AppVersion }}
+        lastTriggeredImage: ""
       type: ImageChange
 {{ end }}
