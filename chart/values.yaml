@@ -8,6 +8,9 @@ route: true
 deploymentConfig: true
 
 replicas: 1
+image_repository: quay.io
+image_name: pet-battle-api
+image_namespace: eformat
 
 # do we deploy mongodb from a template (not helm chart)
 mongodbTemplate:

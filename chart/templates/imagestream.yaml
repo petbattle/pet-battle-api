@@ -12,6 +12,6 @@ spec:
         openshift.io/imported-from: eformat/pet-battle-api
       from:
         kind: DockerImage
-        name: quay.io/eformat/pet-battle-api:latest
+        name: {{ .Values.image_repository }}/{{ .Values.image_namespace }}/{{ .Values.image_name }}:{{ .Chart.appVersion }}
       importPolicy: {}
-      name: latest
+      name: {{ .Chart.appVersion }}

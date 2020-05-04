@@ -16,7 +16,6 @@ version: 0.0.2
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
 appVersion: latest
-
 # no way to conditionally include subchart yet ? https://github.com/helm/helm/issues/7650
 # comment this dep out if you deployed mongodb via a template
 #dependencies:
