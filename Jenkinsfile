@@ -90,9 +90,11 @@ pipeline {
                 git url: "https://github.com/eformat/pet-battle-api.git"
                 sh 'printenv'
 
-                echo '### set package versions ###'
-                env.VERSION = "mvn help:evaluate -Dexpression=project.version -q -DforceStdout".execute()
-                env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
+                script {
+                    echo '### set package versions ###'
+                    env.VERSION = "mvn help:evaluate -Dexpression=project.version -q -DforceStdout".execute()
+                    env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
+                }
 
                 echo '### Running tests ###'
                 // sh 'mvn test'
