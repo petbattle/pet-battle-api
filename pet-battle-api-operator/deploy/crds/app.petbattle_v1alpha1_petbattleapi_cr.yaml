@@ -1,0 +1,6 @@
+apiVersion: app.petbattle/v1alpha1
+kind: PetBattleApi
+metadata:
+  name: example-petbattleapi
+spec:
+  replicaCount: 1

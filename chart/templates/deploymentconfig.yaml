@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Values.appName }}
   name: {{ .Values.appName }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicas }}
   revisionHistoryLimit: 10
   selector:
     deploymentconfig: {{ .Values.appName }}
@@ -29,6 +29,7 @@ spec:
         prometheus.io/scrape: 'true'
         prometheus.io/path: '/metrics'
         prometheus.io/port: '8080'
+        rollme: {{ randAlphaNum 5 | quote }}
       creationTimestamp: null
       labels:
         deploymentconfig: {{ .Values.appName }}
@@ -106,6 +107,6 @@ spec:
         from:
           kind: ImageStreamTag
           name: pet-battle-api:latest
-        lastTriggeredImage: {{ .Values.appName }}/pet-battle-api:latest
+        lastTriggeredImage: {{ .Values.appName }}/pet-battle-api:{{ .Chart.AppVersion }}
       type: ImageChange
 {{ end }}

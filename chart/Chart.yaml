@@ -14,11 +14,11 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 0.0.2
+version: 0.0.4
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-appVersion: 1.0.0
+appVersion: latest
 
 # no way to conditionally include subchart yet ? https://github.com/helm/helm/issues/7650
 # comment this dep out if you deployed mongodb via a template

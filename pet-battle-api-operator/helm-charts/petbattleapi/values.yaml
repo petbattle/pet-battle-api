@@ -11,7 +11,7 @@ deploymentConfig: true
 mongodbTemplate:
     enabled: true
     database:
-      name: *name
+      name: cats
       adminPassword: password
       user: user
       password: password

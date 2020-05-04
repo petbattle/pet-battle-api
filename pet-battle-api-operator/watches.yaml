@@ -2,4 +2,4 @@
 - version: v1alpha1
   group: app.petbattle
   kind: PetBattleApi
-  chart: /opt/helm/helm-charts/petbattleapi
+  chart: helm-charts/petbattleapi

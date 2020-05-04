@@ -1,17 +1,19 @@
 # Default values for pet-battle-api.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-appName: &name cats
+appName: &name pet-battle-api
 
 # OpenShift objects
 route: true
 deploymentConfig: true
 
+replicas: 2
+
 # do we deploy mongodb from a template (not helm chart)
 mongodbTemplate:
     enabled: true
     database:
-      name: *name
+      name: cats
       adminPassword: password
       user: user
       password: password
