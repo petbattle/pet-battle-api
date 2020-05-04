@@ -149,6 +149,9 @@ pipeline {
                     label "jenkins-slave-argocd"
                 }
             }
+            when {
+                expression { false }
+            }
             steps {
                 echo '### Commit new image tag to git ###'
                 sh  '''
