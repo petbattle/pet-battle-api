@@ -99,7 +99,7 @@ pipeline {
                     def VERSION = sh script: 'mvn help:evaluate -Dexpression=project.version -s /tmp/settings.xml -q -DforceStdout', returnStdout: true
                     env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
                     // we want jdk.11 - for now in :4.3 slave-mvn
-                    env.JAVA_HOME=/usr/lib/jvm/java-11-openjdk-11.0.6.10-1.el7_7.x86_64
+                    env.JAVA_HOME="/usr/lib/jvm/java-11-openjdk-11.0.6.10-1.el7_7.x86_64"
                 }
                 sh 'printenv'
 
