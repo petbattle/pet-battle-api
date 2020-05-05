@@ -219,23 +219,23 @@ EOF
             }
         }
 
-        stage("Deploy (ArgoCD)") {
+        stage("Upload Helm Chart") {
             agent {
                 node {
-                    label "jenkins-slave-argocd"
+                    label "jenkins-slave-helm"
                 }
-            }
-            when {
-                expression { false }
             }
             steps {
                 echo '### Commit new image tag to git ###'
                 sh  '''
                     git clone ${GIT_URL} && cd pet-battle-api
                     git checkout ${GIT_BRANCH}
+                    
                     yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
                     yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
+                    yq w -i chart/values.yaml 'image_name' ${APP_NAME}
                     yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
+                    
                     git config --global user.email "jenkins@rht-labs.bot.com"
                     git config --global user.name "Jenkins"
                     git add chart/Chart.yaml chart/values.yaml
@@ -243,18 +243,29 @@ EOF
                     git push --set-upstream origin test/jenkins https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
                 '''
 
+                echo '### Upload Chart ###'
+                sh  '''
+                    helm package chart/                    
+                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${APP_NAME}-${JENKINS_TAG}.tgz                    
+                '''
+            }
+        }
+
+        stage("Deploy (ArgoCD)") {
+            agent {
+                node {
+                    label "jenkins-slave-argocd"
+                }
+            }
+            steps {
                 echo '### Ask ArgoCD to Sync the changes and roll it out ###'
                 sh '''
-                    # 1. Check if app of apps exists, if not create?
-                    # 1.1 Check sync not currently in progress . if so, kill it
-
+                    # 1 Check sync not currently in progress . if so, kill it
+                    # TODO
                     # 2. sync argocd to change pushed in previous step
-                    ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
-                    argocd app sync catz ${ARGOCD_INFO}
-
-                    # todo sync child app 
-                    argocd app sync pb-front-end ${ARGOCD_INFO}
-                    argocd app wait pb-front-end ${ARGOCD_INFO}
+                    ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"                                         
+                    argocd app sync ${APP_NAME} ${ARGOCD_INFO}
+                    argocd app wait ${APP_NAME} ${ARGOCD_INFO}
                 '''
             }
         }
