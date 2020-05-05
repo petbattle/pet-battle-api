@@ -184,8 +184,10 @@ EOF
             }
             when {
                 expression {
-                    openshift.withProject("${PIPELINES_NAMESPACE}") {
-                        return !openshift.selector("bc", "${APP_NAME}").exists();
+                    openshift.withCluster() {
+                        openshift.withProject("${PIPELINES_NAMESPACE}") {
+                            return !openshift.selector("bc", "${APP_NAME}").exists();
+                        }
                     }
                 }
             }
