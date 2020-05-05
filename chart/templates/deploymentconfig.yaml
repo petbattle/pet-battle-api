@@ -57,7 +57,7 @@ spec:
                   name: {{ include "mongodb.fullname" . }}
             - name: DATABASE_SERVICE_HOST
               value: {{ include "mongodb.fullname" . }}
-            - name: DATABSE_SERVICE_PORT
+            - name: DATABASE_SERVICE_PORT
               value: '27017'
 {{- else }}
         - env:
