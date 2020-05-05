@@ -8,9 +8,9 @@ pipeline {
     environment {
         // GLobal Vars
         PIPELINES_NAMESPACE = "labs-ci-cd"
-        HELM_CHART_NAME = "pet-battle-api"
         HELM_REPO="http://nexus.nexus.svc.cluster.local:8081/repository/helm-charts/"
         JENKINS_TAG = "${JOB_NAME}.${BUILD_NUMBER}".replace("%2F", "-")
+        SEM_VER = "0.0.${BUILD_NUMBER}" // fixme
         JOB_NAME = "${JOB_NAME}".replace("/", "-")
         GIT_SSL_NO_VERIFY = true
         GIT_CREDENTIALS = credentials("${PIPELINES_NAMESPACE}-git-auth")
@@ -42,6 +42,7 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api"
+                    env.HELM_CHART_NAME = "pet-battle-api"
                 }
             }
         }
@@ -59,6 +60,7 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api-dev"
+                    env.HELM_CHART_NAME = "pet-battle-api-dev"
                 }
             }
         }
@@ -76,6 +78,7 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api-test"
+                    env.HELM_CHART_NAME = "pet-battle-api-test"
                 }
             }
         }
@@ -115,7 +118,7 @@ spec:
       releaseName: ${APP_NAME}
     path: ''
     repoURL: ${HELM_REPO}
-    targetRevision: ${JENKINS_TAG}
+    targetRevision: ${SEM_VER}
     chart: ${HELM_CHART_NAME}
     automated:
       prune: true
@@ -148,7 +151,7 @@ EOF
                     writeFile file: "/tmp/settings.xml", text: "${newsettings}"
                     // versions
                     def VERSION = sh script: 'mvn help:evaluate -Dexpression=project.version -s /tmp/settings.xml -q -DforceStdout', returnStdout: true
-                    env.PACKAGE = "${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz"
+                    env.PACKAGE = "${JENKINS_TAG}.tar.gz"
                     // we want jdk.11 - for now in :4.3 slave-mvn
                     env.JAVA_HOME="/usr/lib/jvm/java-11-openjdk"
                 }
@@ -224,8 +227,8 @@ EOF
             steps {
                 echo '### Commit new image tag to git ###'
                 sh '''
-                    yq w -i chart/Chart.yaml 'version' ${JENKINS_TAG}
-                    yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}                    
+                    yq w -i chart/Chart.yaml 'version' ${SEM_VER}
+                    yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}                                        
                     yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
                     yq w -i chart/values.yaml 'image_name' ${APP_NAME}
                     yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
@@ -254,7 +257,7 @@ EOF
                     git checkout ${GIT_BRANCH}
                     git pull
                     helm package chart/          
-                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${JENKINS_TAG}.tgz                    
+                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${SEM_VER}.tgz                    
                 '''
             }
         }
@@ -268,7 +271,7 @@ EOF
             steps {
                 script {
                     echo '### Ask ArgoCD to Sync the changes and roll it out ###'
-                    def patch = $/argocd app patch "${APP_NAME}" --patch $'{\"spec\":{\"source\":{\"targetRevision\":\"${JENKINS_TAG}\"}}}' --type merge --auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure/$
+                    def patch = $/argocd app patch "${APP_NAME}" --patch $'{\"spec\":{\"source\":{\"targetRevision\":\"${SEM_VER}\"}}}' --type merge --auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure/$
                     sh patch
                 }
                 sh '''
