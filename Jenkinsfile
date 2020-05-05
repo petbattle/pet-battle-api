@@ -270,9 +270,10 @@ EOF
             }
             steps {
                 echo '### Ask ArgoCD to Sync the changes and roll it out ###'
+                def patch = $/argocd app patch "${APP_NAME}" --patch $'{\"spec\":{\"source\":{\"targetRevision\":\"${JENKINS_TAG}\"}}}$' --type merge --auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure/$
+                sh patch
                 sh '''
-                    ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
-                    argocd app patch ${APP_NAME} --patch $'{\"spec\":{\"source\":{\"targetRevision\":\"${JENKINS_TAG}\"}}}' --type merge ${ARGOCD_INFO}                                         
+                    ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"                                         
                     argocd app sync ${APP_NAME} ${ARGOCD_INFO}
                     argocd app wait ${APP_NAME} ${ARGOCD_INFO}
                 '''
