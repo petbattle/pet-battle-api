@@ -228,9 +228,6 @@ EOF
             steps {
                 echo '### Commit new image tag to git ###'
                 sh '''
-                    git clone ${GIT_URL} && cd pet-battle-api
-                    git checkout ${GIT_BRANCH}
-                    
                     yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
                     yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
                     yq w -i chart/values.yaml 'image_name' ${APP_NAME}
@@ -240,7 +237,7 @@ EOF
                     git config --global user.name "Jenkins"
                     git add chart/Chart.yaml chart/values.yaml
                     git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${JENKINS_TAG} 🚀"
-                    git push --set-upstream origin test/jenkins https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
+                    git push https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
                 '''
             }
         }
