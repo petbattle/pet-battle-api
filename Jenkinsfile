@@ -143,7 +143,8 @@ EOF
                 script {
                     // repoint nexus
                     settings = readFile("/home/jenkins/.m2/settings.xml")
-                    def newsettings = settings.replace("<url>http://nexus:8081/repository/maven-public/</url>","<url>http://nexus-service:8081/repository/maven-public/</url>")
+                    def newsettings = settings.replace("<id>maven-public</id>", "<id>nexus</id>");
+                    newsettings = newsettings.replace("<url>http://nexus:8081/repository/maven-public/</url>","<url>http://nexus-service:8081/repository/maven-public/</url>")
                     writeFile file: "/tmp/settings.xml", text: "${newsettings}"
                     // versions
                     def VERSION = sh script: 'mvn help:evaluate -Dexpression=project.version -s /tmp/settings.xml -q -DforceStdout', returnStdout: true
