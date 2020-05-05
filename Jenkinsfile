@@ -268,7 +268,7 @@ EOF
             steps {
                 script {
                     echo '### Ask ArgoCD to Sync the changes and roll it out ###'
-                    def patch = $/argocd app patch "${APP_NAME}" --patch $'{\"spec\":{\"source\":{\"targetRevision\":\"${JENKINS_TAG}\"}}}$' --type merge --auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure/$
+                    def patch = $/argocd app patch "${APP_NAME}" --patch $'{\"spec\":{\"source\":{\"targetRevision\":\"${JENKINS_TAG}\"}}}' --type merge --auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure/$
                     sh patch
                 }
                 sh '''
