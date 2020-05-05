@@ -65,11 +65,13 @@ Selector labels
 */}}
 {{- define "pet-battle-api.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "pet-battle-api.name" . }}
+app.kubernetes.io/component: {{ include "pet-battle-api.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 deploymentconfig: {{ include "pet-battle-api.fullname" . }}
 {{- end -}}
 
 {{- define "mongodb.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "mongodb.name" . }}
+app.kubernetes.io/component: {{ include "mongodb.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
