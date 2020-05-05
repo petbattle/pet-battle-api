@@ -55,6 +55,10 @@ spec:
                 secretKeyRef:
                   key: database-user
                   name: {{ include "mongodb.fullname" . }}
+            - name: DATABASE_SERVICE_HOST
+              value: {{ include "mongodb.fullname" . }}
+            - name: DATABSE_SERVICE_PORT
+              value: '27017'
 {{- else }}
         - env:
             - name: DATABASE_ADMIN_PASSWORD
@@ -64,9 +68,9 @@ spec:
                   name: cats-mongodb-replicaset-admin
             - name: DATABASE_NAME
               value: "test"
-            - name: MONGODB_SERVICE_HOST
+            - name: DATABASE_SERVICE_HOST
               value: {{ printf "%s-%s" "pet-battle-api" "mongodb-replicaset" | quote }}
-            - name: MONGODB_SERVICE_PORT
+            - name: DATABSE_SERVICE_PORT
               value: '27017'
             - name: DATABASE_PASSWORD
               valueFrom:
