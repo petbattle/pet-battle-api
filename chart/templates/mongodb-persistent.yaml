@@ -127,7 +127,7 @@ items:
         volumes:
         - name: mongodb-data
           persistentVolumeClaim:
-            claimName: mongodb
+            claimName: {{ include "mongodb.fullname" . }}
     triggers:
     - imageChangeParams:
         automatic: true
