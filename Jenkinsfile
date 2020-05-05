@@ -179,7 +179,7 @@ EOF
         stage("Create OpenShift Build") {
             agent {
                 node {
-                    label "master"
+                    label "jenkins-slave-argocd"
                 }
             }
             when {
