@@ -41,6 +41,7 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api"
+                    env.HELM_CHART_VERSION = "0.0.3"
                 }
             }
         }
@@ -58,6 +59,7 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api-dev"
+                    env.HELM_CHART_VERSION = "0.0.3"
                 }
             }
         }
@@ -75,6 +77,7 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api-test"
+                    env.HELM_CHART_VERSION = "0.0.3"
                 }
             }
         }
@@ -223,7 +226,8 @@ EOF
             steps {
                 echo '### Commit new image tag to git ###'
                 sh '''
-                    yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
+                    yq w -i chart/Chart.yaml 'version' ${JENKINS_TAG}
+                    yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}                    
                     yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
                     yq w -i chart/values.yaml 'image_name' ${APP_NAME}
                     yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
@@ -249,9 +253,7 @@ EOF
             steps {
                 echo '### Upload Helm Chart to Nexus ###'
                 sh  '''
-                    git checkout -b ${GIT_BRANCH} origin/${GIT_BRANCH}
-                    git pull
-                    helm package chart/                    
+                    helm package chart/          
                     curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${APP_NAME}-${JENKINS_TAG}.tgz                    
                 '''
             }
