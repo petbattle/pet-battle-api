@@ -219,15 +219,15 @@ EOF
             }
         }
 
-        stage("Upload Helm Chart") {
+        stage("Git Commit Chart"){
             agent {
                 node {
-                    label "jenkins-slave-helm"
+                    label "jenkins-slave-argocd"
                 }
             }
             steps {
                 echo '### Commit new image tag to git ###'
-                sh  '''
+                sh '''
                     git clone ${GIT_URL} && cd pet-battle-api
                     git checkout ${GIT_BRANCH}
                     
@@ -242,8 +242,17 @@ EOF
                     git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${JENKINS_TAG} 🚀"
                     git push --set-upstream origin test/jenkins https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
                 '''
+            }
+        }
 
-                echo '### Upload Chart ###'
+        stage("Upload Helm Chart") {
+            agent {
+                node {
+                    label "jenkins-slave-helm"
+                }
+            }
+            steps {
+                echo '### Upload Helm Chart to Nexus ###'
                 sh  '''
                     helm package chart/                    
                     curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${APP_NAME}-${JENKINS_TAG}.tgz                    
