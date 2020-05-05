@@ -12,7 +12,6 @@ pipeline {
         JENKINS_TAG = "${JOB_NAME}.${BUILD_NUMBER}".replace("%2F", "-")
         JOB_NAME = "${JOB_NAME}".replace("/", "-")
         GIT_SSL_NO_VERIFY = true
-        GIT_URL = "github.com/eformat/pet-battle-api.git"
         GIT_CREDENTIALS = credentials("${PIPELINES_NAMESPACE}-git-auth")
         NEXUS_CREDS = credentials("${PIPELINES_NAMESPACE}-nexus-password")
         ARGOCD_CREDS = credentials("${PIPELINES_NAMESPACE}-argocd-token")
@@ -234,7 +233,7 @@ EOF
                     git config --global push.default simple
                     git add chart/Chart.yaml chart/values.yaml
                     git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${JENKINS_TAG} 🚀"
-                    git remote set-url origin https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@${GIT_URL}
+                    git remote set-url origin https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
                     git push origin ${GIT_BRANCH}
                 '''
             }
