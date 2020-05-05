@@ -161,14 +161,14 @@ EOF
                 // sh 'mvn test'
 
                 echo '### Running build ###'
-                sh '''                    
+                sh '''
                     mvn package -DskipTests -s /tmp/settings.xml
                 '''
 
                 echo '### Packaging App for Nexus ###'
                 sh '''
-                    # PACKAGE=${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz                    
-                    tar -zcvf ${PACKAGE} Dockerfile.jvm target/lib target/*-runner.jar                     
+                    # PACKAGE=${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz
+                    tar -zcvf ${PACKAGE} Dockerfile.jvm target/lib target/*-runner.jar
                     curl -vvv -u ${NEXUS_CREDS} --upload-file ${PACKAGE} http://${NEXUS_SERVICE_SERVICE_HOST}:${NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_NAME}/${APP_NAME}/${PACKAGE}
                 '''
             }
@@ -210,7 +210,7 @@ EOF
             steps {
                 echo '### Get Binary from Nexus and shove it in a box ###'
                 sh  '''
-                    # PACKAGE=${APP_NAME}-${VERSION}-${JENKINS_TAG}-runner.jar                                         
+                    # PACKAGE=${APP_NAME}-${VERSION}-${JENKINS_TAG}-runner.jar
                     curl -v -f -u ${NEXUS_CREDS} http://${NEXUS_SERVICE_SERVICE_HOST}:${NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_NAME}/${APP_NAME}/${PACKAGE} -o ${PACKAGE}
                     oc start-build ${APP_NAME} --from-archive=${PACKAGE} --follow
                     oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${PROJECT_NAMESPACE}/${APP_NAME}:${JENKINS_TAG}
@@ -229,11 +229,11 @@ EOF
                 sh '''
                     yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}
                     yq w -i chart/Chart.yaml 'version' ${SEM_VER}
-                    yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}                                        
+                    yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
                     yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
                     yq w -i chart/values.yaml 'image_name' ${APP_NAME}
                     yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
-                    
+
                     git checkout -b ${GIT_BRANCH} origin/${GIT_BRANCH}
                     git config --global user.email "jenkins@rht-labs.bot.com"
                     git config --global user.name "Jenkins"
@@ -257,8 +257,8 @@ EOF
                 sh  '''
                     git checkout ${GIT_BRANCH}
                     git pull
-                    helm package chart/          
-                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${SEM_VER}.tgz                    
+                    helm package chart/
+                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${SEM_VER}.tgz
                 '''
             }
         }
@@ -276,7 +276,7 @@ EOF
                     sh patch
                 }
                 sh '''
-                    ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"                                         
+                    ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
                     argocd app sync ${APP_NAME} ${ARGOCD_INFO}
                     argocd app wait ${APP_NAME} ${ARGOCD_INFO}
                 '''
