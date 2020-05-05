@@ -8,12 +8,11 @@ pipeline {
     environment {
         // GLobal Vars
         PIPELINES_NAMESPACE = "labs-ci-cd"
-        APP_NAME = "pet-battle-api"
-
+        HELM_REPO="http://nexus.nexus.svc.cluster.local:8081/repository/helm-charts/"
         JENKINS_TAG = "${JOB_NAME}.${BUILD_NUMBER}".replace("/", "-")
         JOB_NAME = "${JOB_NAME}".replace("/", "-")
-
         GIT_SSL_NO_VERIFY = true
+        GIT_URL = "https://github.com/eformat/pet-battle-api.git"
         GIT_CREDENTIALS = credentials("${PIPELINES_NAMESPACE}-git-auth")
         NEXUS_CREDS = credentials("${PIPELINES_NAMESPACE}-nexus-password")
         ARGOCD_CREDS = credentials("${PIPELINES_NAMESPACE}-argocd-token")
@@ -26,6 +25,7 @@ pipeline {
         timeout(time: 15, unit: 'MINUTES')
         ansiColor('xterm')
         timestamps()
+        skipDefaultCheckout()
     }
 
     stages {
@@ -42,7 +42,7 @@ pipeline {
                 script {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
-                    env.E2E_TEST_ROUTE = "oc get route/${APP_NAME} --template='{{.spec.host}}' -n ${PROJECT_NAMESPACE}".execute().text.minus("'").minus("'")
+                    env.APP_NAME = "pet-battle-api"
                 }
             }
         }
@@ -59,7 +59,24 @@ pipeline {
                 script {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
-                    env.E2E_TEST_ROUTE = "oc get route/${APP_NAME} --template='{{.spec.host}}' -n ${PROJECT_NAMESPACE}".execute().text.minus("'").minus("'")
+                    env.APP_NAME = "pet-battle-api-dev"
+                }
+            }
+        }
+        stage("prepare environment for test deploy") {
+            agent {
+                node {
+                    label "master"
+                }
+            }
+            when {
+                expression { GIT_BRANCH ==~ /(.*test)/ }
+            }
+            steps {
+                script {
+                    // Arbitrary Groovy Script executions can do in script tags
+                    env.PROJECT_NAMESPACE = "labs-dev"
+                    env.APP_NAME = "pet-battle-api-test"
                 }
             }
         }
@@ -71,12 +88,48 @@ pipeline {
                 }
             }
             when {
-                expression { BUILD_NUMBER == 1 }
+                expression {
+                    def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
+                    if (retVal == null || retVal == "") {
+                        return 1;
+                    }
+                    return 0;
+                }
             }
             steps {
-                echo '### Create ArgoCD App ? ###'
+                echo '### Create ArgoCD App ###'
                 sh '''
-                    echo "TODO"
+                    cat <<EOF | oc apply -f -
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  name: ${APP_NAME}
+spec:
+  destination:
+    namespace: ${PROJECT_NAMESPACE}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    helm:
+      releaseName: ${APP_NAME}
+    path: ''
+    repoURL: ${HELM_REPO}
+    targetRevision: ${JENKINS_TAG}
+    chart: ${APP_NAME}
+    automated:
+      prune: true
+      selfHeal: true
+      validate: true
+  ignoreDifferences:
+  - group: apps.openshift.io
+    jsonPointers:
+    - /spec/template/spec/containers/0/image
+    - /spec/triggers/0/imageChangeParams/lastTriggeredImage
+    - /spec/triggers/1/imageChangeParams/lastTriggeredImage
+    kind: DeploymentConfig
+EOF
                 '''
             }
         }
@@ -87,7 +140,10 @@ pipeline {
                 }
             }
             steps {
-                git url: "https://github.com/eformat/pet-battle-api.git"
+                checkout([$class: 'GitSCM',
+                          branches: [[name: "${GIT_BRANCH}"]],
+                          userRemoteConfigs: [[url: "${GIT_URL}", credentialsId:"${GIT_CREDENTIALS}"]]
+                ]);
 
                 echo '### configure ###'
                 script {
@@ -121,6 +177,30 @@ pipeline {
             // Post can be used both on individual stages and for the entire build.
         }
 
+        stage("Create OpenShift Build") {
+            agent {
+                node {
+                    label "master"
+                }
+            }
+            when {
+                expression {
+                    openshift.withProject("${PIPELINES_NAMESPACE}") {
+                        return !openshift.selector("bc", "${APP_NAME}").exists();
+                    }
+                }
+            }
+            steps {
+                echo '### Create BuildConfig ###'
+                sh  '''
+                    # oc patch bc ${APP_NAME} -p "{\\"spec\\":{\\"output\\":{\\"imageLabels\\":[{\\"name\\":\\"THINGY\\",\\"value\\":\\"MY_AWESOME_THINGY\\"},{\\"name\\":\\"OTHER_THINGY\\",\\"value\\":\\"MY_OTHER_AWESOME_THINGY\\"}]}}}"
+                    oc new-build --binary --name=${APP_NAME} -l app=${APP_NAME} --strategy=docker --dry-run -o yaml > /tmp/bc.yaml
+                    yq w -i /tmp/bc.yaml items[1].spec.strategy.dockerStrategy.dockerfilePath Dockerfile.jvm
+                    oc apply -f /tmp/bc.yaml
+                '''
+            }
+        }
+
         stage("Bake (OpenShift Build)") {
             agent {
                 node {
@@ -132,11 +212,6 @@ pipeline {
                 sh  '''
                     # PACKAGE=${APP_NAME}-${VERSION}-${JENKINS_TAG}-runner.jar                                         
                     curl -v -f -u ${NEXUS_CREDS} http://${NEXUS_SERVICE_SERVICE_HOST}:${NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_NAME}/${APP_NAME}/${PACKAGE} -o ${PACKAGE}
-                    # TODO think about labeling of images for version purposes 
-                    # oc patch bc ${APP_NAME} -p "{\\"spec\\":{\\"output\\":{\\"imageLabels\\":[{\\"name\\":\\"THINGY\\",\\"value\\":\\"MY_AWESOME_THINGY\\"},{\\"name\\":\\"OTHER_THINGY\\",\\"value\\":\\"MY_OTHER_AWESOME_THINGY\\"}]}}}"
-                    oc new-build --binary --name=${APP_NAME} -l app=${APP_NAME} --strategy=docker --dry-run -o yaml > /tmp/bc.yaml
-                    yq w -i /tmp/bc.yaml items[1].spec.strategy.dockerStrategy.dockerfilePath Dockerfile.jvm
-                    oc apply -f /tmp/bc.yaml
                     oc start-build ${APP_NAME} --from-archive=${PACKAGE} --follow
                     oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${PROJECT_NAMESPACE}/${APP_NAME}:${JENKINS_TAG}
                 '''
@@ -149,11 +224,14 @@ pipeline {
                     label "jenkins-slave-argocd"
                 }
             }
+            when {
+                expression { false }
+            }
             steps {
                 echo '### Commit new image tag to git ###'
                 sh  '''
-                    git clone https://github.com/eformat/pet-battle-api.git && cd pet-battle-api
-                    git checkout test/jenkins
+                    git clone ${GIT_URL} && cd pet-battle-api
+                    git checkout ${GIT_BRANCH}
                     yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
                     yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
                     yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
