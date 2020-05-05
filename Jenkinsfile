@@ -12,7 +12,7 @@ pipeline {
         JENKINS_TAG = "${JOB_NAME}.${BUILD_NUMBER}".replace("%2F", "-")
         JOB_NAME = "${JOB_NAME}".replace("/", "-")
         GIT_SSL_NO_VERIFY = true
-        GIT_URL = "https://github.com/eformat/pet-battle-api.git"
+        GIT_URL = "github.com/eformat/pet-battle-api.git"
         GIT_CREDENTIALS = credentials("${PIPELINES_NAMESPACE}-git-auth")
         NEXUS_CREDS = credentials("${PIPELINES_NAMESPACE}-nexus-password")
         ARGOCD_CREDS = credentials("${PIPELINES_NAMESPACE}-argocd-token")
@@ -139,11 +139,6 @@ EOF
                 }
             }
             steps {
-                checkout([$class: 'GitSCM',
-                          branches: [[name: "${GIT_BRANCH}"]],
-                          userRemoteConfigs: [[url: "${GIT_URL}", credentialsId:"${GIT_CREDENTIALS}"]]
-                ]);
-
                 echo '### configure ###'
                 script {
                     // repoint nexus
@@ -235,9 +230,11 @@ EOF
                     
                     git config --global user.email "jenkins@rht-labs.bot.com"
                     git config --global user.name "Jenkins"
+                    git config --global push.default simple
                     git add chart/Chart.yaml chart/values.yaml
                     git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${JENKINS_TAG} 🚀"
-                    git push https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
+                    git remote set-url origin https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@${GIT_URL}
+                    git push origin ${GIT_BRANCH}
                 '''
             }
         }
