@@ -228,6 +228,7 @@ EOF
                     yq w -i chart/values.yaml 'image_name' ${APP_NAME}
                     yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
                     
+                    git checkout -b ${GIT_BRANCH} origin/${GIT_BRANCH}
                     git config --global user.email "jenkins@rht-labs.bot.com"
                     git config --global user.name "Jenkins"
                     git config --global push.default simple
