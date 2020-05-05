@@ -2,16 +2,13 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 appName: &name pet-battle-api
-
 # OpenShift objects
 route: true
 deploymentConfig: true
-
 replicas: 1
-image_repository: quay.io
-image_name: pet-battle-api
-image_namespace: eformat
-
+image_repository: image-registry.openshift-image-registry.svc:5000
+image_name: pet-battle-api-test
+image_namespace: labs-dev
 # do we deploy mongodb from a template (not helm chart)
 mongodbTemplate:
   enabled: true
@@ -22,7 +19,6 @@ mongodbTemplate:
     password: password
   image: mongodb:3.6
   storage: 1Gi
-
 # mongodb subchart values
 mongodb-replicaset:
   securityContext:
@@ -36,7 +32,7 @@ mongodb-replicaset:
     enabled: true
     adminUser: admin
     adminPassword: password
-    key: |+
+    key: |
       EQa74ITas01uOJarj5rAcmkVIIpsOGRd+tFXwiB02R9ilY1zUvSHYK/+yicvlDr4
       YdvHaK+cVU3SuiLA4BJ5ASK4Y9nbU/RNCZeTGHCdzD+B3IG2bFdt6MyTSfdo/evO
       T/W1Zq6Ema247MqQtogsKv2gz0OciMs7lES/rfezKt5lXDFm0+VB2h7wiaY5zbWR
