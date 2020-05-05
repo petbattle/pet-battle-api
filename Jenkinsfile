@@ -189,11 +189,13 @@ EOF
             }
             steps {
                 echo '### Create BuildConfig ###'
-                openshift.withCluster() {
-                    openshift.withProject("${PIPELINES_NAMESPACE}") {
-                        def bc = "${openshift.raw('new-build', '--binary', "--name=${APP_NAME}", '--strategy=docker', '--dry-run', '-o', 'yaml').out}"
-                        bc.items[1].spec.strategy.dockerStrategy.dockerfilePath = "Dockerfile.jvm"
-                        openshift.create(bc)
+                script {
+                    openshift.withCluster() {
+                        openshift.withProject("${PIPELINES_NAMESPACE}") {
+                            def bc = "${openshift.raw('new-build', '--binary', "--name=${APP_NAME}", '--strategy=docker', '--dry-run', '-o', 'yaml').out}"
+                            bc.items[1].spec.strategy.dockerStrategy.dockerfilePath = "Dockerfile.jvm"
+                            openshift.create(bc)
+                        }
                     }
                 }
             }
