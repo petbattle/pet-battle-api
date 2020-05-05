@@ -15,7 +15,7 @@ type: application
 version: 0.0.4
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
-appVersion: pet-battle-api-test-jenkins.23
+appVersion: pet-battle-api-test-jenkins.24
 home: https://eformat.github.io/helm-charts
 maintainers:
 - name: eformat
