@@ -249,6 +249,8 @@ EOF
             steps {
                 echo '### Upload Helm Chart to Nexus ###'
                 sh  '''
+                    git checkout -b ${GIT_BRANCH} origin/${GIT_BRANCH}
+                    git pull
                     helm package chart/                    
                     curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${APP_NAME}-${JENKINS_TAG}.tgz                    
                 '''
