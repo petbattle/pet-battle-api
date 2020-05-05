@@ -9,7 +9,7 @@ pipeline {
         // GLobal Vars
         PIPELINES_NAMESPACE = "labs-ci-cd"
         HELM_REPO="http://nexus.nexus.svc.cluster.local:8081/repository/helm-charts/"
-        JENKINS_TAG = "${JOB_NAME}.${BUILD_NUMBER}".replace("/", "-")
+        JENKINS_TAG = "${JOB_NAME}.${BUILD_NUMBER}".replace("%2F", "-")
         JOB_NAME = "${JOB_NAME}".replace("/", "-")
         GIT_SSL_NO_VERIFY = true
         GIT_URL = "https://github.com/eformat/pet-battle-api.git"
