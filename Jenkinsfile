@@ -227,6 +227,7 @@ EOF
             steps {
                 echo '### Commit new image tag to git ###'
                 sh '''
+                    yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}
                     yq w -i chart/Chart.yaml 'version' ${SEM_VER}
                     yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}                                        
                     yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
