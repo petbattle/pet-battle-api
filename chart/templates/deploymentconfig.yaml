@@ -3,16 +3,14 @@
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
+  name: {{ include "pet-battle-api.fullname" . }}
   labels:
-    app: {{ .Values.appName }}
-    app.kubernetes.io/component: {{ .Values.appName }}
-    app.kubernetes.io/instance: {{ .Values.appName }}
-  name: {{ .Values.appName }}
+    {{- include "pet-battle-api.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicas }}
   revisionHistoryLimit: 10
   selector:
-    deploymentconfig: {{ .Values.appName }}
+    {{- include "pet-battle-api.selectorLabels" . | nindent 4 }}
   strategy:
     activeDeadlineSeconds: 21600
     resources: {}
@@ -32,7 +30,7 @@ spec:
         rollme: {{ randAlphaNum 5 | quote }}
       creationTimestamp: null
       labels:
-        deploymentconfig: {{ .Values.appName }}
+        {{- include "pet-battle-api.selectorLabels" . | nindent 8 }}
     spec:
       containers:
 {{- if .Values.mongodbTemplate.enabled }}
@@ -41,22 +39,26 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: database-admin-password
-                  name: mongodb
+                  name: {{ include "mongodb.fullname" . }}
             - name: DATABASE_NAME
               valueFrom:
                 secretKeyRef:
                   key: database-name
-                  name: mongodb
+                  name: {{ include "mongodb.fullname" . }}
             - name: DATABASE_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: database-password
-                  name: mongodb
+                  name: {{ include "mongodb.fullname" . }}
             - name: DATABASE_USER
               valueFrom:
                 secretKeyRef:
                   key: database-user
-                  name: mongodb
+                  name: {{ include "mongodb.fullname" . }}
+            - name: DATABASE_SERVICE_HOST
+              value: {{ include "mongodb.fullname" . }}
+            - name: DATABASE_SERVICE_PORT
+              value: '27017'
 {{- else }}
         - env:
             - name: DATABASE_ADMIN_PASSWORD
@@ -66,13 +68,13 @@ spec:
                   name: cats-mongodb-replicaset-admin
             - name: DATABASE_NAME
               value: "test"
-            - name: MONGODB_SERVICE_HOST
-              value: {{ printf "%s-%s" .Values.appName "mongodb-replicaset" | quote }}
-            - name: MONGODB_SERVICE_PORT
+            - name: DATABASE_SERVICE_HOST
+              value: {{ printf "%s-%s" "pet-battle-api" "mongodb-replicaset" | quote }}
+            - name: DATABSE_SERVICE_PORT
               value: '27017'
             - name: DATABASE_PASSWORD
               valueFrom:
-                secretKeyRef:
+                secretKeyRef:.Values.appName
                   key: password
                   name: cats-mongodb-replicaset-admin
             - name: DATABASE_USER
@@ -83,7 +85,7 @@ spec:
 {{- end }}
           image: ''
           imagePullPolicy: Always
-          name: {{ .Values.appName }}
+          name: {{ include "pet-battle-api.name" . }}
           ports:
             - containerPort: 8080
               protocol: TCP
@@ -103,10 +105,10 @@ spec:
     - imageChangeParams:
         automatic: true
         containerNames:
-          - {{ .Values.appName }}
+          - {{ include "pet-battle-api.name" . }}
         from:
           kind: ImageStreamTag
-          name: pet-battle-api:latest
-        lastTriggeredImage: {{ .Values.appName }}/pet-battle-api:{{ .Chart.AppVersion }}
+          name: {{ include "pet-battle-api.fullname" . }}:{{ .Chart.AppVersion }}
+        lastTriggeredImage: ""
       type: ImageChange
 {{ end }}

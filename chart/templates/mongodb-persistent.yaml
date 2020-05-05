@@ -9,9 +9,9 @@ items:
       template.openshift.io/expose-database_name: '{.data[''database-name'']}'
       template.openshift.io/expose-password: '{.data[''database-password'']}'
       template.openshift.io/expose-username: '{.data[''database-user'']}'
+    name: {{ include "mongodb.fullname" . }}
     labels:
-      template: mongodb-persistent-template
-    name: mongodb
+      {{- include "mongodb.labels" . | nindent 6 }}
   stringData:
     database-admin-password: {{ .Values.mongodbTemplate.database.adminPassword | quote }}
     database-name: {{ .Values.mongodbTemplate.database.name | quote }}
@@ -22,9 +22,9 @@ items:
   metadata:
     annotations:
       template.openshift.io/expose-uri: mongodb://{.spec.clusterIP}:{.spec.ports[?(.name=="mongo")].port}
+    name: {{ include "mongodb.fullname" . }}
     labels:
-      template: mongodb-persistent-template
-    name: mongodb
+      {{- include "mongodb.labels" . | nindent 6 }}
   spec:
     ports:
     - name: mongo
@@ -33,7 +33,7 @@ items:
       protocol: TCP
       targetPort: 27017
     selector:
-      name: mongodb
+      {{- include "mongodb.selectorLabels" . | nindent 6 }}
     sessionAffinity: None
     type: ClusterIP
   status:
@@ -41,9 +41,9 @@ items:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
+    name: {{ include "mongodb.fullname" . }}
     labels:
-      template: mongodb-persistent-template
-    name: mongodb
+      {{- include "mongodb.labels" . | nindent 6 }}
   spec:
     accessModes:
     - ReadWriteOnce
@@ -55,19 +55,19 @@ items:
   metadata:
     annotations:
       template.alpha.openshift.io/wait-for-ready: "true"
+    name: {{ include "mongodb.fullname" . }}
     labels:
-      template: mongodb-persistent-template
-    name: mongodb
+      {{- include "mongodb.labels" . | nindent 6 }}
   spec:
     replicas: 1
     selector:
-      name: mongodb
+      {{- include "mongodb.selectorLabels" . | nindent 6 }}
     strategy:
       type: Recreate
     template:
       metadata:
         labels:
-          name: mongodb
+          {{- include "mongodb.selectorLabels" . | nindent 10 }}
       spec:
         containers:
         - env:
@@ -75,22 +75,22 @@ items:
             valueFrom:
               secretKeyRef:
                 key: database-user
-                name: mongodb
+                name: {{ include "mongodb.fullname" . }}
           - name: MONGODB_PASSWORD
             valueFrom:
               secretKeyRef:
                 key: database-password
-                name: mongodb
+                name: {{ include "mongodb.fullname" . }}
           - name: MONGODB_ADMIN_PASSWORD
             valueFrom:
               secretKeyRef:
                 key: database-admin-password
-                name: mongodb
+                name: {{ include "mongodb.fullname" . }}
           - name: MONGODB_DATABASE
             valueFrom:
               secretKeyRef:
                 key: database-name
-                name: mongodb
+                name: {{ include "mongodb.fullname" . }}
           image: ' '
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -127,7 +127,7 @@ items:
         volumes:
         - name: mongodb-data
           persistentVolumeClaim:
-            claimName: mongodb
+            claimName: {{ include "mongodb.fullname" . }}
     triggers:
     - imageChangeParams:
         automatic: true

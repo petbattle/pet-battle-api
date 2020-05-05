@@ -2,11 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: {{ include "pet-battle-api.fullname" . }}
   labels:
-    app: {{ .Values.appName }}
-    app.kubernetes.io/component: {{ .Values.appName }}
-    app.kubernetes.io/instance: {{ .Values.appName }}
-  name: {{ .Values.appName }}
+    {{- include "pet-battle-api.labels" . | nindent 4 }}
 spec:
   ports:
     - port: 8080
@@ -18,7 +16,7 @@ spec:
       targetPort: 8443
       name: 8443-tcp
   selector:
-    deploymentconfig: {{ .Values.appName }}
+    {{- include "pet-battle-api.selectorLabels" . | nindent 4 }}
   sessionAffinity: None
   type: ClusterIP
 status:

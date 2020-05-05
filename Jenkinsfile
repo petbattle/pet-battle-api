@@ -8,6 +8,7 @@ pipeline {
     environment {
         // GLobal Vars
         PIPELINES_NAMESPACE = "labs-ci-cd"
+        HELM_CHART_NAME = "pet-battle-api"
         HELM_REPO="http://nexus.nexus.svc.cluster.local:8081/repository/helm-charts/"
         JENKINS_TAG = "${JOB_NAME}.${BUILD_NUMBER}".replace("%2F", "-")
         JOB_NAME = "${JOB_NAME}".replace("/", "-")
@@ -41,7 +42,6 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api"
-                    env.HELM_CHART_VERSION = "0.0.3"
                 }
             }
         }
@@ -59,7 +59,6 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api-dev"
-                    env.HELM_CHART_VERSION = "0.0.3"
                 }
             }
         }
@@ -77,7 +76,6 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api-test"
-                    env.HELM_CHART_VERSION = "0.0.3"
                 }
             }
         }
@@ -118,7 +116,7 @@ spec:
     path: ''
     repoURL: ${HELM_REPO}
     targetRevision: ${JENKINS_TAG}
-    chart: ${APP_NAME}
+    chart: ${HELM_CHART_NAME}
     automated:
       prune: true
       selfHeal: true
@@ -254,7 +252,7 @@ EOF
                 echo '### Upload Helm Chart to Nexus ###'
                 sh  '''
                     helm package chart/          
-                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${APP_NAME}-${JENKINS_TAG}.tgz                    
+                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${JENKINS_TAG}.tgz                    
                 '''
             }
         }

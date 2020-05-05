@@ -2,9 +2,9 @@
 apiVersion: image.openshift.io/v1
 kind: ImageStream
 metadata:
-  name: pet-battle-api
+  name: {{ include "pet-battle-api.fullname" . }}
   labels:
-    app: {{ .Values.appName }}
+    {{- include "pet-battle-api.labels" . | nindent 4 }}
   creationTimestamp: null
 spec:
   tags:
