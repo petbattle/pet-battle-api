@@ -69,7 +69,7 @@ pipeline {
                 }
             }
             when {
-                expression { GIT_BRANCH ==~ /(.*test)/ }
+                expression { GIT_BRANCH ==~ /(.*test-jenkins)/ }
             }
             steps {
                 script {
