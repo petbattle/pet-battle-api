@@ -75,22 +75,22 @@ items:
             valueFrom:
               secretKeyRef:
                 key: database-user
-                name: mongodb
+                name: {{ include "mongodb.fullname" . }}
           - name: MONGODB_PASSWORD
             valueFrom:
               secretKeyRef:
                 key: database-password
-                name: mongodb
+                name: {{ include "mongodb.fullname" . }}
           - name: MONGODB_ADMIN_PASSWORD
             valueFrom:
               secretKeyRef:
                 key: database-admin-password
-                name: mongodb
+                name: {{ include "mongodb.fullname" . }}
           - name: MONGODB_DATABASE
             valueFrom:
               secretKeyRef:
                 key: database-name
-                name: mongodb
+                name: {{ include "mongodb.fullname" . }}
           image: ' '
           imagePullPolicy: IfNotPresent
           livenessProbe:
