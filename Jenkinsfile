@@ -260,10 +260,8 @@ EOF
             steps {
                 echo '### Ask ArgoCD to Sync the changes and roll it out ###'
                 sh '''
-                    # 1 Check sync not currently in progress . if so, kill it
-                    # TODO
-                    # 2. sync argocd to change pushed in previous step
-                    ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"                                         
+                    ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
+                    argocd app patch ${APP_NAME} --patch '{"spec": { "source": { "targetRevision": "${JENKINS_TAG}" } }}' --type merge ${ARGOCD_INFO}                                         
                     argocd app sync ${APP_NAME} ${ARGOCD_INFO}
                     argocd app wait ${APP_NAME} ${ARGOCD_INFO}
                 '''
