@@ -277,7 +277,7 @@ EOF
                 }
                 sh '''
                     ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
-                    argocd app sync ${APP_NAME} ${ARGOCD_INFO}
+                    argocd app sync ${APP_NAME} ${ARGOCD_INFO} --force --async --prune
                     argocd app wait ${APP_NAME} ${ARGOCD_INFO}
                 '''
             }
