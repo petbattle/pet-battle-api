@@ -8,9 +8,9 @@ pipeline {
     environment {
         // GLobal Vars
         PIPELINES_NAMESPACE = "labs-ci-cd"
+        HELM_CHART_NAME = "pet-battle-api"
         HELM_REPO="http://nexus.nexus.svc.cluster.local:8081/repository/helm-charts/"
         JENKINS_TAG = "${JOB_NAME}.${BUILD_NUMBER}".replace("%2F", "-")
-        SEM_VER = "0.0.${BUILD_NUMBER}" // fixme
         JOB_NAME = "${JOB_NAME}".replace("/", "-")
         GIT_SSL_NO_VERIFY = true
         GIT_CREDENTIALS = credentials("${PIPELINES_NAMESPACE}-git-auth")
@@ -42,7 +42,6 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api"
-                    env.HELM_CHART_NAME = "pet-battle-api"
                 }
             }
         }
@@ -60,7 +59,6 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api-dev"
-                    env.HELM_CHART_NAME = "pet-battle-api-dev"
                 }
             }
         }
@@ -78,63 +76,10 @@ pipeline {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api-test"
-                    env.HELM_CHART_NAME = "pet-battle-api-test"
                 }
             }
         }
 
-        stage("ArgoCD Create App") {
-            agent {
-                node {
-                    label "master"
-                }
-            }
-            when {
-                expression {
-                    def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
-                    if (retVal == null || retVal == "") {
-                        return 0;
-                    }
-                    return 1;
-                }
-            }
-            steps {
-                echo '### Create ArgoCD App ###'
-                sh '''
-                    cat <<EOF | oc apply -n ${PIPELINES_NAMESPACE} -f -
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
-  name: ${APP_NAME}
-spec:
-  destination:
-    namespace: ${PROJECT_NAMESPACE}
-    server: https://kubernetes.default.svc
-  project: default
-  source:
-    helm:
-      releaseName: ${APP_NAME}
-    path: ''
-    repoURL: ${HELM_REPO}
-    targetRevision: ${SEM_VER}
-    chart: ${HELM_CHART_NAME}
-    automated:
-      prune: true
-      selfHeal: true
-      validate: true
-  ignoreDifferences:
-  - group: apps.openshift.io
-    jsonPointers:
-    - /spec/template/spec/containers/0/image
-    - /spec/triggers/0/imageChangeParams/lastTriggeredImage
-    - /spec/triggers/1/imageChangeParams/lastTriggeredImage
-    kind: DeploymentConfig
-EOF
-                '''
-            }
-        }
         stage("Build (Compile App)") {
             agent {
                 node {
@@ -226,9 +171,9 @@ EOF
             }
             steps {
                 echo '### Commit new image tag to git ###'
+                env.SEM_VER = sh(returnStatus: true, script: "./update_version.sh chart/helm-chart-docker-app/Chart.yaml patch")
                 sh '''
-                    yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}
-                    yq w -i chart/Chart.yaml 'version' ${SEM_VER}
+                    yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}                    
                     yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
                     yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
                     yq w -i chart/values.yaml 'image_name' ${APP_NAME}
@@ -259,6 +204,59 @@ EOF
                     git pull
                     helm package chart/
                     curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${SEM_VER}.tgz
+                '''
+            }
+        }
+
+        stage("ArgoCD Create App") {
+            agent {
+                node {
+                    label "master"
+                }
+            }
+            when {
+                expression {
+                    def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
+                    if (retVal == null || retVal == "") {
+                        return 0;
+                    }
+                    return 1;
+                }
+            }
+            steps {
+                echo '### Create ArgoCD App ###'
+                sh '''
+                    cat <<EOF | oc apply -n ${PIPELINES_NAMESPACE} -f -
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
+  name: ${APP_NAME}
+spec:
+  destination:
+    namespace: ${PROJECT_NAMESPACE}
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    helm:
+      releaseName: ${APP_NAME}
+    path: chart
+    repoURL: ${GIT_URL}
+    targetRevision: ${SEM_VER}
+    chart: ${HELM_CHART_NAME}
+    automated:
+      prune: true
+      selfHeal: true
+      validate: true
+  ignoreDifferences:
+  - group: apps.openshift.io
+    jsonPointers:
+    - /spec/template/spec/containers/0/image
+    - /spec/triggers/0/imageChangeParams/lastTriggeredImage
+    - /spec/triggers/1/imageChangeParams/lastTriggeredImage
+    kind: DeploymentConfig
+EOF
                 '''
             }
         }
