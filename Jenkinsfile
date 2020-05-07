@@ -95,10 +95,9 @@ pipeline {
                     newsettings = newsettings.replace("<url>http://nexus:8081/repository/maven-public/</url>","<url>http://nexus-service:8081/repository/maven-public/</url>")
                     writeFile file: "/tmp/settings.xml", text: "${newsettings}"
                     // versions
-                    def VERSION = sh script: 'mvn help:evaluate -Dexpression=project.version -s /tmp/settings.xml -q -DforceStdout', returnStdout: true
                     env.PACKAGE = "${JENKINS_TAG}.tar.gz"
                     // we want jdk.11 - for now in :4.3 slave-mvn
-                    env.JAVA_HOME="/usr/lib/jvm/java-11-openjdk"
+                    env.JAVA_HOME = "/usr/lib/jvm/java-11-openjdk"
                 }
                 sh 'printenv'
 
@@ -111,8 +110,7 @@ pipeline {
                 '''
 
                 echo '### Packaging App for Nexus ###'
-                sh '''
-                    # PACKAGE=${APP_NAME}-${VERSION}-${JENKINS_TAG}.tar.gz
+                sh '''                    
                     tar -zcvf ${PACKAGE} Dockerfile.jvm target/lib target/*-runner.jar
                     curl -vvv -u ${NEXUS_CREDS} --upload-file ${PACKAGE} http://${NEXUS_SERVICE_SERVICE_HOST}:${NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_NAME}/${APP_NAME}/${PACKAGE}
                 '''
@@ -155,7 +153,6 @@ pipeline {
             steps {
                 echo '### Get Binary from Nexus and shove it in a box ###'
                 sh  '''
-                    # PACKAGE=${APP_NAME}-${VERSION}-${JENKINS_TAG}-runner.jar
                     curl -v -f -u ${NEXUS_CREDS} http://${NEXUS_SERVICE_SERVICE_HOST}:${NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_NAME}/${APP_NAME}/${PACKAGE} -o ${PACKAGE}
                     oc start-build ${APP_NAME} --from-archive=${PACKAGE} --follow
                     oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${PROJECT_NAMESPACE}/${APP_NAME}:${JENKINS_TAG}
@@ -172,7 +169,7 @@ pipeline {
             steps {
                 echo '### Commit new image tag to git ###'
                 script {
-                    env.SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch")
+                    def SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch")
                 }
                 sh '''
                     yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}                    
