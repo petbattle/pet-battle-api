@@ -2,8 +2,8 @@ apiVersion: v2
 name: pet-battle-api
 description: A Helm chart for Kubernetes
 type: application
-version: 0.0.45
-appVersion: pet-battle-api-test-jenkins.49
+version: 0.0.46
+appVersion: pet-battle-api-test-jenkins.50
 home: https://eformat.github.io/helm-charts
 maintainers:
 - name: eformat
