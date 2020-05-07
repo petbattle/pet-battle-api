@@ -172,7 +172,7 @@ pipeline {
             steps {
                 echo '### Commit new image tag to git ###'
                 script {
-                    env.SEM_VER = sh(returnStatus: true, script: "./update_version.sh chart/helm-chart-docker-app/Chart.yaml patch")
+                    env.SEM_VER = sh(returnStatus: true, script: "./update_version.sh chart/Chart.yaml patch")
                 }
                 sh '''
                     yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}                    
