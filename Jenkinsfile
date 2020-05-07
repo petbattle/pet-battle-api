@@ -166,10 +166,11 @@ pipeline {
                     label "jenkins-slave-argocd"
                 }
             }
+            environment {
+                SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch").trim()
+            }
             steps {
                 echo '### Commit new image tag to git ###'
-                env.SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch").trim()
-                sh 'printenv'
 
                 sh '''
                     yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}                    
