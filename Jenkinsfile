@@ -168,26 +168,26 @@ pipeline {
             }
             steps {
                 echo '### Commit new image tag to git ###'
-                script {
-                    env.SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch")
-
-                    sh '''
-                        yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}                    
-                        yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
-                        yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
-                        yq w -i chart/values.yaml 'image_name' ${APP_NAME}
-                        yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
-
-                        git checkout -b ${GIT_BRANCH} origin/${GIT_BRANCH}
-                        git config --global user.email "jenkins@rht-labs.bot.com"
-                        git config --global user.name "Jenkins"
-                        git config --global push.default simple
-                        git add chart/Chart.yaml chart/values.yaml
-                        git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${JENKINS_TAG} 🚀"
-                        git remote set-url origin https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
-                        git push origin ${GIT_BRANCH}
-                    '''
+                environment {
+                    SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch").trim()
                 }
+
+                sh '''
+                    yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}                    
+                    yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
+                    yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
+                    yq w -i chart/values.yaml 'image_name' ${APP_NAME}
+                    yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
+
+                    git checkout -b ${GIT_BRANCH} origin/${GIT_BRANCH}
+                    git config --global user.email "jenkins@rht-labs.bot.com"
+                    git config --global user.name "Jenkins"
+                    git config --global push.default simple
+                    git add chart/Chart.yaml chart/values.yaml
+                    git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${JENKINS_TAG} 🚀"
+                    git remote set-url origin https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
+                    git push origin ${GIT_BRANCH}
+                '''
             }
         }
 
@@ -199,14 +199,12 @@ pipeline {
             }
             steps {
                 echo '### Upload Helm Chart to Nexus ###'
-                script {
-                    sh '''
-                        git checkout ${GIT_BRANCH}
-                        git pull
-                        helm package chart/
-                        curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${SEM_VER}.tgz
-                    '''
-                }
+                sh '''
+                    git checkout ${GIT_BRANCH}
+                    git pull
+                    helm package chart/
+                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${SEM_VER}.tgz
+                '''
             }
         }
 
