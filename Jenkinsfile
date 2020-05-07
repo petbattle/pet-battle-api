@@ -242,7 +242,7 @@ spec:
     helm:
       releaseName: ${APP_NAME}
     path: chart
-    repoURL: ${GIT_URL}
+    repoURL: ${HELM_REPO}
     targetRevision: ${SEM_VER}
     chart: ${HELM_CHART_NAME}
     automated:
