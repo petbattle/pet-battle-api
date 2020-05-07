@@ -9,14 +9,14 @@ pipeline {
         // GLobal Vars
         PIPELINES_NAMESPACE = "labs-ci-cd"
         HELM_CHART_NAME = "pet-battle-api"
-        HELM_REPO="http://nexus.nexus.svc.cluster.local:8081/repository/helm-charts/"
+        HELM_REPO = "http://nexus.nexus.svc.cluster.local:8081/repository/helm-charts/"
         JENKINS_TAG = "${JOB_NAME}.${BUILD_NUMBER}".replace("%2F", "-")
         JOB_NAME = "${JOB_NAME}".replace("/", "-")
         GIT_SSL_NO_VERIFY = true
         GIT_CREDENTIALS = credentials("${PIPELINES_NAMESPACE}-git-auth")
         NEXUS_CREDS = credentials("${PIPELINES_NAMESPACE}-nexus-password")
         ARGOCD_CREDS = credentials("${PIPELINES_NAMESPACE}-argocd-token")
-        NEXUS_REPO_NAME="labs-static"
+        NEXUS_REPO_NAME = "labs-static"
     }
 
     // The options directive is for configuration that applies to the whole job.
@@ -92,7 +92,7 @@ pipeline {
                     // repoint nexus
                     settings = readFile("/home/jenkins/.m2/settings.xml")
                     def newsettings = settings.replace("<id>maven-public</id>", "<id>nexus</id>");
-                    newsettings = newsettings.replace("<url>http://nexus:8081/repository/maven-public/</url>","<url>http://nexus-service:8081/repository/maven-public/</url>")
+                    newsettings = newsettings.replace("<url>http://nexus:8081/repository/maven-public/</url>", "<url>http://nexus-service:8081/repository/maven-public/</url>")
                     writeFile file: "/tmp/settings.xml", text: "${newsettings}"
                     // versions
                     env.PACKAGE = "${JENKINS_TAG}.tar.gz"
@@ -135,7 +135,7 @@ pipeline {
             }
             steps {
                 echo '### Create BuildConfig ###'
-                sh  '''
+                sh '''
                     # oc patch bc ${APP_NAME} -p "{\\"spec\\":{\\"output\\":{\\"imageLabels\\":[{\\"name\\":\\"THINGY\\",\\"value\\":\\"MY_AWESOME_THINGY\\"},{\\"name\\":\\"OTHER_THINGY\\",\\"value\\":\\"MY_OTHER_AWESOME_THINGY\\"}]}}}"
                     oc new-build --binary --name=${APP_NAME} -l app=${APP_NAME} --strategy=docker --dry-run -o yaml > /tmp/bc.yaml
                     yq w -i /tmp/bc.yaml items[1].spec.strategy.dockerStrategy.dockerfilePath Dockerfile.jvm
@@ -152,7 +152,7 @@ pipeline {
             }
             steps {
                 echo '### Get Binary from Nexus and shove it in a box ###'
-                sh  '''
+                sh '''
                     curl -v -f -u ${NEXUS_CREDS} http://${NEXUS_SERVICE_SERVICE_HOST}:${NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_NAME}/${APP_NAME}/${PACKAGE} -o ${PACKAGE}
                     oc start-build ${APP_NAME} --from-archive=${PACKAGE} --follow
                     oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${PROJECT_NAMESPACE}/${APP_NAME}:${JENKINS_TAG}
@@ -160,7 +160,7 @@ pipeline {
             }
         }
 
-        stage("Git Commit Chart"){
+        stage("Git Commit Chart") {
             agent {
                 node {
                     label "jenkins-slave-argocd"
@@ -169,24 +169,25 @@ pipeline {
             steps {
                 echo '### Commit new image tag to git ###'
                 script {
-                    def SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch")
-                }
-                sh '''
-                    yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}                    
-                    yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
-                    yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
-                    yq w -i chart/values.yaml 'image_name' ${APP_NAME}
-                    yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
+                    env.SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch")
 
-                    git checkout -b ${GIT_BRANCH} origin/${GIT_BRANCH}
-                    git config --global user.email "jenkins@rht-labs.bot.com"
-                    git config --global user.name "Jenkins"
-                    git config --global push.default simple
-                    git add chart/Chart.yaml chart/values.yaml
-                    git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${JENKINS_TAG} 🚀"
-                    git remote set-url origin https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
-                    git push origin ${GIT_BRANCH}
-                '''
+                    sh '''
+                        yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}                    
+                        yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
+                        yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
+                        yq w -i chart/values.yaml 'image_name' ${APP_NAME}
+                        yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
+
+                        git checkout -b ${GIT_BRANCH} origin/${GIT_BRANCH}
+                        git config --global user.email "jenkins@rht-labs.bot.com"
+                        git config --global user.name "Jenkins"
+                        git config --global push.default simple
+                        git add chart/Chart.yaml chart/values.yaml
+                        git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${JENKINS_TAG} 🚀"
+                        git remote set-url origin https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
+                        git push origin ${GIT_BRANCH}
+                    '''
+                }
             }
         }
 
@@ -198,12 +199,14 @@ pipeline {
             }
             steps {
                 echo '### Upload Helm Chart to Nexus ###'
-                sh  '''
-                    git checkout ${GIT_BRANCH}
-                    git pull
-                    helm package chart/
-                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${SEM_VER}.tgz
-                '''
+                script {
+                    sh '''
+                        git checkout ${GIT_BRANCH}
+                        git pull
+                        helm package chart/
+                        curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${SEM_VER}.tgz
+                    '''
+                }
             }
         }
 
