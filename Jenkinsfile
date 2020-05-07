@@ -171,7 +171,9 @@ pipeline {
             }
             steps {
                 echo '### Commit new image tag to git ###'
-                env.SEM_VER = sh(returnStatus: true, script: "./update_version.sh chart/helm-chart-docker-app/Chart.yaml patch")
+                script {
+                    env.SEM_VER = sh(returnStatus: true, script: "./update_version.sh chart/helm-chart-docker-app/Chart.yaml patch")
+                }
                 sh '''
                     yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}                    
                     yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
