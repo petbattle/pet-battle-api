@@ -168,9 +168,8 @@ pipeline {
             }
             steps {
                 echo '### Commit new image tag to git ###'
-                environment {
-                    SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch").trim()
-                }
+                env.SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch").trim()
+                sh 'printenv'
 
                 sh '''
                     yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}                    
