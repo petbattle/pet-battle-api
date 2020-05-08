@@ -1,12 +1,10 @@
 pipeline {
 
     agent {
-        // label "" also could have been 'agent any' - that has the same meaning.
         label "master"
     }
 
     environment {
-        // GLobal Vars
         PIPELINES_NAMESPACE = "labs-ci-cd"
         HELM_CHART_NAME = "pet-battle-api"
         HELM_REPO = "http://nexus.nexus.svc.cluster.local:8081/repository/helm-charts/"
@@ -19,7 +17,6 @@ pipeline {
         NEXUS_REPO_NAME = "labs-static"
     }
 
-    // The options directive is for configuration that applies to the whole job.
     options {
         buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '1'))
         timeout(time: 15, unit: 'MINUTES')
@@ -39,7 +36,6 @@ pipeline {
             }
             steps {
                 script {
-                    // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api"
                 }
@@ -56,7 +52,6 @@ pipeline {
             }
             steps {
                 script {
-                    // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api-dev"
                 }
@@ -73,7 +68,6 @@ pipeline {
             }
             steps {
                 script {
-                    // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api-test"
                 }
@@ -111,7 +105,6 @@ pipeline {
                     def newsettings = settings.replace("<id>maven-public</id>", "<id>nexus</id>");
                     newsettings = newsettings.replace("<url>http://nexus:8081/repository/maven-public/</url>", "<url>http://nexus-service:8081/repository/maven-public/</url>")
                     writeFile file: "/tmp/settings.xml", text: "${newsettings}"
-                    // versions
                     env.PACKAGE = "${JENKINS_TAG}.tar.gz"
                     // we want jdk.11 - for now in :4.3 slave-mvn
                     env.JAVA_HOME = "/usr/lib/jvm/java-11-openjdk"
