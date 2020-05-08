@@ -211,7 +211,7 @@ pipeline {
             }
         }
 
-        stage("Git Commit Chart") {
+        stage("Git Commit PR Chart") {
             agent {
                 node {
                     label "jenkins-slave-argocd"
@@ -264,7 +264,7 @@ pipeline {
             }
         }
 
-        stage("Upload Helm Chart") {
+        stage("Upload Helm PR Chart") {
             agent {
                 node {
                     label "jenkins-slave-helm"
