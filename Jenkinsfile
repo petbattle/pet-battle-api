@@ -183,9 +183,6 @@ pipeline {
                     label "jenkins-slave-argocd"
                 }
             }
-            when {
-                expression { !GIT_BRANCH.startsWith("PR-") }
-            }
             steps {
                 echo '### Commit new image tag to git ###'
                 script {
