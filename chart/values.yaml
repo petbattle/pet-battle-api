@@ -7,7 +7,7 @@ route: true
 deploymentConfig: true
 replicas: 1
 image_repository: image-registry.openshift-image-registry.svc:5000
-image_name: pet-battle-api-pr
+image_name: pet-battle-api-test-jenkins
 image_namespace: labs-dev
 # do we deploy mongodb from a template (not helm chart)
 mongodbTemplate:
