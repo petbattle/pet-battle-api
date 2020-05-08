@@ -48,12 +48,12 @@ pipeline {
                 }
             }
             when {
-                expression { GIT_BRANCH.startsWith("dev") }
+                expression { GIT_BRANCH.startsWith("dev") || GIT_BRANCH.startsWith("feature") || GIT_BRANCH.startsWith("fix") }
             }
             steps {
                 script {
                     env.PROJECT_NAMESPACE = "labs-dev"
-                    env.APP_NAME = "pet-battle-api-${GIT_BRANCH}".toLowerCase()
+                    env.APP_NAME = "pet-battle-api-${GIT_BRANCH}".replace("/", "-").toLowerCase()
                 }
             }
         }
@@ -69,7 +69,7 @@ pipeline {
             steps {
                 script {
                     env.PROJECT_NAMESPACE = "labs-dev"
-                    env.APP_NAME = "pet-battle-api-${GIT_BRANCH}".toLowerCase()
+                    env.APP_NAME = "pet-battle-api-${GIT_BRANCH}".replace("/", "-").toLowerCase()
                 }
             }
         }
@@ -86,7 +86,7 @@ pipeline {
             steps {
                 script {
                     env.PROJECT_NAMESPACE = "labs-dev"
-                    env.APP_NAME = "pet-battle-api-${GIT_BRANCH}".toLowerCase()
+                    env.APP_NAME = "pet-battle-api-${GIT_BRANCH}".replace("/", "-").toLowerCase()
                 }
             }
         }
