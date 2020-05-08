@@ -221,9 +221,6 @@ pipeline {
                     label "jenkins-slave-helm"
                 }
             }
-            when {
-                expression { !GIT_BRANCH.startsWith("PR-") }
-            }
             steps {
                 echo '### Upload Helm Chart to Nexus ###'
                 sh '''
