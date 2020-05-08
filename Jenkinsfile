@@ -69,13 +69,30 @@ pipeline {
                 }
             }
             when {
-                expression { GIT_BRANCH ==~ /test\/jenkins/ }
+                expression { GIT_BRANCH.startsWith("test") }
             }
             steps {
                 script {
                     // Arbitrary Groovy Script executions can do in script tags
                     env.PROJECT_NAMESPACE = "labs-dev"
                     env.APP_NAME = "pet-battle-api-test"
+                }
+            }
+        }
+
+        stage("prepare environment for PR deploy") {
+            agent {
+                node {
+                    label "master"
+                }
+            }
+            when {
+                expression { GIT_BRANCH.startsWith("PR-") }
+            }
+            steps {
+                script {
+                    env.PROJECT_NAMESPACE = "labs-dev"
+                    env.APP_NAME = "pet-battle-api-pr"
                 }
             }
         }
