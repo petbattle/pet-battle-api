@@ -82,7 +82,7 @@ pipeline {
                 }
             }
             when {
-                expression { GIT_BRANCH ==~ /PR/ }
+                expression { GIT_BRANCH ==~ /PR*/ }
             }
             steps {
                 script {
