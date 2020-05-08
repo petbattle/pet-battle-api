@@ -50,7 +50,7 @@ pipeline {
                 }
             }
             when {
-                expression { GIT_BRANCH ==~ /(.*develop)/ }
+                expression { GIT_BRANCH.startsWith("dev") }
             }
             steps {
                 script {
@@ -66,7 +66,7 @@ pipeline {
                 }
             }
             when {
-                expression { GIT_BRANCH ==~ /test\/jenkins/ }
+                expression { GIT_BRANCH.startsWith("test") }
             }
             steps {
                 script {
@@ -82,7 +82,7 @@ pipeline {
                 }
             }
             when {
-                expression { GIT_BRANCH ==~ /PR*/ }
+                expression { GIT_BRANCH.startsWith("PR-") }
             }
             steps {
                 script {
