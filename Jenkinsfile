@@ -52,7 +52,7 @@ pipeline {
                 }
             }
             when {
-                expression { GIT_BRANCH ==~ /(.*develop)/ }
+                expression { GIT_BRANCH.startsWith("dev") }
             }
             steps {
                 script {
@@ -187,6 +187,10 @@ pipeline {
                 echo '### Commit new image tag to git ###'
                 script {
                     env.SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch").trim()
+                    env.BRANCH = "${GIT_BRANCH}"
+                    if ( GIT_BRANCH.startsWith("PR-") ) {
+                        env.BRANCH = "${CHANGE_BRANCH}"
+                    }
                 }
                 sh 'printenv'
                 sh '''
@@ -196,14 +200,14 @@ pipeline {
                     yq w -i chart/values.yaml 'image_name' ${APP_NAME}
                     yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
 
-                    git checkout -b ${GIT_BRANCH} origin/${GIT_BRANCH}
+                    git checkout -b ${BRANCH}
                     git config --global user.email "jenkins@rht-labs.bot.com"
                     git config --global user.name "Jenkins"
                     git config --global push.default simple
                     git add chart/Chart.yaml chart/values.yaml
                     git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${JENKINS_TAG} 🚀"
                     git remote set-url origin https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
-                    git push origin ${GIT_BRANCH}
+                    git push origin ${BRANCH}
                 '''
             }
         }
