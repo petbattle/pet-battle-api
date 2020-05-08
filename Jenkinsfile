@@ -187,9 +187,9 @@ pipeline {
                 echo '### Commit new image tag to git ###'
                 script {
                     env.SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch").trim()
-                    env.BRANCH = ${GIT_BRANCH}
+                    env.BRANCH = "${GIT_BRANCH}"
                     if ( GIT_BRANCH.startsWith("PR-") ) {
-                        env.BRANCH = ${CHANGE_BRANCH}
+                        env.BRANCH = "${CHANGE_BRANCH}"
                     }
                 }
                 sh 'printenv'
