@@ -52,7 +52,7 @@ pipeline {
                 }
             }
             when {
-                expression { GIT_BRANCH ==~ /(.*develop)/ }
+                expression { GIT_BRANCH.startsWith("dev") }
             }
             steps {
                 script {
