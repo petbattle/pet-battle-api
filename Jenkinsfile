@@ -183,6 +183,9 @@ pipeline {
                     label "jenkins-slave-argocd"
                 }
             }
+            when {
+                expression { !GIT_BRANCH.startsWith("PR-") }
+            }
             steps {
                 echo '### Commit new image tag to git ###'
                 script {
@@ -208,16 +211,72 @@ pipeline {
             }
         }
 
+        stage("Git Commit Chart") {
+            agent {
+                node {
+                    label "jenkins-slave-argocd"
+                }
+            }
+            when {
+                expression { GIT_BRANCH.startsWith("PR-") }
+            }
+            steps {
+                echo '### Merge PR ###'
+                script {
+                    env.SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch").trim()
+                }
+                sh 'printenv'
+                sh '''
+                    yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}                    
+                    yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
+                    yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
+                    yq w -i chart/values.yaml 'image_name' ${APP_NAME}
+                    yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
+
+                    git checkout -b ${CHANGE_BRANCH}
+                    git config --global user.email "jenkins@rht-labs.bot.com"
+                    git config --global user.name "Jenkins"
+                    git config --global push.default simple
+                    git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${JENKINS_TAG} 🚀"
+                    git remote set-url origin https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
+                    git push origin ${CHANGE_BRANCH}
+                '''
+            }
+        }
+
         stage("Upload Helm Chart") {
             agent {
                 node {
                     label "jenkins-slave-helm"
                 }
             }
+            when {
+                expression { !GIT_BRANCH.startsWith("PR-") }
+            }
             steps {
                 echo '### Upload Helm Chart to Nexus ###'
                 sh '''
                     git checkout ${GIT_BRANCH}
+                    git pull
+                    helm package chart/
+                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${SEM_VER}.tgz
+                '''
+            }
+        }
+
+        stage("Upload Helm Chart") {
+            agent {
+                node {
+                    label "jenkins-slave-helm"
+                }
+            }
+            when {
+                expression { GIT_BRANCH.startsWith("PR-") }
+            }
+            steps {
+                echo '### Upload Helm Chart to Nexus ###'
+                sh '''
+                    git checkout ${CHANGE_BRANCH}
                     git pull
                     helm package chart/
                     curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${SEM_VER}.tgz
