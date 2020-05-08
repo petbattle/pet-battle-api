@@ -221,7 +221,7 @@ pipeline {
             steps {
                 echo '### Upload Helm Chart to Nexus ###'
                 sh '''
-                    git checkout ${BRANCH}
+                    git checkout ${GIT_BRANCH}
                     git pull
                     helm package chart/
                     curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${SEM_VER}.tgz
