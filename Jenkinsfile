@@ -32,7 +32,7 @@ pipeline {
                 }
             }
             when {
-                expression { GIT_BRANCH ==~ /(.*master)/ }
+                expression { GIT_BRANCH.startsWith("master") }
             }
             steps {
                 script {
@@ -53,7 +53,7 @@ pipeline {
             steps {
                 script {
                     env.PROJECT_NAMESPACE = "labs-dev"
-                    env.APP_NAME = "pet-battle-api-dev"
+                    env.APP_NAME = "pet-battle-api-${GIT_BRANCH}".toLowerCase()
                 }
             }
         }
@@ -69,7 +69,7 @@ pipeline {
             steps {
                 script {
                     env.PROJECT_NAMESPACE = "labs-dev"
-                    env.APP_NAME = "pet-battle-api-test"
+                    env.APP_NAME = "pet-battle-api-${GIT_BRANCH}".toLowerCase()
                 }
             }
         }
@@ -86,7 +86,7 @@ pipeline {
             steps {
                 script {
                     env.PROJECT_NAMESPACE = "labs-dev"
-                    env.APP_NAME = "pet-battle-api-pr"
+                    env.APP_NAME = "pet-battle-api-${GIT_BRANCH}".toLowerCase()
                 }
             }
         }
