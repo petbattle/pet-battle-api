@@ -221,6 +221,7 @@ pipeline {
                     agent {
                         node {
                             label "jenkins-slave-helm"
+                            serviceAccount "jenkins"
                         }
                     }
                     when {
