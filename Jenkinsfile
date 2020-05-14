@@ -99,7 +99,7 @@ pipeline {
                     writeFile file: "/tmp/settings.xml", text: "${newsettings}"
                     // we want jdk.11 - for now in :4.3 slave-mvn
                     env.JAVA_HOME = "/usr/lib/jvm/java-11-openjdk"
-                    env.VERSION = readMavenPom file: 'pom.xml'
+                    env.VERSION = readMavenPom().getVersion()
                     env.PACKAGE = "${APP_NAME}-${VERSION}.tar.gz"
                 }
                 sh 'printenv'
