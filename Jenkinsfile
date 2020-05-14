@@ -239,7 +239,7 @@ pipeline {
                                 --set image_repository=${IMAGE_REPOSITORY} \
                                 --set image_namespace=${TARGET_NAMESPACE}
 
-                            oc -n ${PIPELINES_NAMESPACE} tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
+                            #oc -n ${PIPELINES_NAMESPACE} tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
                         '''
                     }
                 }
