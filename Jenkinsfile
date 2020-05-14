@@ -43,6 +43,7 @@ pipeline {
                             env.TARGET_NAMESPACE = "labs-test"
                             // app name for master is just pet-battle-api
                         }
+                        sh 'printenv'
                     }
                 }
                 stage("Sandbox Build") {
@@ -60,6 +61,7 @@ pipeline {
                             // in multibranch the job name is just the git branch name
                             env.APP_NAME = "${GIT_BRANCH}-${APP_NAME}".replace("/", "-").toLowerCase()
                         }
+                        sh 'printenv'
                     }
                 }
                 stage("Pull Request Build") {
@@ -76,6 +78,7 @@ pipeline {
                             env.TARGET_NAMESPACE = "labs-dev"
                             env.APP_NAME = "${GIT_BRANCH}-${APP_NAME}".replace("/", "-").toLowerCase()
                         }
+                        sh 'printenv'
                     }
                 }
             }
@@ -213,7 +216,7 @@ pipeline {
             }
         }
 
-        stage("Deploy (ArgoCD)") {
+        stage("Deploy") {
             failFast true
             parallel {
                 stage("helm3 publish and install (sandbox)") {
