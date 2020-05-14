@@ -108,7 +108,7 @@ spec:
           - {{ include "pet-battle-api.name" . }}
         from:
           kind: ImageStreamTag
-          name: {{ include "pet-battle-api.fullname" . }}:{{ .Chart.AppVersion }}
+          name: {{ include "pet-battle-api.fullname" . }}:{{ .Values.image_version }}
         lastTriggeredImage: ""
       type: ImageChange
 {{ end }}
