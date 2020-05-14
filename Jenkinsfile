@@ -219,10 +219,8 @@ pipeline {
             parallel {
                 stage("helm3 publish and install (sandbox)") {
                     agent {
-                        kubernetes {
+                        node {
                             label "jenkins-slave-helm"
-                            cloud 'openshift'
-                            serviceAccount 'jenkins'
                         }
                     }
                     when {
