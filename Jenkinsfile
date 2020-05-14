@@ -6,6 +6,7 @@ pipeline {
 
     environment {
         PIPELINES_NAMESPACE = "labs-ci-cd"
+        NAME = "pet-battle-api"
         IMAGE_REPOSITORY= 'image-registry.openshift-image-registry.svc:5000'
         HELM_REPO = "http://nexus.nexus.svc.cluster.local:8081/repository/helm-charts/"
         JOB_NAME = "${JOB_NAME}".replace("/", "-")
@@ -39,7 +40,7 @@ pipeline {
                     steps {
                         script {
                             env.TARGET_NAMESPACE = "labs-test"
-                            // app name for master is just pet-battle-api
+                            env.APP_NAME = "${NAME}"
                         }
                         sh 'printenv'
                     }
@@ -57,7 +58,7 @@ pipeline {
                         script {
                             env.TARGET_NAMESPACE = "labs-dev"
                             // in multibranch the job name is just the git branch name
-                            env.APP_NAME = "${GIT_BRANCH}-${APP_NAME}".replace("/", "-").toLowerCase()
+                            env.APP_NAME = "${GIT_BRANCH}-${NAME}".replace("/", "-").toLowerCase()
                         }
                         sh 'printenv'
                     }
@@ -74,7 +75,7 @@ pipeline {
                     steps {
                         script {
                             env.TARGET_NAMESPACE = "labs-dev"
-                            env.APP_NAME = "${GIT_BRANCH}-${APP_NAME}".replace("/", "-").toLowerCase()
+                            env.APP_NAME = "${GIT_BRANCH}-${NAME}".replace("/", "-").toLowerCase()
                         }
                         sh 'printenv'
                     }
