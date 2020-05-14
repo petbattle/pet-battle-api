@@ -6,8 +6,6 @@ pipeline {
 
     environment {
         PIPELINES_NAMESPACE = "labs-ci-cd"
-        APP_NAME = "pet-battle-api"
-        VERSION = "latest"
         IMAGE_REPOSITORY= 'image-registry.openshift-image-registry.svc:5000'
         HELM_REPO = "http://nexus.nexus.svc.cluster.local:8081/repository/helm-charts/"
         JOB_NAME = "${JOB_NAME}".replace("/", "-")
