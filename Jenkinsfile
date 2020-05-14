@@ -219,9 +219,9 @@ pipeline {
             parallel {
                 stage("helm3 publish and install (sandbox)") {
                     agent {
-                        node {
+                        kubernetes {
                             label "jenkins-slave-helm"
-                            serviceAccount "jenkins"
+                            serviceAccount 'jenkins'
                         }
                     }
                     when {
