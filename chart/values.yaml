@@ -9,6 +9,7 @@ replicas: 1
 image_repository: image-registry.openshift-image-registry.svc:5000
 image_name: pet-battle-api-feature-foo
 image_namespace: labs-dev
+image_version: latest
 # do we deploy mongodb from a template (not helm chart)
 mongodbTemplate:
   enabled: true
