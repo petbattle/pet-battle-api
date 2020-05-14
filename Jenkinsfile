@@ -157,6 +157,8 @@ pipeline {
                 sh '''
                     curl -v -f -u ${NEXUS_CREDS} http://${NEXUS_SERVICE_SERVICE_HOST}:${NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_NAME}/${APP_NAME}/${PACKAGE} -o ${PACKAGE}
                     oc start-build ${APP_NAME} --from-archive=${PACKAGE} --follow
+                    # FIXME - dont tag if chart does not exist else conflicts
+                    oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
                 '''
             }
         }
@@ -238,8 +240,6 @@ pipeline {
                                 --set image_name=${APP_NAME} \
                                 --set image_repository=${IMAGE_REPOSITORY} \
                                 --set image_namespace=${TARGET_NAMESPACE}
-
-                            #oc -n ${PIPELINES_NAMESPACE} tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
                         '''
                     }
                 }
