@@ -157,7 +157,6 @@ pipeline {
                 sh '''
                     curl -v -f -u ${NEXUS_CREDS} http://${NEXUS_SERVICE_SERVICE_HOST}:${NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_NAME}/${APP_NAME}/${PACKAGE} -o ${PACKAGE}
                     oc start-build ${APP_NAME} --from-archive=${PACKAGE} --follow
-                    oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
                 '''
             }
         }
@@ -239,6 +238,8 @@ pipeline {
                                 --set image_name=${APP_NAME} \
                                 --set image_repository=${IMAGE_REPOSITORY} \
                                 --set image_namespace=${TARGET_NAMESPACE}
+
+                            oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
                         '''
                     }
                 }
@@ -295,6 +296,8 @@ EOF
                         }
                         echo '### Ask ArgoCD to Sync the changes and roll it out ###'
                         sh '''
+                            oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
+                            
                             ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
                             argocd app sync ${APP_NAME} ${ARGOCD_INFO} --force --async --prune
                             argocd app wait ${APP_NAME} ${ARGOCD_INFO}
