@@ -6,7 +6,8 @@ pipeline {
 
     environment {
         PIPELINES_NAMESPACE = "labs-ci-cd"
-        HELM_CHART_NAME = "pet-battle-api"
+        APP_NAME = "pet-battle-api"
+        IMAGE_REPOSITORY= 'image-registry.openshift-image-registry.svc:5000'
         HELM_REPO = "http://nexus.nexus.svc.cluster.local:8081/repository/helm-charts/"
         JENKINS_TAG = "${JOB_NAME}.${BUILD_NUMBER}".replace("%2F", "-")
         JOB_NAME = "${JOB_NAME}".replace("/", "-")
@@ -25,68 +26,57 @@ pipeline {
     }
 
     stages {
-        stage("prepare environment for master deploy") {
-            agent {
-                node {
-                    label "master"
+        stage('Perpare Environment') {
+            failFast true
+            parallel {
+                stage("Release Build") {
+                    agent {
+                        node {
+                            label "master"
+                        }
+                    }
+                    when {
+                        expression { GIT_BRANCH.startsWith("master") }
+                    }
+                    steps {
+                        script {
+                            env.TARGET_NAMESPACE = "labs-test"
+                            // app name for master is just pet-battle-api
+                        }
+                    }
                 }
-            }
-            when {
-                expression { GIT_BRANCH.startsWith("master") }
-            }
-            steps {
-                script {
-                    env.PROJECT_NAMESPACE = "labs-dev"
-                    env.APP_NAME = "pet-battle-api"
+                stage("Sandbox Build") {
+                    agent {
+                        node {
+                            label "master"
+                        }
+                    }
+                    when {
+                        expression { GIT_BRANCH.startsWith("dev") || GIT_BRANCH.startsWith("feature") || GIT_BRANCH.startsWith("fix") }
+                    }
+                    steps {
+                        script {
+                            env.TARGET_NAMESPACE = "labs-dev"
+                            // in multibranch the job name is just the git branch name
+                            env.APP_NAME = "${GIT_BRANCH}-${APP_NAME}".replace("/", "-").toLowerCase()
+                        }
+                    }
                 }
-            }
-        }
-        stage("prepare environment for develop deploy") {
-            agent {
-                node {
-                    label "master"
-                }
-            }
-            when {
-                expression { GIT_BRANCH.startsWith("dev") || GIT_BRANCH.startsWith("feature") || GIT_BRANCH.startsWith("fix") }
-            }
-            steps {
-                script {
-                    env.PROJECT_NAMESPACE = "labs-dev"
-                    env.APP_NAME = "pet-battle-api-${GIT_BRANCH}".replace("/", "-").toLowerCase()
-                }
-            }
-        }
-        stage("prepare environment for test deploy") {
-            agent {
-                node {
-                    label "master"
-                }
-            }
-            when {
-                expression { GIT_BRANCH.startsWith("test") }
-            }
-            steps {
-                script {
-                    env.PROJECT_NAMESPACE = "labs-dev"
-                    env.APP_NAME = "pet-battle-api-${GIT_BRANCH}".replace("/", "-").toLowerCase()
-                }
-            }
-        }
-
-        stage("prepare environment for PR deploy") {
-            agent {
-                node {
-                    label "master"
-                }
-            }
-            when {
-                expression { GIT_BRANCH.startsWith("PR-") }
-            }
-            steps {
-                script {
-                    env.PROJECT_NAMESPACE = "labs-dev"
-                    env.APP_NAME = "pet-battle-api-${GIT_BRANCH}".replace("/", "-").toLowerCase()
+                stage("Pull Request Build") {
+                    agent {
+                        node {
+                            label "master"
+                        }
+                    }
+                    when {
+                        expression { GIT_BRANCH.startsWith("PR-") }
+                    }
+                    steps {
+                        script {
+                            env.TARGET_NAMESPACE = "labs-dev"
+                            env.APP_NAME = "${GIT_BRANCH}-${APP_NAME}".replace("/", "-").toLowerCase()
+                        }
+                    }
                 }
             }
         }
@@ -164,7 +154,7 @@ pipeline {
                 sh '''
                     curl -v -f -u ${NEXUS_CREDS} http://${NEXUS_SERVICE_SERVICE_HOST}:${NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_NAME}/${APP_NAME}/${PACKAGE} -o ${PACKAGE}
                     oc start-build ${APP_NAME} --from-archive=${PACKAGE} --follow
-                    oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${PROJECT_NAMESPACE}/${APP_NAME}:${JENKINS_TAG}
+                    oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${JENKINS_TAG}
                 '''
             }
         }
@@ -175,40 +165,41 @@ pipeline {
                     label "jenkins-slave-argocd"
                 }
             }
+            when {
+                expression { GIT_BRANCH.startsWith("master") }
+            }
             steps {
                 echo '### Commit new image tag to git ###'
                 script {
                     env.SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch").trim()
-                    env.BRANCH = "${GIT_BRANCH}"
-                    if ( GIT_BRANCH.startsWith("PR-") ) {
-                        env.BRANCH = "${CHANGE_BRANCH}"
-                    }
                 }
                 sh 'printenv'
                 sh '''
-                    yq w -i chart/Chart.yaml 'name' ${HELM_CHART_NAME}                    
                     yq w -i chart/Chart.yaml 'appVersion' ${JENKINS_TAG}
                     yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
                     yq w -i chart/values.yaml 'image_name' ${APP_NAME}
-                    yq w -i chart/values.yaml 'image_namespace' ${PROJECT_NAMESPACE}
+                    yq w -i chart/values.yaml 'image_namespace' ${TARGET_NAMESPACE}
 
-                    git checkout -b ${BRANCH}
+                    git checkout -b ${GIT_BRANCH}
                     git config --global user.email "jenkins@rht-labs.bot.com"
                     git config --global user.name "Jenkins"
                     git config --global push.default simple
                     git add chart/Chart.yaml chart/values.yaml
                     git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${JENKINS_TAG} 🚀"
                     git remote set-url origin https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
-                    git push origin ${BRANCH}
+                    git push origin ${GIT_BRANCH}
                 '''
             }
         }
 
-        stage("Upload Helm Chart") {
+        stage("Upload Helm Chart (master)") {
             agent {
                 node {
                     label "jenkins-slave-helm"
                 }
+            }
+            when {
+                expression { GIT_BRANCH.startsWith("master") }
             }
             steps {
                 echo '### Upload Helm Chart to Nexus ###'
@@ -216,30 +207,54 @@ pipeline {
                     git checkout ${GIT_BRANCH}
                     git pull
                     helm package chart/
-                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${HELM_CHART_NAME}-${SEM_VER}.tgz
+                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${APP_NAME}-${SEM_VER}.tgz
                 '''
             }
         }
 
-        stage("ArgoCD Create App") {
-            agent {
-                node {
-                    label "master"
-                }
-            }
-            when {
-                expression {
-                    def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
-                    if (retVal == null || retVal == "") {
-                        return 0;
+        stage("Deploy (ArgoCD)") {
+            failFast true
+            parallel {
+                stage("helm3 publish and install (sandbox)") {
+                    agent {
+                        node {
+                            label "jenkins-slave-helm"
+                        }
                     }
-                    return 1;
+                    when {
+                        expression { GIT_BRANCH.startsWith("dev") || GIT_BRANCH.startsWith("feature") || GIT_BRANCH.startsWith("fix") || GIT_BRANCH.startsWith("PR-") }
+                    }
+                    steps {
+                        sh '''
+                            helm lint chart
+                        '''
+                        // TODO - if SANDBOX, create release in rando ns
+                        sh '''
+                            helm upgrade --install ${APP_NAME} chart \
+                                --namespace=${TARGET_NAMESPACE} \
+                                --set image_name=${APP_NAME}
+                                --set app_tag=${VERSION} \
+                                --set image_repository=${IMAGE_REPOSITORY} \
+                                --set image_namespace=${TARGET_NAMESPACE}
+                        '''
+                    }
                 }
-            }
-            steps {
-                echo '### Create ArgoCD App ###'
-                sh '''
-                    cat <<EOF | oc apply -n ${PIPELINES_NAMESPACE} -f -
+                stage("argocd sync (master)") {
+                    agent {
+                        node {
+                            label "jenkins-slave-argocd"
+                        }
+                    }
+                    when {
+                        expression { GIT_BRANCH.startsWith("master") }
+                    }
+                    steps {
+                        script {
+                            def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
+                            if (retVal == null || retVal == "") {
+                                echo '### Create ArgoCD App ###'
+                                sh '''
+cat <<EOF | oc apply -n ${PIPELINES_NAMESPACE} -f -
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -248,7 +263,7 @@ metadata:
   name: ${APP_NAME}
 spec:
   destination:
-    namespace: ${PROJECT_NAMESPACE}
+    namespace: ${TARGET_NAMESPACE}
     server: https://kubernetes.default.svc
   project: default
   source:
@@ -257,7 +272,7 @@ spec:
     path: chart
     repoURL: ${HELM_REPO}
     targetRevision: ${SEM_VER}
-    chart: ${HELM_CHART_NAME}
+    chart: ${APP_NAME}
     automated:
       prune: true
       selfHeal: true
@@ -271,25 +286,49 @@ spec:
     kind: DeploymentConfig
 EOF
                 '''
+                            }
+                            def patch = $/argocd app patch "${APP_NAME}" --patch $'{\"spec\":{\"source\":{\"targetRevision\":\"${SEM_VER}\"}}}' --type merge --auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure/$
+                            sh patch
+                        }
+                        echo '### Ask ArgoCD to Sync the changes and roll it out ###'
+                        sh '''
+                            ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
+                            argocd app sync ${APP_NAME} ${ARGOCD_INFO} --force --async --prune
+                            argocd app wait ${APP_NAME} ${ARGOCD_INFO}
+                        '''
+                    }
+                }
             }
         }
 
-        stage("Deploy (ArgoCD)") {
+        stage("End to End Test") {
             agent {
                 node {
-                    label "jenkins-slave-argocd"
+                    label "master"
                 }
             }
+            when {
+                expression { GIT_BRANCH.startsWith("master") }
+            }
             steps {
-                script {
-                    echo '### Ask ArgoCD to Sync the changes and roll it out ###'
-                    def patch = $/argocd app patch "${APP_NAME}" --patch $'{\"spec\":{\"source\":{\"targetRevision\":\"${SEM_VER}\"}}}' --type merge --auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure/$
-                    sh patch
+                sh  '''
+                    echo "TODO - Run tests"
+                '''
+            }
+        }
+
+        stage("Promote app to Staging") {
+            agent {
+                node {
+                    label "master"
                 }
-                sh '''
-                    ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
-                    argocd app sync ${APP_NAME} ${ARGOCD_INFO} --force --async --prune
-                    argocd app wait ${APP_NAME} ${ARGOCD_INFO}
+            }
+            when {
+                expression { GIT_BRANCH.startsWith("master") }
+            }
+            steps {
+                sh  '''
+                    echo "TODO - Run ArgoCD Sync 2 for staging env"
                 '''
             }
         }
