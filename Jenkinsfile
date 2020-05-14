@@ -221,6 +221,7 @@ pipeline {
                     agent {
                         kubernetes {
                             label "jenkins-slave-helm"
+                            cloud 'openshift'
                             serviceAccount 'jenkins'
                         }
                     }
