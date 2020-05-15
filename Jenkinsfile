@@ -55,6 +55,7 @@ pipeline {
                     steps {
                         script {
                             env.TARGET_NAMESPACE = "labs-test"
+                            env.STAGING_NAMESPACE = "labs-staging"
                             env.APP_NAME = "${NAME}".replace("/", "-").toLowerCase()
                         }
                     }
@@ -253,6 +254,7 @@ pipeline {
                                     git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
                                     helm template ${ARGOCD_APPNAME} -f example-deployment/values-applications.yaml example-deployment/ > /tmp/app.yaml
                                     oc apply -n ${PIPELINES_NAMESPACE} -f /tmp/app.yaml
+                                    oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
                                 '''
                             }
                         }
@@ -287,6 +289,7 @@ pipeline {
 
                                 echo '### Ask ArgoCD to Sync the changes and roll it out ###'
                                 sh '''
+                                    oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
                                     # 1 Check sync not currently in progress . if so, kill it
                                     # 2. sync argocd to change pushed in previous step
                                     ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
@@ -294,8 +297,8 @@ pipeline {
                                     # argocd app sync -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
                                     # argocd app wait -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
                                     # sync individual app
-                                    argocd app sync ${APP_NAME} ${ARGOCD_INFO}
-                                    argocd app wait ${APP_NAME} ${ARGOCD_INFO}
+                                    argocd app sync test-${APP_NAME} ${ARGOCD_INFO}
+                                    argocd app wait test-${APP_NAME} ${ARGOCD_INFO}
                                 '''
                             }
                         }
@@ -353,11 +356,13 @@ pipeline {
 
                 echo '### Ask ArgoCD to Sync the changes and roll it out ###'
                 sh '''
+                    oc tag ${TARGET_NAMESPACE}/${APP_NAME}:latest ${STAGING_NAMESPACE}/${APP_NAME}:${VERSION}
                     # 1 Check sync not currently in progress . if so, kill it
                     # 2. sync argocd to change pushed in previous step
                     ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
-                    argocd app sync -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
-                    argocd app wait -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
+                    # sync individual app
+                    argocd app sync ${APP_NAME} ${ARGOCD_INFO}
+                    argocd app wait ${APP_NAME} ${ARGOCD_INFO}                    
                 '''
 
                 sh '''
