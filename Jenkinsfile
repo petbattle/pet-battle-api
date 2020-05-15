@@ -217,7 +217,7 @@ pipeline {
                             helm upgrade --install ${APP_NAME} \
                                 --namespace=${TARGET_NAMESPACE} \
                                 http://${SONATYPE_NEXUS_SERVICE_SERVICE_HOST}:${SONATYPE_NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_HELM}/${APP_NAME}-${HELM_CHART_VERSION}.tgz
-                            oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}                    
+                            oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/test-${APP_NAME}:${VERSION}                    
                         '''
                     }
                 }
@@ -254,7 +254,7 @@ pipeline {
                                     git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
                                     helm template ${ARGOCD_APPNAME} -f example-deployment/values-applications.yaml example-deployment/ > /tmp/app.yaml
                                     oc apply -n ${PIPELINES_NAMESPACE} -f /tmp/app.yaml
-                                    oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
+                                    oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/test-${APP_NAME}:${VERSION}
                                 '''
                             }
                         }
