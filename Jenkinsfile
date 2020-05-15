@@ -217,7 +217,7 @@ pipeline {
                             helm upgrade --install ${APP_NAME} \
                                 --namespace=${TARGET_NAMESPACE} \
                                 http://${SONATYPE_NEXUS_SERVICE_SERVICE_HOST}:${SONATYPE_NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_HELM}/${APP_NAME}-${HELM_CHART_VERSION}.tgz
-                            oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/test-${APP_NAME}:${VERSION}                    
+                            oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}                    
                         '''
                     }
                 }
@@ -254,7 +254,7 @@ pipeline {
                                     git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
                                     helm template ${ARGOCD_APPNAME} -f example-deployment/values-applications.yaml example-deployment/ > /tmp/app.yaml
                                     oc apply -n ${PIPELINES_NAMESPACE} -f /tmp/app.yaml
-                                    oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/test-${APP_NAME}:${VERSION}
+                                    oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
                                 '''
                             }
                         }
@@ -288,8 +288,7 @@ pipeline {
                                 '''
 
                                 echo '### Ask ArgoCD to Sync the changes and roll it out ###'
-                                sh '''
-                                    oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
+                                sh '''                                    
                                     # 1 Check sync not currently in progress . if so, kill it
                                     # 2. sync argocd to change pushed in previous step
                                     ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
@@ -356,7 +355,7 @@ pipeline {
 
                 echo '### Ask ArgoCD to Sync the changes and roll it out ###'
                 sh '''
-                    oc tag ${TARGET_NAMESPACE}/${APP_NAME}:latest ${STAGING_NAMESPACE}/${APP_NAME}:${VERSION}
+                    oc tag ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION} ${STAGING_NAMESPACE}/${APP_NAME}:${VERSION}
                     # 1 Check sync not currently in progress . if so, kill it
                     # 2. sync argocd to change pushed in previous step
                     ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
