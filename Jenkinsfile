@@ -146,6 +146,9 @@ pipeline {
             steps {
                 echo '### Get Binary from Nexus and shove it in a box ###'
                 sh '''
+                    rm -rf ${PACKAGE}
+                    curl -v -f -u ${NEXUS_CREDS} http://${SONATYPE_NEXUS_SERVICE_SERVICE_HOST}:${SONATYPE_NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_NAME}/${APP_NAME}/${PACKAGE} -o ${PACKAGE}
+
                     BUILD_ARGS=" --build-arg git_commit=${GIT_COMMIT} --build-arg git_url=${GIT_URL}  --build-arg build_url=${RUN_DISPLAY_URL} --build-arg build_tag=${BUILD_TAG}"
                     echo ${BUILD_ARGS}   
                     
