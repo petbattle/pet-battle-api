@@ -221,9 +221,6 @@ pipeline {
                     }
                 }
                 stage("test/staging argocd app create (master)") {
-                    options {
-                        skipDefaultCheckout(true)
-                    }
                     agent {
                         node {
                             label "jenkins-slave-helm"
