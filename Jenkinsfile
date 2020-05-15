@@ -290,8 +290,12 @@ pipeline {
                                     # 1 Check sync not currently in progress . if so, kill it
                                     # 2. sync argocd to change pushed in previous step
                                     ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
-                                    argocd app sync -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
-                                    argocd app wait -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
+                                    # sync by label (fails on non built instances)
+                                    # argocd app sync -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
+                                    # argocd app wait -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
+                                    # sync individual app
+                                    argocd app sync ${APP_NAME} ${ARGOCD_INFO}
+                                    argocd app wait ${APP_NAME} ${ARGOCD_INFO}
                                 '''
                             }
                         }
