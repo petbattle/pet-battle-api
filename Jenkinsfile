@@ -107,7 +107,7 @@ pipeline {
                     // repoint nexus
                     settings = readFile("/home/jenkins/.m2/settings.xml")
                     def newsettings = settings.replace("<id>maven-public</id>", "<id>nexus</id>");
-                    newsettings = newsettings.replace("<url>http://nexus:8081/repository/maven-public/</url>", "<url>http://nexus-service:8081/repository/maven-public/</url>")
+                    newsettings = newsettings.replace("<url>http://nexus:8081/repository/maven-public/</url>", "<url>http://${SONATYPE_NEXUS_SERVICE_SERVICE_HOST}:${SONATYPE_NEXUS_SERVICE_SERVICE_PORT}/repository/maven-public/</url>")
                     writeFile file: "/tmp/settings.xml", text: "${newsettings}"
                     // we want jdk.11 - for now in :4.3 slave-mvn
                     env.JAVA_HOME = "/usr/lib/jvm/java-11-openjdk"
