@@ -347,7 +347,7 @@ pipeline {
                     git add ${ARGOCD_CONFIG_REPO_PATH}
                     # grabbing the error code incase there is nothing to commit and allow jenkins proceed
                     git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${VERSION} 🚀" || rc=$?
-                    git remote set-url origin  https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@github.com/springdo/ubiquitous-journey.git
+                    git remote set-url origin  https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@${ARGOCD_CONFIG_REPO}
                     git push -u origin ${ARGOCD_CONFIG_REPO_BRANCH}
                 '''
 
