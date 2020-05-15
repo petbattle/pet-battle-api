@@ -5,16 +5,31 @@ pipeline {
     }
 
     environment {
+        // GLobal Vars
         PIPELINES_NAMESPACE = "labs-ci-cd"
         NAME = "pet-battle-api"
+
+        // Argo specific
+        ARGOCD_INSTANCE = "rht-labs.com/uj"
+        ARGOCD_APPNAME = "catz"
+        ARGOCD_CONFIG_REPO = "github.com/eformat/ubiquitous-journey.git"
+        ARGOCD_CONFIG_REPO_PATH = "example-deployment/values-applications.yaml"
+        ARGOCD_CONFIG_REPO_BRANCH = "pipeline-test"
+
+        // Job name contains the branch eg my-app-feature%2Fjenkins-123
+        JOB_NAME = "${JOB_NAME}".replace("%2F", "-").replace("/", "-")
         IMAGE_REPOSITORY= 'image-registry.openshift-image-registry.svc:5000'
-        HELM_REPO = "http://nexus.nexus.svc.cluster.local:8081/repository/helm-charts/"
-        JOB_NAME = "${JOB_NAME}".replace("/", "-")
+
         GIT_SSL_NO_VERIFY = true
-        GIT_CREDENTIALS = credentials("${PIPELINES_NAMESPACE}-git-auth")
+
+        // Credentials bound in OpenShift
+        GIT_CREDS = credentials("${PIPELINES_NAMESPACE}-git-auth")
         NEXUS_CREDS = credentials("${PIPELINES_NAMESPACE}-nexus-password")
         ARGOCD_CREDS = credentials("${PIPELINES_NAMESPACE}-argocd-token")
-        NEXUS_REPO_NAME = "labs-static"
+
+        // Nexus Artifact repo
+        NEXUS_REPO_NAME="labs-static"
+        NEXUS_REPO_HELM = "helm-charts"
     }
 
     options {
@@ -40,9 +55,8 @@ pipeline {
                     steps {
                         script {
                             env.TARGET_NAMESPACE = "labs-test"
-                            env.APP_NAME = "${NAME}"
+                            env.APP_NAME = "${NAME}".replace("/", "-").toLowerCase()
                         }
-                        sh 'printenv'
                     }
                 }
                 stage("Sandbox Build") {
@@ -57,10 +71,9 @@ pipeline {
                     steps {
                         script {
                             env.TARGET_NAMESPACE = "labs-dev"
-                            // in multibranch the job name is just the git branch name
+                            // ammend the name to create 'sandbox' deploys based on current branch
                             env.APP_NAME = "${GIT_BRANCH}-${NAME}".replace("/", "-").toLowerCase()
                         }
-                        sh 'printenv'
                     }
                 }
                 stage("Pull Request Build") {
@@ -77,7 +90,6 @@ pipeline {
                             env.TARGET_NAMESPACE = "labs-dev"
                             env.APP_NAME = "${GIT_BRANCH}-${NAME}".replace("/", "-").toLowerCase()
                         }
-                        sh 'printenv'
                     }
                 }
             }
@@ -99,10 +111,14 @@ pipeline {
                     writeFile file: "/tmp/settings.xml", text: "${newsettings}"
                     // we want jdk.11 - for now in :4.3 slave-mvn
                     env.JAVA_HOME = "/usr/lib/jvm/java-11-openjdk"
+                    // version from pom.xml
                     env.VERSION = readMavenPom().getVersion()
                     env.PACKAGE = "${APP_NAME}-${VERSION}.tar.gz"
                 }
                 sh 'printenv'
+
+                echo '### Running checkstyle ###'
+                // sh 'mvn checkstyle:check'
 
                 echo '### Running tests ###'
                 // sh 'mvn test'
@@ -121,31 +137,6 @@ pipeline {
             // Post can be used both on individual stages and for the entire build.
         }
 
-        stage("Create OpenShift Build") {
-            agent {
-                node {
-                    label "jenkins-slave-argocd"
-                }
-            }
-            when {
-                expression {
-                    openshift.withCluster() {
-                        openshift.withProject("${PIPELINES_NAMESPACE}") {
-                            return !openshift.selector("bc", "${APP_NAME}").exists();
-                        }
-                    }
-                }
-            }
-            steps {
-                echo '### Create BuildConfig ###'
-                sh '''
-                    oc new-build --binary --name=${APP_NAME} -l app=${APP_NAME} --strategy=docker --dry-run -o yaml > /tmp/bc.yaml
-                    yq w -i /tmp/bc.yaml items[1].spec.strategy.dockerStrategy.dockerfilePath Dockerfile.jvm
-                    oc apply -f /tmp/bc.yaml
-                '''
-            }
-        }
-
         stage("Bake (OpenShift Build)") {
             agent {
                 node {
@@ -155,7 +146,18 @@ pipeline {
             steps {
                 echo '### Get Binary from Nexus and shove it in a box ###'
                 sh '''
-                    curl -v -f -u ${NEXUS_CREDS} http://${NEXUS_SERVICE_SERVICE_HOST}:${NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_NAME}/${APP_NAME}/${PACKAGE} -o ${PACKAGE}
+                    BUILD_ARGS=" --build-arg git_commit=${GIT_COMMIT} --build-arg git_url=${GIT_URL}  --build-arg build_url=${RUN_DISPLAY_URL} --build-arg build_tag=${BUILD_TAG}"
+                    echo ${BUILD_ARGS}   
+                    
+                    oc get bc ${APP_NAME} || rc=$?
+                    if [ $rc -eq 1 ]; then
+                        echo " 🏗 no build - creating one 🏗"
+                        oc new-build --binary --name=${APP_NAME} -l app=${APP_NAME} --strategy=docker --dry-run -o yaml > /tmp/bc.yaml
+                        yq w -i /tmp/bc.yaml items[1].spec.strategy.dockerStrategy.dockerfilePath Dockerfile.jvm
+                        oc apply -f /tmp/bc.yaml
+                    fi
+                                 
+                    echo " 🏗 build found - starting it  🏗"    
                     oc start-build ${APP_NAME} --from-archive=${PACKAGE} --follow
                     # FIXME - dont tag if chart does not exist else conflicts
                     oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
@@ -163,40 +165,7 @@ pipeline {
             }
         }
 
-        stage("Git Commit Chart") {
-            agent {
-                node {
-                    label "jenkins-slave-argocd"
-                }
-            }
-            when {
-                expression { GIT_BRANCH.startsWith("master") }
-            }
-            steps {
-                echo '### Commit new image tag to git ###'
-                script {
-                    env.SEM_VER = sh(returnStdout: true, script: "./update_version.sh chart/Chart.yaml patch").trim()
-                }
-                sh 'printenv'
-                sh '''
-                    yq w -i chart/Chart.yaml 'appVersion' ${VERSION}
-                    yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
-                    yq w -i chart/values.yaml 'image_name' ${APP_NAME}
-                    yq w -i chart/values.yaml 'image_namespace' ${TARGET_NAMESPACE}
-
-                    git checkout -b ${GIT_BRANCH}
-                    git config --global user.email "jenkins@rht-labs.bot.com"
-                    git config --global user.name "Jenkins"
-                    git config --global push.default simple
-                    git add chart/Chart.yaml chart/values.yaml
-                    git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${VERSION} 🚀"
-                    git remote set-url origin https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/eformat/pet-battle-api.git
-                    git push origin ${GIT_BRANCH}
-                '''
-            }
-        }
-
-        stage("Upload Helm Chart (master)") {
+        stage("Helm Package App (master)") {
             agent {
                 node {
                     label "jenkins-slave-helm"
@@ -206,12 +175,24 @@ pipeline {
                 expression { GIT_BRANCH.startsWith("master") }
             }
             steps {
-                echo '### Upload Helm Chart to Nexus ###'
+                echo '### Commit new image tag to git ###'
+                sh 'printenv'
                 sh '''
-                    git checkout ${GIT_BRANCH}
-                    git pull
-                    helm package chart/
-                    curl -vvv -u ${NEXUS_CREDS} ${HELM_REPO} --upload-file ${APP_NAME}-${SEM_VER}.tgz
+                    helm lint chart
+                '''
+                sh '''
+                    yq w -i chart/Chart.yaml 'name' ${APP_NAME}
+                    yq w -i chart/Chart.yaml 'appVersion' ${VERSION}                     
+                    
+                    yq w -i chart/values.yaml 'image_repository' 'image-registry.openshift-image-registry.svc:5000'
+                    yq w -i chart/values.yaml 'image_name' ${APP_NAME}
+                    yq w -i chart/values.yaml 'image_namespace' ${TARGET_NAMESPACE}
+                    yq w -i chart/values.yaml 'image_version' ${VERSION}
+                '''
+                sh '''
+                    # package and release helm chart
+                    helm package chart/ --app-version ${VERSION}
+                    curl -v -f -u ${NEXUS_CREDS} http://${SONATYPE_NEXUS_SERVICE_SERVICE_HOST}:${SONATYPE_NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_HELM}/ --upload-file ${APP_NAME}-*.tgz
                 '''
             }
         }
@@ -219,7 +200,7 @@ pipeline {
         stage("Deploy") {
             failFast true
             parallel {
-                stage("helm3 publish and install (sandbox)") {
+                stage("sandbox - helm3 publish and install") {
                     agent {
                         node {
                             label "jenkins-slave-helm"
@@ -229,21 +210,43 @@ pipeline {
                         expression { GIT_BRANCH.startsWith("dev") || GIT_BRANCH.startsWith("feature") || GIT_BRANCH.startsWith("fix") || GIT_BRANCH.startsWith("PR-") }
                     }
                     steps {
-                        sh '''
-                            helm lint chart
-                        '''
                         // TODO - if SANDBOX, create release in rando ns
                         sh '''                            
                             helm upgrade --install ${APP_NAME} chart/ \
                                 --namespace=${TARGET_NAMESPACE} \
-                                --set image_version=${VERSION} \
-                                --set image_name=${APP_NAME} \
-                                --set image_repository=${IMAGE_REPOSITORY} \
-                                --set image_namespace=${TARGET_NAMESPACE}
+                                http://${SONATYPE_NEXUS_SERVICE_SERVICE_HOST}:${SONATYPE_NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_HELM}/${APP_NAME}-${VERSION}.tgz
                         '''
                     }
                 }
-                stage("argocd sync (master)") {
+                stage("test/staging argocd app create (master)") {
+                    options {
+                        skipDefaultCheckout(true)
+                    }
+                    agent {
+                        node {
+                            label "jenkins-slave-helm"
+                        }
+                    }
+                    when {
+                        expression {
+                            GIT_BRANCH.startsWith("master") && sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${ARGOCD_APP_NAME}\" -o name")
+                        }
+                    }
+                    steps {
+                        echo '### Create ArgoCD App ###'
+                        sh '''
+                            git clone https://${ARGOCD_CONFIG_REPO} config-repo
+                            cd config-repo
+                            git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
+                            helm template ${ARGOCD_APPNAME} -f example-deployment/values-applications.yaml example-deployment/
+                        '''
+                    }
+                }
+
+                stage("test env - argocd sync (master)") {
+                    options {
+                        skipDefaultCheckout(true)
+                    }
                     agent {
                         node {
                             label "jenkins-slave-argocd"
@@ -253,54 +256,31 @@ pipeline {
                         expression { GIT_BRANCH.startsWith("master") }
                     }
                     steps {
-                        script {
-                            def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
-                            if (retVal == null || retVal == "") {
-                                echo '### Create ArgoCD App ###'
-                                sh '''
-cat <<EOF | oc apply -n ${PIPELINES_NAMESPACE} -f -
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
-  name: ${APP_NAME}
-spec:
-  destination:
-    namespace: ${TARGET_NAMESPACE}
-    server: https://kubernetes.default.svc
-  project: default
-  source:
-    helm:
-      releaseName: ${APP_NAME}
-    path: chart
-    repoURL: ${HELM_REPO}
-    targetRevision: ${SEM_VER}
-    chart: ${APP_NAME}
-    automated:
-      prune: true
-      selfHeal: true
-      validate: true
-  ignoreDifferences:
-  - group: apps.openshift.io
-    jsonPointers:
-    - /spec/template/spec/containers/0/image
-    - /spec/triggers/0/imageChangeParams/lastTriggeredImage
-    - /spec/triggers/1/imageChangeParams/lastTriggeredImage
-    kind: DeploymentConfig
-EOF
-                '''
-                            }
-                            def patch = $/argocd app patch "${APP_NAME}" --patch $'{\"spec\":{\"source\":{\"targetRevision\":\"${SEM_VER}\"}}}' --type merge --auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure/$
-                            sh patch
-                        }
+                        echo '### Commit new image tag to git ###'
+                        sh  '''
+                            # TODO - fix all this after chat with @eformat
+                            git clone https://${ARGOCD_CONFIG_REPO} config-repo
+                            cd config-repo
+                            git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
+                            # TODO - @eformat we probs need to think about the app of apps approach or better logic here 
+                            # as using array[0] is 🧻
+                            yq w -i ${ARGOCD_CONFIG_REPO_PATH} 'applications[2].source_ref' ${VERSION}
+                            git config --global user.email "jenkins@rht-labs.bot.com"
+                            git config --global user.name "Jenkins"
+                            git config --global push.default simple
+                            git add ${ARGOCD_CONFIG_REPO_PATH}
+                            git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${VERSION} 🚀" || rc=$?
+                            git remote set-url origin  https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@${ARGOCD_CONFIG_REPO}
+                            git push -u origin ${ARGOCD_CONFIG_REPO_BRANCH}
+                        '''
+
                         echo '### Ask ArgoCD to Sync the changes and roll it out ###'
                         sh '''
-                            oc -n ${PIPELINES_NAMESPACE} tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
-                            
+                            # 1 Check sync not currently in progress . if so, kill it
+                            # 2. sync argocd to change pushed in previous step
                             ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
-                            argocd app sync ${APP_NAME} ${ARGOCD_INFO} --force --async --prune
-                            argocd app wait ${APP_NAME} ${ARGOCD_INFO}
+                            argocd app sync -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
+                            argocd app wait -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
                         '''
                     }
                 }
@@ -324,17 +304,47 @@ EOF
         }
 
         stage("Promote app to Staging") {
+            options {
+                skipDefaultCheckout(true)
+            }
             agent {
                 node {
-                    label "master"
+                    label "jenkins-slave-argocd"
                 }
             }
             when {
                 expression { GIT_BRANCH.startsWith("master") }
             }
             steps {
-                sh  '''
-                    echo "TODO - Run ArgoCD Sync 2 for staging env"
+                sh '''
+                    # TODO - fix all this after chat with @eformat
+                    git clone ${ARGOCD_CONFIG_REPO} config-repo
+                    cd config-repo
+                    git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
+                    # TODO - @eformat we probs need to think about the app of apps approach or better logic here 
+                    # as using array[0] is 🧻
+                    yq w -i ${ARGOCD_CONFIG_REPO_PATH} 'applications[4].source_ref' ${VERSION}
+                    git config --global user.email "jenkins@rht-labs.bot.com"
+                    git config --global user.name "Jenkins"
+                    git config --global push.default simple
+                    git add ${ARGOCD_CONFIG_REPO_PATH}
+                    # grabbing the error code incase there is nothing to commit and allow jenkins proceed
+                    git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${VERSION} 🚀" || rc=$?
+                    git remote set-url origin  https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@github.com/springdo/ubiquitous-journey.git
+                    git push -u origin ${ARGOCD_CONFIG_REPO_BRANCH}
+                '''
+
+                echo '### Ask ArgoCD to Sync the changes and roll it out ###'
+                sh '''
+                    # 1 Check sync not currently in progress . if so, kill it
+                    # 2. sync argocd to change pushed in previous step
+                    ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
+                    argocd app sync -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
+                    argocd app wait -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
+                '''
+
+                sh '''
+                    echo "merge versions back to the original GIT repo as they should be persisted?"
                 '''
             }
         }
