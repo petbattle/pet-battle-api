@@ -228,7 +228,13 @@ pipeline {
                     }
                     when {
                         expression {
-                            GIT_BRANCH.startsWith("master") && ! sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${ARGOCD_APP_NAME}\" -o name")
+                            if (GIT_BRANCH.startsWith("master")) {
+                                def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
+                                if (retVal == null || retVal == "") {
+                                    return 0;
+                                }
+                            }
+                            return 1;
                         }
                     }
                     steps {
