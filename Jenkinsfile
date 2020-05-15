@@ -157,13 +157,11 @@ pipeline {
                         echo " 🏗 no build - creating one 🏗"
                         oc new-build --binary --name=${APP_NAME} -l app=${APP_NAME} --strategy=docker --dry-run -o yaml > /tmp/bc.yaml
                         yq w -i /tmp/bc.yaml items[1].spec.strategy.dockerStrategy.dockerfilePath Dockerfile.jvm
-                        oc apply -f /tmp/bc.yaml
+                        oc apply -f /tmp/bc.yaml                        
                     fi
                                  
                     echo " 🏗 build found - starting it  🏗"    
                     oc start-build ${APP_NAME} --from-archive=${PACKAGE} --follow
-                    # FIXME - dont tag if chart does not exist else conflicts
-                    oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
                 '''
             }
         }
@@ -218,6 +216,7 @@ pipeline {
                             helm upgrade --install ${APP_NAME} \
                                 --namespace=${TARGET_NAMESPACE} \
                                 http://${SONATYPE_NEXUS_SERVICE_SERVICE_HOST}:${SONATYPE_NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_HELM}/${APP_NAME}-${HELM_CHART_VERSION}.tgz
+                            oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}                    
                         '''
                     }
                 }
