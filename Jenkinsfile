@@ -220,74 +220,79 @@ pipeline {
                         '''
                     }
                 }
-                stages {
-                    stage("test/staging argocd app create (master)") {
-                        agent {
-                            node {
-                                label "jenkins-slave-helm"
-                            }
+                stage("master - deploy") {
+                    agent {
+                        node {
+                            label "master"
                         }
-                        when {
-                            expression {
-                                if (GIT_BRANCH.startsWith("master")) {
+                    }
+                    when {
+                        expression { GIT_BRANCH.startsWith("master") }
+                    }
+                    stages {
+                        stage("test/staging argocd app create (master)") {
+                            agent {
+                                node {
+                                    label "jenkins-slave-helm"
+                                }
+                            }
+                            when {
+                                expression {
                                     def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
                                     if (retVal == null || retVal == "") {
                                         return 0;
                                     }
+                                    return 1;
                                 }
-                                return 1;
+                            }
+                            steps {
+                                echo '### Create ArgoCD App ###'
+                                sh '''
+                                    git clone https://${ARGOCD_CONFIG_REPO} config-repo
+                                    cd config-repo
+                                    git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
+                                    helm template ${ARGOCD_APPNAME} -f example-deployment/values-applications.yaml example-deployment/
+                                '''
                             }
                         }
-                        steps {
-                            echo '### Create ArgoCD App ###'
-                            sh '''
-                            git clone https://${ARGOCD_CONFIG_REPO} config-repo
-                            cd config-repo
-                            git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
-                            helm template ${ARGOCD_APPNAME} -f example-deployment/values-applications.yaml example-deployment/
-                        '''
-                        }
-                    }
 
-                    stage("test env - argocd sync (master)") {
-                        options {
-                            skipDefaultCheckout(true)
-                        }
-                        agent {
-                            node {
-                                label "jenkins-slave-argocd"
+                        stage("test env - argocd sync (master)") {
+                            options {
+                                skipDefaultCheckout(true)
                             }
-                        }
-                        when {
-                            expression { GIT_BRANCH.startsWith("master") }
-                        }
-                        steps {
-                            echo '### Commit new image tag to git ###'
-                            sh '''
-                            # TODO - fix all this after chat with @eformat
-                            git clone https://${ARGOCD_CONFIG_REPO} config-repo
-                            cd config-repo
-                            git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
-                            # TODO - @eformat we probs need to think about the app of apps approach or better logic here 
-                            # as using array[0] is 🧻
-                            yq w -i ${ARGOCD_CONFIG_REPO_PATH} 'applications[2].source_ref' ${VERSION}
-                            git config --global user.email "jenkins@rht-labs.bot.com"
-                            git config --global user.name "Jenkins"
-                            git config --global push.default simple
-                            git add ${ARGOCD_CONFIG_REPO_PATH}
-                            git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${VERSION} 🚀" || rc=$?
-                            git remote set-url origin  https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@${ARGOCD_CONFIG_REPO}
-                            git push -u origin ${ARGOCD_CONFIG_REPO_BRANCH}
-                        '''
+                            agent {
+                                node {
+                                    label "jenkins-slave-argocd"
+                                }
+                            }
+                            steps {
+                                echo '### Commit new image tag to git ###'
+                                sh '''
+                                    # TODO - fix all this after chat with @eformat
+                                    git clone https://${ARGOCD_CONFIG_REPO} config-repo
+                                    cd config-repo
+                                    git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
+                                    # TODO - @eformat we probs need to think about the app of apps approach or better logic here 
+                                    # as using array[0] is 🧻
+                                    yq w -i ${ARGOCD_CONFIG_REPO_PATH} 'applications[2].source_ref' ${VERSION}
+                                    git config --global user.email "jenkins@rht-labs.bot.com"
+                                    git config --global user.name "Jenkins"
+                                    git config --global push.default simple
+                                    git add ${ARGOCD_CONFIG_REPO_PATH}
+                                    git commit -m "🚀 AUTOMATED COMMIT - Deployment new app version ${VERSION} 🚀" || rc=$?
+                                    git remote set-url origin  https://${GIT_CREDS_USR}:${GIT_CREDS_PSW}@${ARGOCD_CONFIG_REPO}
+                                    git push -u origin ${ARGOCD_CONFIG_REPO_BRANCH}
+                                '''
 
-                            echo '### Ask ArgoCD to Sync the changes and roll it out ###'
-                            sh '''
-                            # 1 Check sync not currently in progress . if so, kill it
-                            # 2. sync argocd to change pushed in previous step
-                            ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
-                            argocd app sync -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
-                            argocd app wait -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
-                        '''
+                                echo '### Ask ArgoCD to Sync the changes and roll it out ###'
+                                sh '''
+                                    # 1 Check sync not currently in progress . if so, kill it
+                                    # 2. sync argocd to change pushed in previous step
+                                    ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
+                                    argocd app sync -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
+                                    argocd app wait -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
+                                '''
+                            }
                         }
                     }
                 }
