@@ -220,49 +220,50 @@ pipeline {
                         '''
                     }
                 }
-                stage("test/staging argocd app create (master)") {
-                    agent {
-                        node {
-                            label "jenkins-slave-helm"
-                        }
-                    }
-                    when {
-                        expression {
-                            if (GIT_BRANCH.startsWith("master")) {
-                                def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
-                                if (retVal == null || retVal == "") {
-                                    return 0;
-                                }
+                stages {
+                    stage("test/staging argocd app create (master)") {
+                        agent {
+                            node {
+                                label "jenkins-slave-helm"
                             }
-                            return 1;
                         }
-                    }
-                    steps {
-                        echo '### Create ArgoCD App ###'
-                        sh '''
+                        when {
+                            expression {
+                                if (GIT_BRANCH.startsWith("master")) {
+                                    def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
+                                    if (retVal == null || retVal == "") {
+                                        return 0;
+                                    }
+                                }
+                                return 1;
+                            }
+                        }
+                        steps {
+                            echo '### Create ArgoCD App ###'
+                            sh '''
                             git clone https://${ARGOCD_CONFIG_REPO} config-repo
                             cd config-repo
                             git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
                             helm template ${ARGOCD_APPNAME} -f example-deployment/values-applications.yaml example-deployment/
                         '''
-                    }
-                }
-
-                stage("test env - argocd sync (master)") {
-                    options {
-                        skipDefaultCheckout(true)
-                    }
-                    agent {
-                        node {
-                            label "jenkins-slave-argocd"
                         }
                     }
-                    when {
-                        expression { GIT_BRANCH.startsWith("master") }
-                    }
-                    steps {
-                        echo '### Commit new image tag to git ###'
-                        sh  '''
+
+                    stage("test env - argocd sync (master)") {
+                        options {
+                            skipDefaultCheckout(true)
+                        }
+                        agent {
+                            node {
+                                label "jenkins-slave-argocd"
+                            }
+                        }
+                        when {
+                            expression { GIT_BRANCH.startsWith("master") }
+                        }
+                        steps {
+                            echo '### Commit new image tag to git ###'
+                            sh '''
                             # TODO - fix all this after chat with @eformat
                             git clone https://${ARGOCD_CONFIG_REPO} config-repo
                             cd config-repo
@@ -279,14 +280,15 @@ pipeline {
                             git push -u origin ${ARGOCD_CONFIG_REPO_BRANCH}
                         '''
 
-                        echo '### Ask ArgoCD to Sync the changes and roll it out ###'
-                        sh '''
+                            echo '### Ask ArgoCD to Sync the changes and roll it out ###'
+                            sh '''
                             # 1 Check sync not currently in progress . if so, kill it
                             # 2. sync argocd to change pushed in previous step
                             ARGOCD_INFO="--auth-token ${ARGOCD_CREDS_PSW} --server ${ARGOCD_SERVER_SERVICE_HOST}:${ARGOCD_SERVER_SERVICE_PORT_HTTP} --insecure"
                             argocd app sync -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
                             argocd app wait -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
                         '''
+                        }
                     }
                 }
             }
