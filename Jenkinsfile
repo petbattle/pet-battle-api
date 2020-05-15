@@ -176,6 +176,9 @@ pipeline {
             }
             steps {
                 echo '### Commit new image tag to git ###'
+                script {
+                    env.HELM_CHART_VERSION = sh(returnStdout: true, script: "helm show chart chart/ | egrep '^version' | awk '{print \$2}\\'").trim()
+                }
                 sh 'printenv'
                 sh '''
                     helm lint chart
@@ -191,8 +194,8 @@ pipeline {
                 '''
                 sh '''
                     # package and release helm chart
-                    helm package chart/ --app-version ${VERSION}
-                    curl -v -f -u ${NEXUS_CREDS} http://${SONATYPE_NEXUS_SERVICE_SERVICE_HOST}:${SONATYPE_NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_HELM}/ --upload-file ${APP_NAME}-*.tgz
+                    helm package chart/ --app-version ${VERSION}                    
+                    curl -v -f -u ${NEXUS_CREDS} http://${SONATYPE_NEXUS_SERVICE_SERVICE_HOST}:${SONATYPE_NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_HELM}/ --upload-file ${APP_NAME}-${HELM_CHART_VERSION}.tgz
                 '''
             }
         }
@@ -214,7 +217,7 @@ pipeline {
                         sh '''                            
                             helm upgrade --install ${APP_NAME} \
                                 --namespace=${TARGET_NAMESPACE} \
-                                http://${SONATYPE_NEXUS_SERVICE_SERVICE_HOST}:${SONATYPE_NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_HELM}/${APP_NAME}-${VERSION}.tgz
+                                http://${SONATYPE_NEXUS_SERVICE_SERVICE_HOST}:${SONATYPE_NEXUS_SERVICE_SERVICE_PORT}/repository/${NEXUS_REPO_HELM}/${APP_NAME}-${HELM_CHART_VERSION}.tgz
                         '''
                     }
                 }
