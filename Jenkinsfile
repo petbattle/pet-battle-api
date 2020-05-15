@@ -168,14 +168,11 @@ pipeline {
             }
         }
 
-        stage("Helm Package App (master)") {
+        stage("Helm Package App") {
             agent {
                 node {
                     label "jenkins-slave-helm"
                 }
-            }
-            when {
-                expression { GIT_BRANCH.startsWith("master") }
             }
             steps {
                 echo '### Commit new image tag to git ###'
