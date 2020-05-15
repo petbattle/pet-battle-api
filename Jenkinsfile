@@ -228,7 +228,7 @@ pipeline {
                     }
                     when {
                         expression {
-                            GIT_BRANCH.startsWith("master") && sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${ARGOCD_APP_NAME}\" -o name")
+                            GIT_BRANCH.startsWith("master") && ! sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${ARGOCD_APP_NAME}\" -o name")
                         }
                     }
                     steps {
