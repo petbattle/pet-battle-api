@@ -338,7 +338,7 @@ pipeline {
             steps {
                 sh '''
                     # TODO - fix all this after chat with @eformat
-                    git clone ${ARGOCD_CONFIG_REPO} config-repo
+                    git clone https://${ARGOCD_CONFIG_REPO} config-repo
                     cd config-repo
                     git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
                     # TODO - @eformat we probs need to think about the app of apps approach or better logic here 
