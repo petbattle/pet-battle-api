@@ -10,6 +10,6 @@ services:
     ports:
       - "8080:8080"
       - "8443:8443"
-    hostname: materalize
+    hostname: pet-battle-api
     environment:
       - quarkus.mongodb.connection-string=mongodb://localhost:27017
