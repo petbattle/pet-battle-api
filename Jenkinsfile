@@ -273,9 +273,7 @@ pipeline {
                                     git clone https://${ARGOCD_CONFIG_REPO} config-repo
                                     cd config-repo
                                     git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
-                                    # TODO - @eformat we probs need to think about the app of apps approach or better logic here 
-                                    # as using array[0] is 🧻
-                                    yq w -i ${ARGOCD_CONFIG_REPO_PATH} 'applications[2].source_ref' ${VERSION}
+                                    yq w -i ${ARGOCD_CONFIG_REPO_PATH} 'applications(name=test-pet-battle-api).source_ref' ${VERSION}
                                     git config --global user.email "jenkins@rht-labs.bot.com"
                                     git config --global user.name "Jenkins"
                                     git config --global push.default simple
@@ -338,9 +336,7 @@ pipeline {
                     git clone https://${ARGOCD_CONFIG_REPO} config-repo
                     cd config-repo
                     git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
-                    # TODO - @eformat we probs need to think about the app of apps approach or better logic here 
-                    # as using array[0] is 🧻
-                    yq w -i ${ARGOCD_CONFIG_REPO_PATH} 'applications[4].source_ref' ${VERSION}
+                    yq w -i ${ARGOCD_CONFIG_REPO_PATH} 'applications(name==pet-battle-api).source_ref' ${VERSION}
                     git config --global user.email "jenkins@rht-labs.bot.com"
                     git config --global user.name "Jenkins"
                     git config --global push.default simple
