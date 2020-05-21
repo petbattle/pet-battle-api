@@ -240,8 +240,7 @@ pipeline {
                             when {
                                 expression {
                                     sh '''
-                                    oc -n "${PIPELINES_NAMESPACE} get applications.argoproj.io ${APP_NAME} || rc=$?
-                                    exit $rc                                    
+                                    oc -n "${PIPELINES_NAMESPACE} get applications.argoproj.io ${APP_NAME}                                    
                                     '''
                                 }
                             }
