@@ -241,9 +241,9 @@ pipeline {
                                 expression {
                                     def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
                                     if (retVal == null || retVal == "") {
-                                        return 0;
+                                        return 1;
                                     }
-                                    return 1;
+                                    return 0;
                                 }
                             }
                             steps {
