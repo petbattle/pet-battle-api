@@ -239,9 +239,8 @@ pipeline {
                             }
                             when {
                                 expression {
-                                    sh '''
-                                    oc -n ${PIPELINES_NAMESPACE} get applications.argoproj.io ${APP_NAME}                                    
-                                    '''
+                                    def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
+                                    return retVal
                                 }
                             }
                             steps {
