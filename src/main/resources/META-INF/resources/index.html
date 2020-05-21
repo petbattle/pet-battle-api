@@ -136,6 +136,7 @@
                     <tr>
                         <th>id</th>
                         <th>count</th>
+                        <th>issfw</th>
                         <th>image</th>
                     </tr>
                     </thead>
@@ -143,6 +144,7 @@
                     <tr>
                         <td>a123</td>
                         <td>0</td>
+                        <td>0.1</td>
                         <td>foobar</td>
                     </tr>
                     </tbody>
@@ -189,7 +191,7 @@
       lengthChange: false,
       pageLength: 10,
       columnDefs: [
-      { targets: 2,
+      { targets: 3,
         render: function(data) {
           return '<img src="'+ data + '" width="50px" height="50px">';
         }
@@ -202,6 +204,10 @@
         {
           name: 'count',
           data: 'count'
+        },
+        {
+          name: 'issfw',
+          data: 'issfw'
         },
         {
           name: 'image',

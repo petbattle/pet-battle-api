@@ -16,6 +16,8 @@ public class Cat extends PanacheMongoEntity {
 
     public Boolean vote;
 
+    public Boolean issfw;
+
     public String image;
 
     public Integer getCount() {
@@ -33,6 +35,10 @@ public class Cat extends PanacheMongoEntity {
     public void setVote(Boolean vote) {
         this.vote = vote;
     }
+
+    public Boolean getIssfw() { return issfw; }
+
+    public void setIssfw(Boolean issfw) { this.issfw = issfw; }
 
     public String getImage() {
         return image;
@@ -52,8 +58,8 @@ public class Cat extends PanacheMongoEntity {
 
     public void resizeCat() {
         try {
-            String id = getImage().replaceFirst("^data:image/[^;]*;base64,?","");
-            byte[] imageData = Base64.getDecoder().decode(id);
+            String raw = getImage().replaceFirst("^data:image/[^;]*;base64,?", "");
+            byte[] imageData = Base64.getDecoder().decode(raw);
             InputStream is = new ByteArrayInputStream(imageData);
             BufferedImage _tmp = ImageIO.read(is);
             BufferedImage scaledImage = Scalr.resize(_tmp, 300); // Scale image
