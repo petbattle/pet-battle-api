@@ -239,11 +239,10 @@ pipeline {
                             }
                             when {
                                 expression {
-                                    def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
-                                    if (retVal == null || retVal == "") {
-                                        return 1;
-                                    }
-                                    return 0;
+                                    sh '''
+                                    oc -n "${PIPELINES_NAMESPACE} get applications.argoproj.io ${APP_NAME} || rc=$?
+                                    exit $rc                                    
+                                    '''
                                 }
                             }
                             steps {
