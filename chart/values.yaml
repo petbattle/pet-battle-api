@@ -6,9 +6,9 @@
 route: true
 deploymentConfig: true
 replicas: 1
-image_repository: image-registry.openshift-image-registry.svc:5000
-image_name: pet-battle-api-feature-foo
-image_namespace: labs-dev
+image_repository: quay.io
+image_name: pet-battle-api
+image_namespace: eformat
 image_version: latest
 # do we deploy mongodb from a template (not helm chart)
 mongodbTemplate:
@@ -20,7 +20,7 @@ mongodbTemplate:
     password: password
   image: mongodb:3.6
   storage: 1Gi
-# mongodb subchart values
+# mongodb subchart values (not used at present)
 mongodb-replicaset:
   securityContext:
     runAsUser: '1000850000'
