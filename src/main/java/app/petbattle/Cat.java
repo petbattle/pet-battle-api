@@ -50,15 +50,21 @@ public class Cat extends PanacheMongoEntity {
         }
     }
 
+    /**
+     * convert to jpeg and resize all images to 300px ~15k size for speed
+     */
     public void resizeCat() {
         try {
-            String id = getImage().replaceFirst("^data:image/[^;]*;base64,?","");
-            byte[] imageData = Base64.getDecoder().decode(id);
+            String p = "^data:image/([^;]*);base64,?";
+            String raw = getImage().replaceFirst(p, "");
+            byte[] imageData = Base64.getDecoder().decode(raw);
             InputStream is = new ByteArrayInputStream(imageData);
             BufferedImage _tmp = ImageIO.read(is);
             BufferedImage scaledImage = Scalr.resize(_tmp, 300); // Scale image
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(scaledImage, "jpg", baos);
+            BufferedImage newImage = new BufferedImage( scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+            newImage.createGraphics().drawImage( scaledImage, 0, 0, null);
+            ImageIO.write(newImage, "jpeg", baos);
             baos.flush();
             String encodedString = Base64
                     .getEncoder()
