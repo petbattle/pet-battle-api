@@ -6,8 +6,13 @@ import io.quarkus.mongodb.panache.PanacheMongoEntity;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @MongoEntity(collection = "cats")
 public class Cat extends PanacheMongoEntity {
@@ -58,13 +63,16 @@ public class Cat extends PanacheMongoEntity {
 
     public void resizeCat() {
         try {
-            String raw = getImage().replaceFirst("^data:image/[^;]*;base64,?", "");
+            String p = "^data:image/([^;]*);base64,?";
+            String raw = getImage().replaceFirst(p, "");
             byte[] imageData = Base64.getDecoder().decode(raw);
             InputStream is = new ByteArrayInputStream(imageData);
             BufferedImage _tmp = ImageIO.read(is);
             BufferedImage scaledImage = Scalr.resize(_tmp, 300); // Scale image
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(scaledImage, "jpg", baos);
+            BufferedImage newImage = new BufferedImage( scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+            newImage.createGraphics().drawImage( scaledImage, 0, 0, null);
+            ImageIO.write(newImage, "jpeg", baos);
             baos.flush();
             String encodedString = Base64
                     .getEncoder()
