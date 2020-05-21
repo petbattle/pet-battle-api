@@ -294,8 +294,8 @@ pipeline {
                                     # argocd app sync -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
                                     # argocd app wait -l ${ARGOCD_INSTANCE}=${ARGOCD_APPNAME} ${ARGOCD_INFO}
                                     # sync individual app
-                                    argocd app sync test-${APP_NAME} ${ARGOCD_INFO}
-                                    argocd app wait test-${APP_NAME} ${ARGOCD_INFO}
+                                    argocd app sync ${APP_NAME} ${ARGOCD_INFO}
+                                    argocd app wait ${APP_NAME} ${ARGOCD_INFO}
                                 '''
                             }
                         }
