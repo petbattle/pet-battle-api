@@ -248,11 +248,10 @@ pipeline {
                                 sh '''
                                     git clone https://${ARGOCD_CONFIG_REPO} config-repo
                                     cd config-repo
-                                    git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
-                                    helm template ${ARGOCD_APPNAME} -f example-deployment/values-applications.yaml example-deployment/ > /tmp/app.yaml
-                                    oc apply -n ${PIPELINES_NAMESPACE} -f /tmp/app.yaml
+                                    git checkout ${ARGOCD_CONFIG_REPO_BRANCH}                                    
                                     oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
                                 '''
+                                sh(returnStatus: true, script: "helm template \"${ARGOCD_APPNAME}\" -f example-deployment/values-applications.yaml example-deployment/ | oc apply -n \"${PIPELINES_NAMESPACE}\" -f-")
                             }
                         }
 
