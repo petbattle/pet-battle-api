@@ -249,7 +249,7 @@ pipeline {
                                     git clone https://${ARGOCD_CONFIG_REPO} config-repo
                                     cd config-repo
                                     git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
-                                    helm template ${ARGOCD_APPNAME} -f example-deployment/values-applications.yaml example-deployment/ | oc apply -n ${PIPELINES_NAMESPACE}
+                                    helm template ${ARGOCD_APPNAME} -f example-deployment/values-applications.yaml example-deployment/ | oc  -n ${PIPELINES_NAMESPACE} apply -f-
                                     oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
                                 '''
                             }
