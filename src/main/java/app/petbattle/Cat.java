@@ -2,15 +2,18 @@ package app.petbattle;
 
 import app.petbattle.utils.Scalr;
 import io.quarkus.mongodb.panache.MongoEntity;
-import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntity;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
 
 @MongoEntity(collection = "cats")
-public class Cat extends PanacheMongoEntity {
+public class Cat extends ReactivePanacheMongoEntity {
 
     public Integer count;
 
@@ -50,15 +53,21 @@ public class Cat extends PanacheMongoEntity {
         }
     }
 
+    /**
+     * convert to jpeg and resize all images to 300px ~15k size for speed
+     */
     public void resizeCat() {
         try {
-            String id = getImage().replaceFirst("^data:image/[^;]*;base64,?","");
-            byte[] imageData = Base64.getDecoder().decode(id);
+            String p = "^data:image/([^;]*);base64,?";
+            String raw = getImage().replaceFirst(p, "");
+            byte[] imageData = Base64.getDecoder().decode(raw);
             InputStream is = new ByteArrayInputStream(imageData);
             BufferedImage _tmp = ImageIO.read(is);
             BufferedImage scaledImage = Scalr.resize(_tmp, 300); // Scale image
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(scaledImage, "jpg", baos);
+            BufferedImage newImage = new BufferedImage( scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+            newImage.createGraphics().drawImage( scaledImage, 0, 0, null);
+            ImageIO.write(newImage, "jpeg", baos);
             baos.flush();
             String encodedString = Base64
                     .getEncoder()
@@ -68,4 +77,5 @@ public class Cat extends PanacheMongoEntity {
             e.printStackTrace();
         }
     }
+
 }

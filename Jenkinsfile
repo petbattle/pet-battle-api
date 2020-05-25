@@ -35,6 +35,8 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '1'))
         timeout(time: 15, unit: 'MINUTES')
+        //ansiColor('xterm')
+        //timestamps()
     }
 
     stages {
@@ -238,10 +240,7 @@ pipeline {
                             when {
                                 expression {
                                     def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
-                                    if (retVal == null || retVal == "") {
-                                        return 1;
-                                    }
-                                    return 0;
+                                    return retVal
                                 }
                             }
                             steps {
@@ -250,8 +249,7 @@ pipeline {
                                     git clone https://${ARGOCD_CONFIG_REPO} config-repo
                                     cd config-repo
                                     git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
-                                    helm template ${ARGOCD_APPNAME} -f example-deployment/values-applications.yaml example-deployment/ > /tmp/app.yaml
-                                    oc apply -n ${PIPELINES_NAMESPACE} -f /tmp/app.yaml
+                                    helm template ${ARGOCD_APPNAME} -f example-deployment/values-applications.yaml example-deployment/ | oc  -n ${PIPELINES_NAMESPACE} apply -f-
                                     oc tag ${PIPELINES_NAMESPACE}/${APP_NAME}:latest ${TARGET_NAMESPACE}/${APP_NAME}:${VERSION}
                                 '''
                             }
@@ -273,7 +271,7 @@ pipeline {
                                     git clone https://${ARGOCD_CONFIG_REPO} config-repo
                                     cd config-repo
                                     git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
-                                    yq w -i ${ARGOCD_CONFIG_REPO_PATH} 'applications(name=test-pet-battle-api).source_ref' ${VERSION}
+                                    yq w -i ${ARGOCD_CONFIG_REPO_PATH} 'applications(name==test-pet-battle-api).source_ref' ${HELM_CHART_VERSION}
                                     git config --global user.email "jenkins@rht-labs.bot.com"
                                     git config --global user.name "Jenkins"
                                     git config --global push.default simple
@@ -336,7 +334,7 @@ pipeline {
                     git clone https://${ARGOCD_CONFIG_REPO} config-repo
                     cd config-repo
                     git checkout ${ARGOCD_CONFIG_REPO_BRANCH}
-                    yq w -i ${ARGOCD_CONFIG_REPO_PATH} 'applications(name==pet-battle-api).source_ref' ${VERSION}
+                    yq w -i ${ARGOCD_CONFIG_REPO_PATH} 'applications(name==pet-battle-api).source_ref' ${HELM_CHART_VERSION}
                     git config --global user.email "jenkins@rht-labs.bot.com"
                     git config --global user.name "Jenkins"
                     git config --global push.default simple

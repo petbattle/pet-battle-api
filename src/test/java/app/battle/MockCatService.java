@@ -2,6 +2,7 @@ package app.battle;
 
 import app.petbattle.CatResource;
 import io.quarkus.test.Mock;
+import io.smallrye.mutiny.Uni;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +19,9 @@ public class MockCatService extends CatResource {
     @Override
     @GET
     @Path("/count")
-    public Long count() {
+    public Uni<Long> count() {
         LOGGER.info("<<< MockCatService <<<");
-        return 3L;
+        return Uni.createFrom().nothing();
     }
 
 }
