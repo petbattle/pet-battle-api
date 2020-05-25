@@ -1,5 +1,7 @@
 # pet-battle-api
 
+A reactive back end for [pet battle](http://petbattle.app) based on the quarkus reactive mutiny framework with mongodb and panache. 
+
 ### Develop
 
 #### for the impatient
