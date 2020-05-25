@@ -2,15 +2,18 @@ package app.petbattle;
 
 import app.petbattle.utils.Scalr;
 import io.quarkus.mongodb.panache.MongoEntity;
-import io.quarkus.mongodb.panache.PanacheMongoEntity;
+import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntity;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
 
 @MongoEntity(collection = "cats")
-public class Cat extends PanacheMongoEntity {
+public class Cat extends ReactivePanacheMongoEntity {
 
     public Integer count;
 
@@ -74,4 +77,5 @@ public class Cat extends PanacheMongoEntity {
             e.printStackTrace();
         }
     }
+
 }

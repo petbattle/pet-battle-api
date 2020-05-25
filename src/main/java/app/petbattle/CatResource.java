@@ -1,8 +1,10 @@
 package app.petbattle;
 
 import io.quarkus.mongodb.panache.PanacheQuery;
+import io.quarkus.mongodb.panache.reactive.ReactivePanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
+import io.smallrye.mutiny.Uni;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.metrics.MetricUnits;
 import org.eclipse.microprofile.metrics.annotation.Metered;
@@ -13,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -29,7 +32,7 @@ public class CatResource {
             description = "This operation retrieves all cats from the database",
             deprecated = false,
             hidden = false)
-    public List<Cat> list() {
+    public Uni<List<Cat>> list() {
         return Cat.listAll();
     }
 
@@ -40,8 +43,8 @@ public class CatResource {
             description = "This operation retrieves all cat ids from the database",
             deprecated = false,
             hidden = false)
-    public List<CatId> catids() {
-        PanacheQuery<CatId> query = Cat.findAll().project(CatId.class);
+    public Uni<List<CatId>> catids() {
+        ReactivePanacheQuery<CatId> query = Cat.findAll().project(CatId.class);
         return query.list();
     }
 
@@ -52,8 +55,8 @@ public class CatResource {
             description = "This operation retrieves top 3 cats from the database sorted by count descending",
             deprecated = false,
             hidden = false)
-    public List<Cat> topcats() {
-        PanacheQuery<Cat> query = Cat.findAll(Sort.by("count").descending()).page(Page.ofSize(3));
+    public Uni<List<Cat>> topcats() {
+        ReactivePanacheQuery<Cat> query = Cat.findAll(Sort.by("count").descending()).page(Page.ofSize(3));
         return query.list();
     }
 
@@ -64,7 +67,7 @@ public class CatResource {
             description = "This operation retrieves a cat by id from the database",
             deprecated = false,
             hidden = false)
-    public Cat get(@PathParam("id") String id) {
+    public Uni<Cat> get(@PathParam("id") String id) {
         return Cat.findById(new ObjectId(id));
     }
 
@@ -78,19 +81,8 @@ public class CatResource {
     public synchronized Response create(Cat cat) {
         cat.vote();
         cat.resizeCat();
-        cat.persistOrUpdate();
+        cat.persistOrUpdate().await().indefinitely();
         return Response.status(201).entity(cat.id).build();
-    }
-
-    @PUT
-    @Path("/")
-    @Operation(operationId = "update",
-            summary = "update cat",
-            description = "This operation updates a cat (id supplied) - prefer POST method",
-            deprecated = false,
-            hidden = false)
-    public void update(Cat cat) {
-        cat.update();
     }
 
     @DELETE
@@ -100,9 +92,8 @@ public class CatResource {
             description = "This operation deletes a cat by id",
             deprecated = false,
             hidden = false)
-    public void delete(@PathParam("id") String id) {
-        Cat cat = Cat.findById(new ObjectId(id));
-        cat.delete();
+    public Uni<Boolean> delete(@PathParam("id") String id) {
+        return Cat.deleteById(new ObjectId(id));
     }
 
     @GET
@@ -112,7 +103,7 @@ public class CatResource {
             description = "This operation returns a count of all cats in the database",
             deprecated = false,
             hidden = false)
-    public Long count() {
+    public Uni<Long> count() {
         return Cat.count();
     }
 
@@ -123,8 +114,8 @@ public class CatResource {
             description = "This operation deletes all cats from the database",
             deprecated = false,
             hidden = false)
-    public void deleteAll() {
-        Cat.deleteAll();
+    public Uni<Long> deleteAll() {
+        return Cat.deleteAll();
     }
 
     @GET
@@ -146,7 +137,7 @@ public class CatResource {
         result.setDraw(draw);
 
         // Filter based on search
-        PanacheQuery<Cat> filteredCats;
+        ReactivePanacheQuery<Cat> filteredCats;
 
         // FIXME Search busted with ID
         /*if (searchVal != null && !searchVal.isEmpty()) {
@@ -159,9 +150,9 @@ public class CatResource {
         int page_number = start / length;
         filteredCats.page(page_number, length);
 
-        result.setRecordsFiltered(filteredCats.count());
-        result.setData(filteredCats.list());
-        result.setRecordsTotal(Cat.count());
+        result.setData(filteredCats.stream().collectItems().asList().await().atMost(Duration.ofSeconds(1)));
+        result.setRecordsFiltered(filteredCats.count().await().atMost(Duration.ofSeconds(1)));
+        result.setRecordsTotal(Cat.count().await().atMost(Duration.ofSeconds(1)));
 
         return result;
     }
@@ -174,7 +165,7 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public static void loadlitter() {
-        if (Cat.count() > 0)
+        if (Cat.count().await().indefinitely() > 0)
             return;
         final List<String> catList = Arrays.asList("cat1.jpeg", "cat2.jpeg", "cat3.jpeg", "cat4.jpeg", "cat5.jpeg", "cat6.jpeg", "cat7.jpeg", "cat8.jpeg", "cat9.jpeg", "cat10.jpeg", "cat11.jpeg", "cat12.jpeg", "dog1.jpeg");
         for (String tc : catList) {
@@ -190,7 +181,7 @@ public class CatResource {
                         .encodeToString(fileContent);
                 cat.setImage("data:image/jpeg;base64," + encodedString);
                 cat.resizeCat();
-                cat.persistOrUpdate();
+                cat.persistOrUpdate().await().indefinitely();
 
             } catch (IOException e) {
                 e.printStackTrace();
