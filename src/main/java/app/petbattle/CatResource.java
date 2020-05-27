@@ -294,6 +294,7 @@ public class CatResource {
         if (null == nsfwEnabled || !nsfwEnabled.toLowerCase().contentEquals("true")) {
             // feature not enabled in config
             cat.setIssfw(true);
+            cat.persistOrUpdate().await().indefinitely();
             return;
         }
         try {
