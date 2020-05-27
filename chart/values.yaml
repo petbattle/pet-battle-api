@@ -10,6 +10,12 @@ image_repository: quay.io
 image_name: pet-battle-api
 image_namespace: eformat
 image_version: latest
+# not safe for work service
+nsfw:
+  enabled: false
+  apiHost: nsfwapi-my
+  apiPort: 5000
+
 # do we deploy mongodb from a template (not helm chart)
 mongodbTemplate:
   enabled: true

@@ -19,6 +19,8 @@ public class Cat extends ReactivePanacheMongoEntity {
 
     public Boolean vote;
 
+    public Boolean issfw;
+
     public String image;
 
     public Integer getCount() {
@@ -35,6 +37,14 @@ public class Cat extends ReactivePanacheMongoEntity {
 
     public void setVote(Boolean vote) {
         this.vote = vote;
+    }
+
+    public Boolean getIssfw() {
+        return issfw;
+    }
+
+    public void setIssfw(Boolean issfw) {
+        this.issfw = issfw;
     }
 
     public String getImage() {
@@ -65,8 +75,8 @@ public class Cat extends ReactivePanacheMongoEntity {
             BufferedImage _tmp = ImageIO.read(is);
             BufferedImage scaledImage = Scalr.resize(_tmp, 300); // Scale image
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BufferedImage newImage = new BufferedImage( scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
-            newImage.createGraphics().drawImage( scaledImage, 0, 0, null);
+            BufferedImage newImage = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+            newImage.createGraphics().drawImage(scaledImage, 0, 0, null);
             ImageIO.write(newImage, "jpeg", baos);
             baos.flush();
             String encodedString = Base64

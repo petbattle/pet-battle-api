@@ -33,8 +33,14 @@ spec:
         {{- include "pet-battle-api.selectorLabels" . | nindent 8 }}
     spec:
       containers:
-{{- if .Values.mongodbTemplate.enabled }}
         - env:
+            - name: NSFW_API_SERVICE_ENABLED
+              value: {{ .Values.nsfw.enabled | default "false" | quote }}
+            - name: NSFW_API_SERVICE_HOST
+              value: {{ .Values.nsfw.apiHost | default "nsfwapi" | quote }}
+            - name: NSFW_API_SERVICE_PORT
+              value: {{ .Values.nsfw.apiPort | default 5000 | quote }}
+{{- if .Values.mongodbTemplate.enabled }}
             - name: DATABASE_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -60,7 +66,6 @@ spec:
             - name: DATABASE_SERVICE_PORT
               value: '27017'
 {{- else }}
-        - env:
             - name: DATABASE_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -111,4 +116,4 @@ spec:
           name: {{ include "pet-battle-api.fullname" . }}:{{ .Chart.AppVersion }}
         lastTriggeredImage: ""
       type: ImageChange
-{{ end }}
+{{- end }}
