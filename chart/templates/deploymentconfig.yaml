@@ -79,7 +79,7 @@ spec:
               value: '27017'
             - name: DATABASE_PASSWORD
               valueFrom:
-                secretKeyRef:.Values.appName
+                secretKeyRef:
                   key: password
                   name: cats-mongodb-replicaset-admin
             - name: DATABASE_USER
