@@ -1,0 +1,76 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pb-acm
+---
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: helm-sub-app
+  namespace: pb-acm
+spec:
+  componentKinds:
+    - group: apps.open-cluster-management.io
+      kind: Subscription
+  descriptor: {}
+  selector:
+    matchLabels:
+      name: helm-sub
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: skip-cert-verify
+  namespace: ch-helm
+  labels:
+    name: helm-sub
+data:
+  insecureSkipVerify: "true"
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Channel
+metadata:
+  name: helm
+  namespace: pb-acm
+  labels:
+    name: helm-sub
+spec:
+  type: HelmRepo
+  pathname: https://eformat.github.io/helm-charts
+  configMapRef:
+    name: skip-cert-verify
+    apiVersion: v1
+    kind: ConfigMap
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: PlacementRule
+metadata:
+  name: pb-cluster
+  namespace: pb-acm
+  labels:
+    name: helm-sub
+spec:
+  clusterConditions:
+    - type: OK
+  clusterLabels:
+    matchLabels:
+      environment: dev
+---
+apiVersion: apps.open-cluster-management.io/v1
+kind: Subscription
+metadata:
+  name: helm-sub
+  namespace: pb-acm
+  labels:
+    name: helm-sub
+spec:
+  channel: ch-helm/helm
+  name: pet-battle-api
+  packageFilter:
+    version: "1.0.0"
+  placement:
+    placementRef:
+      name: pb-cluster
+      kind: PlacementRule
+  EOF
