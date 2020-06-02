@@ -68,7 +68,7 @@ spec:
   channel: ch-helm/helm
   name: pet-battle-api
   packageFilter:
-    version: "1.0.0"
+    version: ">=1.0.0"
   placement:
     placementRef:
       name: pb-cluster
