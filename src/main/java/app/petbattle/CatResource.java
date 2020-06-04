@@ -138,7 +138,7 @@ public class CatResource {
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = Response.class)))})
     @Metered(unit = MetricUnits.PER_SECOND, name = "cats-uploaded", description = "Frequency of cats uploaded")
-    public synchronized Response create(Cat cat) {
+    public Response create(Cat cat) {
         cat.vote();
         cat.resizeCat();
         cat.persistOrUpdate().await().indefinitely();
