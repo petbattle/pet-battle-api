@@ -19,11 +19,11 @@ podman run --name mongo -p 27017:27017 mongo:latest
 
 Application:
 ```bash
-mvn compile quarkus:dev -Ddebug=true -Dquarkus.mongodb.connection-string=mongodb://localhost:27017
+mvn compile quarkus:dev
 ```
 OR
 ```
-./target/pet-battle-api-1.0-SNAPSHOT-runner -Dquarkus.mongodb.connection-string=mongodb://localhost:27017 -Dquarkus.http.ssl.certificate.key-store-file=$HOME/git/pet-battle-api/src/main/resources/keystore.jks
+java -Dquarkus-profile=dev -jar ./target/pet-battle-api-1.0-SNAPSHOT-runner
 ```
 OR
 ```
