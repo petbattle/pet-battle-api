@@ -27,7 +27,7 @@ java -Dquarkus-profile=dev -jar ./target/pet-battle-api-1.0-SNAPSHOT-runner
 ```
 OR
 ```
-podman run -d --pod pb -e quarkus.mongodb.connection-string=mongodb://localhost:27017 quay.io/eformat/pet-battle-api:latest
+podman run -e QUARKUS_PROFILE=dev -e quarkus.mongodb.connection-string=mongodb://localhost:27017 quay.io/eformat/pet-battle-api:latest
 ```
 
 See Makefile for container targets:
