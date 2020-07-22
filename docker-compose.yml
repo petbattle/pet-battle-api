@@ -13,3 +13,4 @@ services:
     hostname: pet-battle-api
     environment:
       - quarkus.mongodb.connection-string=mongodb://localhost:27017
+      - QUARKUS_PROFILE=dev
