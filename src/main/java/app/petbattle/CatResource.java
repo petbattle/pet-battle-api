@@ -300,7 +300,7 @@ public class CatResource {
         try {
             TransactionRequest transactionRequest = new TransactionRequest(cat.id.toString(), cat.getImage());
 
-            Uni<TransactionResponse> nsfw = Uni.createFrom().item(callNsfw(transactionRequest)).subscribeOn(Infrastructure.getDefaultWorkerPool());
+            Uni<TransactionResponse> nsfw = Uni.createFrom().item(callNsfw(transactionRequest)).runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
             nsfw.onItem().invoke(transactionResponse -> {
                 if (!transactionResponse.isIssfw()) {
                     log.info("NSFW: " + transactionResponse);
