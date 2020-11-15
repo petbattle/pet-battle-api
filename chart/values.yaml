@@ -56,3 +56,9 @@ mongodb-replicaset:
       ozWr6NJqdmSvpENuf25uQggl6/GzDGgsWXesdu5orrjYZy8SfMjA1284vvpxYayu
       VMJ1b4KUtqwWMG1WKCoe1GJThjFKq0JDEboWxUmvmU5ng9LttdjfKu8vdDOjSImO
       GZHXvHfvLMq/FWBETJ0I23qFtSN888LZNXsu6odwk/19aYmL
+
+# service mesh
+istio:
+  enabled: false
+  mtls: true
+  domain: apps.hivec.sandbox209.opentlc.com

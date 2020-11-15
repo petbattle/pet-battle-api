@@ -1,0 +1,104 @@
+{{- if .Values.istio.enabled }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: {{ include "pet-battle-api.fullname" . }}
+  labels:
+    {{- include "pet-battle-api.labels" . | nindent 4 }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - {{ include "pet-battle-api.fullname" . }}.{{ .Values.istio.domain }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "pet-battle-api.fullname" . }}
+spec:
+  hosts:
+    - {{ include "pet-battle-api.fullname" . }}.{{ .Values.istio.domain }}
+  gateways:
+    - {{ include "pet-battle-api.fullname" . }}
+  http:
+    - route:
+        - destination:
+            host: {{ include "pet-battle-api.fullname" . }}
+            port:
+              number: 8080
+          subset: v1
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: {{ include "mongodb.fullname" . }}
+spec:
+  hosts:
+    - {{ include "mongodb.fullname" . }}
+  exportTo:
+    - "."
+  gateways:
+    - mesh
+  tcp:
+    - match:
+        - port: 27017
+          gateways:
+            - mesh
+      route:
+        - destination:
+            host: {{ include "mongodb.fullname" . }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: {{ include "mongodb.fullname" . }}
+spec:
+  hosts:
+    - {{ include "mongodb.fullname" . }}
+  exportTo:
+    - "."
+  ports:
+    - number: 27017
+      name: tcp-mongo
+      protocol: TCP
+  location: MESH_INTERNAL
+  resolution: DNS
+  endpoints:
+    - address: {{ include "mongodb.fullname" . }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "pet-battle-api.fullname" . }}
+spec:
+  host: {{ include "pet-battle-api.fullname" . }}
+  trafficPolicy:
+    {{- if .Values.istio.mtls }}
+    tls:
+      mode: ISTIO_MUTUAL
+    {{- end }}
+    loadBalancer:
+      simple: LEAST_CONN
+  subsets:
+    - name: v1
+      labels:
+        {{- include "pet-battle-api.selectorLabels" . | nindent 8 }}
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: {{ include "mongodb.fullname" . }}
+spec:
+  host: {{ include "mongodb.fullname" . }}
+  trafficPolicy:
+    tls:
+      mode: DISABLE
+    loadBalancer:
+      simple: LEAST_CONN
+{{- end }}

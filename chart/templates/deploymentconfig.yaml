@@ -28,6 +28,10 @@ spec:
         prometheus.io/path: '/metrics'
         prometheus.io/port: '8080'
         rollme: {{ randAlphaNum 5 | quote }}
+        {{- if .Values.istio.enabled }}
+        sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "27017"
+        {{- end}}
       creationTimestamp: null
       labels:
         {{- include "pet-battle-api.selectorLabels" . | nindent 8 }}

@@ -1,4 +1,4 @@
-{{- if .Values.route }}
+{{- if and (eq .Values.route true) (ne .Values.istio.enabled true) }}
 ---
 apiVersion: route.openshift.io/v1
 kind: Route
@@ -8,7 +8,7 @@ metadata:
     {{- include "pet-battle-api.labels" . | nindent 4 }}
 spec:
   port:
-    targetPort: 8080-tcp
+    targetPort: tcp-8080
   to:
     kind: Service
     name: {{ include "pet-battle-api.fullname" . }}
