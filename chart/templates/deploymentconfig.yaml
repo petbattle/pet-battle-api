@@ -31,6 +31,9 @@ spec:
         {{- if .Values.istio.enabled }}
         sidecar.istio.io/inject: "true"
         traffic.sidecar.istio.io/excludeOutboundPorts: "27017"
+        proxy.istio.io/config: |
+          tracing:
+            sampling: 100.0
         {{- end}}
       creationTimestamp: null
       labels:
