@@ -8,7 +8,7 @@ deploymentConfig: true
 replicas: 1
 image_repository: quay.io
 image_name: pet-battle-api
-image_namespace: eformat
+image_namespace: petbattle
 image_version: latest
 # not safe for work service
 nsfw:
