@@ -10,8 +10,8 @@ pipeline {
         NAME = "pet-battle-api"
 
         // Argo specific
-        ARGOCD_INSTANCE = "rht-labs.com/uj"
-        ARGOCD_APPNAME = "catz"
+        ARGOCD_INSTANCE = "petbattle.app/uj"
+        ARGOCD_APPNAME = "ubiquitous-journey"
         ARGOCD_CONFIG_REPO = "github.com/eformat/ubiquitous-journey.git"
         ARGOCD_CONFIG_REPO_PATH = "example-deployment/values-applications.yaml"
         ARGOCD_CONFIG_REPO_BRANCH = "pipeline-test"
