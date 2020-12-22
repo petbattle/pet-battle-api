@@ -11,7 +11,7 @@ pipeline {
 
         // Argo specific
         ARGOCD_INSTANCE = "petbattle.app/uj"
-        ARGOCD_APPNAME = "ubiquitous-journey"
+        ARGOCD_APPNAME = "catz"
         ARGOCD_CONFIG_REPO = "github.com/eformat/ubiquitous-journey.git"
         ARGOCD_CONFIG_REPO_PATH = "example-deployment/values-applications.yaml"
         ARGOCD_CONFIG_REPO_BRANCH = "pipeline-test"
