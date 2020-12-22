@@ -240,7 +240,7 @@ pipeline {
                             when {
                                 expression {
                                     def retVal = sh(returnStatus: true, script: "oc -n \"${PIPELINES_NAMESPACE}\" get applications.argoproj.io \"${APP_NAME}\" -o name")
-                                    return retVal
+                                    return retVal != 0
                                 }
                             }
                             steps {
