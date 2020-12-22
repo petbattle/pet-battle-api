@@ -99,7 +99,7 @@ pipeline {
         stage("Build (Compile App)") {
             agent {
                 node {
-                    label "jenkins-slave-mvn"
+                    label "jenkins-agent-mvn-mandrel"
                 }
             }
             steps {
@@ -141,7 +141,7 @@ pipeline {
         stage("Bake (OpenShift Build)") {
             agent {
                 node {
-                    label "jenkins-slave-argocd"
+                    label "jenkins-agent-argocd"
                 }
             }
             steps {
@@ -170,7 +170,7 @@ pipeline {
         stage("Helm Package App") {
             agent {
                 node {
-                    label "jenkins-slave-helm"
+                    label "jenkins-agent-helm"
                 }
             }
             steps {
@@ -205,7 +205,7 @@ pipeline {
                 stage("sandbox - helm3 publish and install") {
                     agent {
                         node {
-                            label "jenkins-slave-helm"
+                            label "jenkins-agent-helm"
                         }
                     }
                     when {
@@ -234,7 +234,7 @@ pipeline {
                         stage("test/staging argocd app create (master)") {
                             agent {
                                 node {
-                                    label "jenkins-slave-helm"
+                                    label "jenkins-agent-helm"
                                 }
                             }
                             when {
@@ -261,7 +261,7 @@ pipeline {
                             }
                             agent {
                                 node {
-                                    label "jenkins-slave-argocd"
+                                    label "jenkins-agent-argocd"
                                 }
                             }
                             steps {
@@ -322,7 +322,7 @@ pipeline {
             }
             agent {
                 node {
-                    label "jenkins-slave-argocd"
+                    label "jenkins-agent-argocd"
                 }
             }
             when {
