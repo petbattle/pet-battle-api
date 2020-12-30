@@ -7,6 +7,9 @@ metadata:
     {{- include "pet-battle-api.labels" . | nindent 4 }}
   creationTimestamp: null
 spec:
+  lookupPolicy:
+    local: false
+{{- if (eq .Values.istag.enabled true) }}
   tags:
     - annotations:
         openshift.io/imported-from: eformat/pet-battle-api
@@ -15,3 +18,4 @@ spec:
         name: {{ .Values.image_repository }}/{{ .Values.image_namespace }}/{{ .Values.image_name }}:{{ .Values.image_version }}
       importPolicy: {}
       name: {{ .Chart.AppVersion }}
+{{ end }}

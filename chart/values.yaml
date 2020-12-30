@@ -10,6 +10,8 @@ image_repository: quay.io
 image_name: pet-battle-api
 image_namespace: petbattle
 image_version: latest
+istag:
+  enabled: true
 # not safe for work service
 nsfw:
   enabled: false
