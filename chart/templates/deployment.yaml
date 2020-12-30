@@ -1,0 +1,112 @@
+{{- if (ne .Values.deploymentConfig true) }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pet-battle-api.fullname" . }}
+  annotations:
+    image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"{{ include "pet-battle-api.fullname" . }}:{{ .Values.image_version }}"},"fieldPath":"spec.template.spec.containers[?(@.name==\"pet-battle-api\")].image"}]'
+  labels:
+    {{- include "pet-battle-api.labels" . | nindent 4 }}
+spec:
+  progressDeadlineSeconds: 600
+  replicas: {{ .Values.replicas }}
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      {{- include "pet-battle-api.selectorLabels" . | nindent 6 }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/metrics'
+        prometheus.io/port: '8080'
+        rollme: {{ randAlphaNum 5 | quote }}
+        {{- if .Values.istio.enabled }}
+        sidecar.istio.io/inject: "true"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "27017"
+        proxy.istio.io/config: |
+          tracing:
+            sampling: 100.0
+        {{- end}}
+      labels:
+        {{- include "pet-battle-api.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - env:
+            - name: NSFW_API_SERVICE_ENABLED
+              value: {{ .Values.nsfw.enabled | default "false" | quote }}
+            - name: NSFW_API_SERVICE_HOST
+              value: {{ .Values.nsfw.apiHost | default "nsfwapi" | quote }}
+            - name: NSFW_API_SERVICE_PORT
+              value: {{ .Values.nsfw.apiPort | default 5000 | quote }}
+{{- if .Values.mongodbTemplate.enabled }}
+            - name: DATABASE_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-admin-password
+                  name: {{ include "mongodb.fullname" . }}
+            - name: DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: database-name
+                  name: {{ include "mongodb.fullname" . }}
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: {{ include "mongodb.fullname" . }}
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: {{ include "mongodb.fullname" . }}
+            - name: DATABASE_SERVICE_HOST
+              value: {{ include "mongodb.fullname" . }}
+            - name: DATABASE_SERVICE_PORT
+              value: '27017'
+{{- else }}
+            - name: DATABASE_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: cats-mongodb-replicaset-admin
+            - name: DATABASE_NAME
+              value: "test"
+            - name: DATABASE_SERVICE_HOST
+              value: {{ printf "%s-%s" "pet-battle-api" "mongodb-replicaset" | quote }}
+            - name: DATABSE_SERVICE_PORT
+              value: '27017'
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: cats-mongodb-replicaset-admin
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  key: user
+                  name: cats-mongodb-replicaset-admin
+{{- end }}
+          image: ' '
+          imagePullPolicy: Always
+          name: {{ include "pet-battle-api.name" . }}
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 8443
+              protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+{{ end }}

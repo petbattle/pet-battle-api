@@ -1,96 +1,97 @@
 {{- if .Values.mongodbTemplate.enabled }}
 apiVersion: v1
-items:
-- apiVersion: v1
-  kind: Secret
-  metadata:
-    annotations:
-      template.openshift.io/expose-admin_password: '{.data[''database-admin-password'']}'
-      template.openshift.io/expose-database_name: '{.data[''database-name'']}'
-      template.openshift.io/expose-password: '{.data[''database-password'']}'
-      template.openshift.io/expose-username: '{.data[''database-user'']}'
-    name: {{ include "mongodb.fullname" . }}
-    labels:
-      {{- include "mongodb.labels" . | nindent 6 }}
-  stringData:
-    database-admin-password: {{ .Values.mongodbTemplate.database.adminPassword | quote }}
-    database-name: {{ .Values.mongodbTemplate.database.name | quote }}
-    database-password: {{ .Values.mongodbTemplate.database.password | quote }}
-    database-user: {{ .Values.mongodbTemplate.database.user | quote }}
-- apiVersion: v1
-  kind: Service
-  metadata:
-    annotations:
-      template.openshift.io/expose-uri: mongodb://{.spec.clusterIP}:{.spec.ports[?(.name=="mongo")].port}
-    name: {{ include "mongodb.fullname" . }}
-    labels:
-      {{- include "mongodb.labels" . | nindent 6 }}
-  spec:
-    ports:
+kind: Secret
+metadata:
+  annotations:
+    template.openshift.io/expose-admin_password: '{.data[''database-admin-password'']}'
+    template.openshift.io/expose-database_name: '{.data[''database-name'']}'
+    template.openshift.io/expose-password: '{.data[''database-password'']}'
+    template.openshift.io/expose-username: '{.data[''database-user'']}'
+  name: {{ include "mongodb.fullname" . }}
+  labels:
+    {{- include "mongodb.labels" . | nindent 4 }}
+stringData:
+  database-admin-password: {{ .Values.mongodbTemplate.database.adminPassword | quote }}
+  database-name: {{ .Values.mongodbTemplate.database.name | quote }}
+  database-password: {{ .Values.mongodbTemplate.database.password | quote }}
+  database-user: {{ .Values.mongodbTemplate.database.user | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    template.openshift.io/expose-uri: mongodb://{.spec.clusterIP}:{.spec.ports[?(.name=="mongo")].port}
+  name: {{ include "mongodb.fullname" . }}
+  labels:
+    {{- include "mongodb.labels" . | nindent 4 }}
+spec:
+  ports:
     - name: mongo
       nodePort: 0
       port: 27017
       protocol: TCP
       targetPort: 27017
-    selector:
-      {{- include "mongodb.selectorLabels" . | nindent 6 }}
-    sessionAffinity: None
-    type: ClusterIP
-  status:
-    loadBalancer: {}
-- apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    name: {{ include "mongodb.fullname" . }}
-    labels:
-      {{- include "mongodb.labels" . | nindent 6 }}
-  spec:
-    accessModes:
+  selector:
+    {{- include "mongodb.selectorLabels" . | nindent 4 }}
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "mongodb.fullname" . }}
+  labels:
+    {{- include "mongodb.labels" . | nindent 4 }}
+spec:
+  accessModes:
     - ReadWriteOnce
-    resources:
-      requests:
-        storage: {{ .Values.mongodbTemplate.storage | quote }}
-- apiVersion: apps.openshift.io/v1
-  kind: DeploymentConfig
-  metadata:
-    annotations:
-      template.alpha.openshift.io/wait-for-ready: "true"
-    name: {{ include "mongodb.fullname" . }}
-    labels:
-      {{- include "mongodb.labels" . | nindent 6 }}
-  spec:
-    replicas: 1
-    selector:
-      {{- include "mongodb.selectorLabels" . | nindent 6 }}
-    strategy:
-      type: Recreate
-    template:
-      metadata:
-        labels:
-          {{- include "mongodb.selectorLabels" . | nindent 10 }}
-      spec:
-        containers:
+  resources:
+    requests:
+      storage: {{ .Values.mongodbTemplate.storage | quote }}
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    template.alpha.openshift.io/wait-for-ready: "true"
+  name: {{ include "mongodb.fullname" . }}
+  labels:
+    {{- include "mongodb.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    {{- include "mongodb.selectorLabels" . | nindent 4 }}
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        {{- include "mongodb.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
         - env:
-          - name: MONGODB_USER
-            valueFrom:
-              secretKeyRef:
-                key: database-user
-                name: {{ include "mongodb.fullname" . }}
-          - name: MONGODB_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: database-password
-                name: {{ include "mongodb.fullname" . }}
-          - name: MONGODB_ADMIN_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                key: database-admin-password
-                name: {{ include "mongodb.fullname" . }}
-          - name: MONGODB_DATABASE
-            valueFrom:
-              secretKeyRef:
-                key: database-name
-                name: {{ include "mongodb.fullname" . }}
+            - name: MONGODB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: {{ include "mongodb.fullname" . }}
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-password
+                  name: {{ include "mongodb.fullname" . }}
+            - name: MONGODB_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: database-admin-password
+                  name: {{ include "mongodb.fullname" . }}
+            - name: MONGODB_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  key: database-name
+                  name: {{ include "mongodb.fullname" . }}
           image: ' '
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -100,16 +101,16 @@ items:
             timeoutSeconds: 1
           name: mongodb
           ports:
-          - containerPort: 27017
-            protocol: TCP
+            - containerPort: 27017
+              protocol: TCP
           readinessProbe:
             exec:
               command:
-              - /bin/sh
-              - -i
-              - -c
-              - mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD
-                --eval="quit()"
+                - /bin/sh
+                - -i
+                - -c
+                - mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD
+                  --eval="quit()"
             initialDelaySeconds: 3
             timeoutSeconds: 1
           resources:
@@ -120,19 +121,19 @@ items:
             privileged: false
           terminationMessagePath: /dev/termination-log
           volumeMounts:
-          - mountPath: /var/lib/mongodb/data
-            name: mongodb-data
-        dnsPolicy: ClusterFirst
-        restartPolicy: Always
-        volumes:
+            - mountPath: /var/lib/mongodb/data
+              name: mongodb-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
         - name: mongodb-data
           persistentVolumeClaim:
             claimName: {{ include "mongodb.fullname" . }}
-    triggers:
+  triggers:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - mongodb
+          - mongodb
         from:
           kind: ImageStreamTag
           name: {{ .Values.mongodbTemplate.image | quote }}
@@ -140,6 +141,4 @@ items:
         lastTriggeredImage: ""
       type: ImageChange
     - type: ConfigChange
-kind: List
-metadata: {}
 {{- end }}

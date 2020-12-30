@@ -4,6 +4,7 @@
 
 # OpenShift objects
 route: true
+# if false use a kube deployment instead
 deploymentConfig: true
 replicas: 1
 image_repository: quay.io
