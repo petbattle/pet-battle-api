@@ -5,7 +5,7 @@
 # OpenShift objects
 route: true
 # if false use a kube deployment instead
-deploymentConfig: true
+deploymentConfig: false
 replicas: 1
 image_repository: quay.io
 image_name: pet-battle-api
