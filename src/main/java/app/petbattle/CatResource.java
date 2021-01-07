@@ -59,7 +59,7 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<Cat>> list() {
-        return Cat.find("issfw = true").list();
+        return Cat.find("issfw", true).list();
     }
 
     /**
