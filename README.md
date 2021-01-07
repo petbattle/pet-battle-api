@@ -142,4 +142,3 @@ OR
 ```git exclude
 helm uninstall pet-battle-api
 ```
-
