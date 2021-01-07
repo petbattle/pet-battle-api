@@ -1,0 +1,51 @@
+{
+  "title": "\uD83E\uDDA9 Pet Battle API \uD83E\uDDA9",
+  "description": "Deploy Pet Battle API",
+  "type": "object",
+  "required": [],
+  "properties": {
+    "deploymentConfig": {
+      "type": "boolean",
+      "title": "Use a DeploymentConfig. Kubernetes Deployment is the default.",
+      "default": false
+    },
+    "image_name": {
+      "type": "string",
+      "title": "Image Name",
+      "default": "pet-battle-api",
+      "minLength": 3
+    },
+    "image_namespace": {
+      "type": "string",
+      "title": "Image Namespace",
+      "default": "pet-battle",
+      "examples": [
+        "pet-battle",
+        "labs-ci-cd"
+      ],
+      "minLength": 3
+    },
+    "image_repository": {
+      "type": "string",
+      "title": "Image Repository",
+      "default": "quay.io",
+      "examples": [
+        "quiy.io",
+        "image_repository=image-registry.openshift-image-registry.svc:5000"
+      ],
+      "minLength": 3
+    },
+    "image_version": {
+      "type": "string",
+      "title": "Image Version",
+      "default": "latest",
+      "minLength": 3
+    },
+    "replicas": {
+      "type": "number",
+      "title": "Replicas",
+      "default": 1,
+      "minLength": 1
+    }
+  }
+}
