@@ -18,7 +18,7 @@ istag:
 nsff:
   enabled: false
   apiHost: tensorflowserving-pb-nsff
-  apiPort: 5000
+  apiPort: 8501
   limit: 0.6
 
 # do we deploy mongodb from a template (not helm chart)
