@@ -3,6 +3,7 @@ package app.petbattle;
 import app.petbattle.utils.Scalr;
 import io.quarkus.mongodb.panache.MongoEntity;
 import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntity;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -88,7 +89,8 @@ public class Cat extends ReactivePanacheMongoEntity {
         }
     }
 
-    public String getUrlSafeImage() {
+
+    protected String getUrlSafeImage() {
         String p = "^data:image/([^;]*);base64,?";
         String raw = getImage().replaceFirst(p, "");
         byte[] bytes = Base64.getDecoder().decode(raw);
