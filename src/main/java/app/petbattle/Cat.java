@@ -92,7 +92,7 @@ public class Cat extends ReactivePanacheMongoEntity {
         String p = "^data:image/([^;]*);base64,?";
         String raw = getImage().replaceFirst(p, "");
         byte[] bytes = Base64.getDecoder().decode(raw);
-        return Base64.getUrlEncoder().encodeToString(bytes);
+        return '\"' + Base64.getUrlEncoder().encodeToString(bytes) + '\"';
     }
 
 }

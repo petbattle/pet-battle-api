@@ -282,7 +282,7 @@ public class CatResource {
     }
 
     private NSFFResponse callNsff(NSFFRequest request) {
-        // toString() should not be required here, but tensorflow expects array values quotes
+        // toString() should not be required here, but tensorflow is picky with the formatting
         return NSFFService.nsff(request.toString());
     }
 
@@ -300,7 +300,7 @@ public class CatResource {
         }
         try {
             ArrayList<String> list = new ArrayList();
-            list.add('\"' + cat.getUrlSafeImage() + '\"');
+            list.add(cat.getUrlSafeImage());
             NSFFRequest nsffRequest = new NSFFRequest(list);
 
             Uni<NSFFResponse> nsfw = Uni.createFrom().item(callNsff(nsffRequest)).runSubscriptionOn(Infrastructure.getDefaultWorkerPool());

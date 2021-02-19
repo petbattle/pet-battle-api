@@ -16,5 +16,5 @@ public interface NSFFService {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     NSFFResponse nsff(String request);
-
+    // NSFFResponse nsff(NSFFRequest request) should be here, but tensorflow is picky with the formatting
 }
