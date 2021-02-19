@@ -44,9 +44,9 @@ spec:
             - name: NSFF_API_SERVICE_ENABLED
               value: {{ .Values.nsff.enabled | default "false" | quote }}
             - name: NSFF_API_SERVICE_HOST
-              value: {{ .Values.nsff.apiHost | default "nsfwapi" | quote }}
+              value: {{ .Values.nsff.apiHost | default "tensorflowserving-pb-nsff" | quote }}
             - name: NSFF_API_SERVICE_PORT
-              value: {{ .Values.nsff.apiPort | default 5000 | quote }}
+              value: {{ .Values.nsff.apiPort | default 8501 | quote }}
             - name: NSFF_LIMIT
               value: {{ .Values.nsff.limit | default 0.6 | quote }}
 {{- if .Values.mongodbTemplate.enabled }}

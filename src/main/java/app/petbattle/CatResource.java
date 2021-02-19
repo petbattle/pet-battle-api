@@ -302,16 +302,17 @@ public class CatResource {
             ArrayList<String> list = new ArrayList();
             list.add(cat.getUrlSafeImage());
             NSFFRequest nsffRequest = new NSFFRequest(list);
+            //log.info("{}", nsffRequest);
 
-            Uni<NSFFResponse> nsfw = Uni.createFrom().item(callNsff(nsffRequest)).runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
-            nsfw.onItem().invoke(nsffResponse -> {
+            Uni<NSFFResponse> nsff = Uni.createFrom().item(callNsff(nsffRequest)).runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
+            nsff.onItem().invoke(nsffResponse -> {
                 log.info("{}", nsffResponse);
-                boolean nsff = nsffResponse.isSff(nsffLimit);
-                if (!nsff) {
-                    log.debug("NSFW: " + nsffResponse);
+                boolean isff = nsffResponse.isSff(nsffLimit);
+                if (!isff) {
+                    log.debug("NSFF: " + nsffResponse);
                     cat.setCount(-1000); // never in topcats
                 }
-                cat.setIssff(nsff);
+                cat.setIssff(isff);
             }).await().indefinitely();
 
         } catch (Exception e) {
