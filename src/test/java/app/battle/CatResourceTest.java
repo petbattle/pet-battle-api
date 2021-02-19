@@ -33,8 +33,8 @@ public class CatResourceTest {
         cat.setVote(false);
         Assertions.assertEquals(false, cat.getVote());
 
-        cat.setIssfw(false);
-        Assertions.assertEquals(false, cat.getIssfw());
+        cat.setIssff(false);
+        Assertions.assertEquals(false, cat.getIssff());
     }
 
 }

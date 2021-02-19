@@ -14,11 +14,12 @@ image_version: latest
 # use the image specified above as tag (else tag overridden in pipeline say)
 istag:
   enabled: true
-# not safe for work service
-nsfw:
+# not safe for families service
+nsff:
   enabled: false
-  apiHost: nsfwapi-my
+  apiHost: tensorflowserving-pb-nsff
   apiPort: 5000
+  limit: 0.6
 
 # do we deploy mongodb from a template (not helm chart)
 mongodbTemplate:

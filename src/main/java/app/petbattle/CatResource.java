@@ -1,8 +1,8 @@
 package app.petbattle;
 
-import app.petbattle.rest.client.NSFWTransactionService;
-import app.petbattle.rest.client.TransactionRequest;
-import app.petbattle.rest.client.TransactionResponse;
+import app.petbattle.rest.client.NSFFService;
+import app.petbattle.rest.client.NSFFRequest;
+import app.petbattle.rest.client.NSFFResponse;
 import io.quarkus.mongodb.panache.reactive.ReactivePanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
@@ -28,10 +28,7 @@ import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Path("/cats")
 @Consumes("application/json")
@@ -42,10 +39,13 @@ public class CatResource {
 
     @Inject
     @RestClient
-    NSFWTransactionService nsfwTransactionService;
+    NSFFService NSFFService;
 
-    @ConfigProperty(name = "app.petbattle.nsfw.enabled", defaultValue = "false")
-    String nsfwEnabled;
+    @ConfigProperty(name = "app.petbattle.nsff.enabled", defaultValue = "false")
+    String nsffEnabled;
+
+    @ConfigProperty(name = "app.petbattle.nsff.limit", defaultValue = "0.6")
+    Double nsffLimit = 0.6;
 
     /**
      * List all Cats including images
@@ -59,7 +59,7 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<Cat>> list() {
-        return Cat.find("issfw", true).list();
+        return Cat.find("issff", true).list();
     }
 
     /**
@@ -142,8 +142,8 @@ public class CatResource {
         cat.vote();
         cat.resizeCat();
         cat.persistOrUpdate().await().indefinitely();
-        nsfw(cat);
-        if (!cat.getIssfw())
+        nsff(cat);
+        if (!cat.getIssff())
             return Response.status(400).build();
         return Response.status(201).entity(cat.id).build();
     }
@@ -272,7 +272,7 @@ public class CatResource {
                         .encodeToString(fileContent);
                 cat.setImage("data:image/jpeg;base64," + encodedString);
                 cat.resizeCat();
-                cat.setIssfw(true);
+                cat.setIssff(true);
                 cat.persistOrUpdate().await().indefinitely();
 
             } catch (IOException e) {
@@ -281,8 +281,9 @@ public class CatResource {
         }
     }
 
-    private TransactionResponse callNsfw(TransactionRequest request) {
-        return nsfwTransactionService.nsfw(request);
+    private NSFFResponse callNsff(NSFFRequest request) {
+        // toString() should not be required here, but tensorflow expects array values quotes
+        return NSFFService.nsff(request.toString());
     }
 
     /**
@@ -290,28 +291,33 @@ public class CatResource {
      *
      * @param cat
      */
-    private void nsfw(Cat cat) {
-        if (null == nsfwEnabled || !nsfwEnabled.toLowerCase().contentEquals("true")) {
+    private void nsff(Cat cat) {
+        if (null == nsffEnabled || !nsffEnabled.toLowerCase().contentEquals("true")) {
             // feature not enabled in config
-            cat.setIssfw(true);
+            cat.setIssff(true);
             cat.persistOrUpdate().await().indefinitely();
             return;
         }
         try {
-            TransactionRequest transactionRequest = new TransactionRequest(cat.id.toString(), cat.getImage());
+            ArrayList<String> list = new ArrayList();
+            list.add('\"' + cat.getUrlSafeImage() + '\"');
+            NSFFRequest nsffRequest = new NSFFRequest(list);
 
-            Uni<TransactionResponse> nsfw = Uni.createFrom().item(callNsfw(transactionRequest)).runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
-            nsfw.onItem().invoke(transactionResponse -> {
-                if (!transactionResponse.isIssfw()) {
-                    log.info("NSFW: " + transactionResponse);
+            Uni<NSFFResponse> nsfw = Uni.createFrom().item(callNsff(nsffRequest)).runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
+            nsfw.onItem().invoke(nsffResponse -> {
+                log.info("{}", nsffResponse);
+                boolean nsff = nsffResponse.isSff(nsffLimit);
+                if (!nsff) {
+                    log.debug("NSFW: " + nsffResponse);
                     cat.setCount(-1000); // never in topcats
                 }
-                cat.setIssfw(transactionResponse.isIssfw());
+                cat.setIssff(nsff);
             }).await().indefinitely();
 
         } catch (Exception e) {
             // no service found assuming image is safe for now
-            cat.setIssfw(true);
+            log.warn("NSFF error, continuing {}", e);
+            cat.setIssff(true);
         }
         // we need the cat.id for tracing nsfw calls, else we could have just done this once
         cat.persistOrUpdate().await().indefinitely();

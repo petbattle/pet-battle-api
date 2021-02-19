@@ -19,7 +19,7 @@ public class Cat extends ReactivePanacheMongoEntity {
 
     public Boolean vote;
 
-    public Boolean issfw;
+    public Boolean issff;
 
     public String image;
 
@@ -39,12 +39,12 @@ public class Cat extends ReactivePanacheMongoEntity {
         this.vote = vote;
     }
 
-    public Boolean getIssfw() {
-        return issfw;
+    public Boolean getIssff() {
+        return issff;
     }
 
-    public void setIssfw(Boolean issfw) {
-        this.issfw = issfw;
+    public void setIssff(Boolean issff) {
+        this.issff = issff;
     }
 
     public String getImage() {
@@ -86,6 +86,13 @@ public class Cat extends ReactivePanacheMongoEntity {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getUrlSafeImage() {
+        String p = "^data:image/([^;]*);base64,?";
+        String raw = getImage().replaceFirst(p, "");
+        byte[] bytes = Base64.getDecoder().decode(raw);
+        return Base64.getUrlEncoder().encodeToString(bytes);
     }
 
 }

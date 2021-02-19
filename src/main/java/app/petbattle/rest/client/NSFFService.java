@@ -8,14 +8,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/api")
 @RegisterRestClient
-public interface NSFWTransactionService {
+public interface NSFFService {
 
     @POST
-    @Path("/v1.0/nsfw")
+    @Path("/v1/models/test_model:predict")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    TransactionResponse nsfw(TransactionRequest request);
+    NSFFResponse nsff(String request);
 
 }
