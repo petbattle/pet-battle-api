@@ -75,8 +75,7 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<CatId>> catids() {
-        ReactivePanacheQuery<CatId> query = Cat.findAll().project(CatId.class);
-        return query.list();
+        return Cat.find("issff",true).project(CatId.class).list();
     }
 
     /**
