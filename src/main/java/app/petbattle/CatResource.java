@@ -92,8 +92,7 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<Cat>> topcats() {
-        ReactivePanacheQuery<Cat> query = Cat.findAll(Sort.by("count").descending()).page(Page.ofSize(3));
-        return query.list();
+        return Cat.find("issff", Sort.by("count").descending(), true).page(Page.ofSize(3)).list();
     }
 
     /**
