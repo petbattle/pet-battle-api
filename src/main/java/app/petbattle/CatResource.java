@@ -37,6 +37,8 @@ public class CatResource {
 
     private final Logger log = LoggerFactory.getLogger(CatResource.class);
 
+    private static final String ISSFF = "issff";
+
     @Inject
     @RestClient
     NSFFService NSFFService;
@@ -59,7 +61,7 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<Cat>> list() {
-        return Cat.find("issff", true).list();
+        return Cat.find(ISSFF,true).list();
     }
 
     /**
@@ -75,7 +77,7 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<CatId>> catids() {
-        return Cat.find("issff",true).project(CatId.class).list();
+        return Cat.find(ISSFF,true).project(CatId.class).list();
     }
 
     /**
@@ -91,7 +93,7 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<Cat>> topcats() {
-        return Cat.find("issff", Sort.by("count").descending(), true).page(Page.ofSize(3)).list();
+        return Cat.find(ISSFF, Sort.by("count").descending(), true).page(Page.ofSize(3)).list();
     }
 
     /**
