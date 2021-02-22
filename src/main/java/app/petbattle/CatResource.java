@@ -61,7 +61,6 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<Cat>> list() {
-        //NOSONAR
         return Cat.find(ISSFF,true).list();
     }
 
@@ -78,7 +77,6 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<CatId>> catids() {
-        //NOSONAR
         return Cat.find(ISSFF,true).project(CatId.class).list();
     }
 
@@ -95,7 +93,6 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<Cat>> topcats() {
-        //NOSONAR
         return Cat.find(ISSFF, Sort.by("count").descending(), true).page(Page.ofSize(3)).list();
     }
 
