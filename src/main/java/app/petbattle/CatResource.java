@@ -1,8 +1,8 @@
 package app.petbattle;
 
-import app.petbattle.rest.client.NSFFService;
 import app.petbattle.rest.client.NSFFRequest;
 import app.petbattle.rest.client.NSFFResponse;
+import app.petbattle.rest.client.NSFFService;
 import io.quarkus.mongodb.panache.reactive.ReactivePanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
@@ -61,6 +61,7 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<Cat>> list() {
+        //NOSONAR
         return Cat.find(ISSFF,true).list();
     }
 
@@ -77,6 +78,7 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<CatId>> catids() {
+        //NOSONAR
         return Cat.find(ISSFF,true).project(CatId.class).list();
     }
 
@@ -93,6 +95,7 @@ public class CatResource {
             deprecated = false,
             hidden = false)
     public Uni<List<Cat>> topcats() {
+        //NOSONAR
         return Cat.find(ISSFF, Sort.by("count").descending(), true).page(Page.ofSize(3)).list();
     }
 

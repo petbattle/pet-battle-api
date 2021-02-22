@@ -3,7 +3,6 @@ package app.petbattle;
 import app.petbattle.utils.Scalr;
 import io.quarkus.mongodb.panache.MongoEntity;
 import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntity;
-import org.bson.codecs.pojo.annotations.BsonIgnore;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
