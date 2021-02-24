@@ -13,12 +13,12 @@ import static org.hamcrest.CoreMatchers.*;
 
 @QuarkusTest
 @QuarkusTestResource(MongoTestResource.class)
-public class CatEndpointTest {
+class CatEndpointTest {
 
     private static final Logger log = LoggerFactory.getLogger("CatEndpointTest");
 
     @Test
-    public void testCats() {
+    void testCats() {
         RestAssured.given()
                 .when().get("/cats")
                 .then()
@@ -31,7 +31,7 @@ public class CatEndpointTest {
     }
 
     @Test
-    public void testCatIds() {
+    void testCatIds() {
         RestAssured.given()
                 .when().get("/cats/ids")
                 .then()
@@ -42,7 +42,7 @@ public class CatEndpointTest {
     }
 
     @Test
-    public void testTopCats() {
+    void testTopCats() {
         RestAssured.given()
                 .when().get("/cats/topcats")
                 .then()
@@ -51,7 +51,7 @@ public class CatEndpointTest {
     }
 
     @Test
-    public void testCatById() {
+    void testCatById() {
         Response response = RestAssured.given()
                 .when().get("/cats/ids")
                 .then()
@@ -70,7 +70,7 @@ public class CatEndpointTest {
     }
 
     @Test
-    public void testCatCount() {
+    void testCatCount() {
         RestAssured.given()
                 .when().delete("/cats/kittykiller")
                 .then()
@@ -96,7 +96,7 @@ public class CatEndpointTest {
     }
 
     @Test
-    public void testCatCreate() {
+    void testCatCreate() {
         CatInstance catInstance = new CatInstance();
 
         RestAssured.given()
@@ -109,7 +109,7 @@ public class CatEndpointTest {
     }
 
     @Test
-    public void testCatDelete() {
+    void testCatDelete() {
         Response response = RestAssured.given()
                 .when().get("/cats/ids")
                 .then()
@@ -128,7 +128,7 @@ public class CatEndpointTest {
     }
 
     @Test
-    public void testDatatable() {
+    void testDatatable() {
         RestAssured.given()
                 .when().get("/cats/datatable")
                 .then()

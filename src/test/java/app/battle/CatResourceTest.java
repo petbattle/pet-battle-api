@@ -13,12 +13,12 @@ import org.slf4j.LoggerFactory;
 
 @QuarkusTest
 @QuarkusTestResource(MongoTestResource.class)
-public class CatResourceTest {
+class CatResourceTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("CatResourceTest");
 
     @Test
-    public void testCat() {
+    void testCat() {
         PanacheMock.mock(Cat.class);
 
         Mockito.when(Cat.count()).thenReturn(Uni.createFrom().item(23l));
