@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @QuarkusTest
-@QuarkusTestResource(MongoTestResource.class)
 class CatResourceTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("CatResourceTest");
