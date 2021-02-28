@@ -1,0 +1,15 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "pet-battle-tournament.fullname" . }}-monitor
+  labels:
+    {{- include "pet-battle-tournament.labels" . | nindent 4 }}
+spec:
+  endpoints:
+    - interval: 30s
+      port: tcp-8080
+      scheme: http
+  selector:
+    matchLabels:
+    {{- include "pet-battle-api.labels" . | nindent 6 }}
