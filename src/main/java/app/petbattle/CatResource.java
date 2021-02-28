@@ -137,7 +137,7 @@ public class CatResource {
                             description = "cat created or updated OK",
                             content = @Content(mediaType = "application/json",
                                     schema = @Schema(implementation = Response.class)))})
-    @Metered(unit = MetricUnits.PER_SECOND, name = "cats-uploaded", description = "Frequency of cats uploaded")
+    //@Metered(unit = MetricUnits.PER_SECOND, name = "cats-uploaded", description = "Frequency of cats uploaded")
     public Response create(Cat cat) {
         cat.vote();
         cat.resizeCat();
