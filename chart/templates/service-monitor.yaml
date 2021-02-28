@@ -2,9 +2,9 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "pet-battle-tournament.fullname" . }}-monitor
+  name: {{ include "pet-battle-api.fullname" . }}
   labels:
-    {{- include "pet-battle-tournament.labels" . | nindent 4 }}
+    {{- include "pet-battle-api.labels" . | nindent 4 }}
 spec:
   endpoints:
     - interval: 30s
