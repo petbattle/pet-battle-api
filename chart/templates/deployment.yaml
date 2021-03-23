@@ -10,7 +10,7 @@ metadata:
     {{- include "pet-battle-api.labels" . | nindent 4 }}
 spec:
   progressDeadlineSeconds: 600
-  replicas: {{ .Values.replicas }}
+  replicas: {{ .Values.replicas.min }}
   revisionHistoryLimit: 10
   selector:
     matchLabels:

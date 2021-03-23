@@ -42,10 +42,8 @@
       "minLength": 3
     },
     "replicas": {
-      "type": "number",
-      "title": "Replicas",
-      "default": 1,
-      "minLength": 1
+      "type": "object",
+      "title": "Replicas"
     }
   }
 }

@@ -6,7 +6,9 @@
 route: true
 # if false use a kube deployment instead
 deploymentConfig: false
-replicas: 1
+replicas:
+  min: 2
+  max: 6
 image_repository: quay.io
 image_name: pet-battle-api
 image_namespace: petbattle

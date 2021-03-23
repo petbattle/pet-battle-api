@@ -1,0 +1,26 @@
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "pet-battle-api.fullname" . }}
+  labels:
+    {{- include "pet-battle-api.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    {{- if .Values.deploymentConfig }}
+    apiVersion: v1
+    kind: DeploymentConfig
+    {{- else }}
+    apiVersion: apps/v1
+    kind: Deployment
+    {{- end }}
+    name: {{ include "pet-battle-api.fullname" . }}
+  minReplicas: {{ .Values.replicas.min }}
+  maxReplicas: {{ .Values.replicas.max }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: AverageValue
+          averageValue: 500m

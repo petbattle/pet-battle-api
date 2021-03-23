@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "pet-battle-api.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicas }}
+  replicas: {{ .Values.replicas.min }}
   revisionHistoryLimit: 10
   selector:
     {{- include "pet-battle-api.selectorLabels" . | nindent 4 }}
