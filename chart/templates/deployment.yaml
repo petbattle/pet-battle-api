@@ -39,6 +39,10 @@ spec:
     spec:
       containers:
         - env:
+            - name: QUARKUS_PROFILE
+              value: prod
+            - name: QUARKUS_LOG_LEVEL
+              value: INFO
             - name: NSFF_API_SERVICE_ENABLED
               value: {{ .Values.nsff.enabled | default "false" | quote }}
             - name: NSFF_API_SERVICE_HOST
