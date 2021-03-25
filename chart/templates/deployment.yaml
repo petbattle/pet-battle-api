@@ -128,10 +128,10 @@ spec:
           resources:
             limits:
               cpu: '600m'
-              memory: 500Mi
+              memory: 1000Mi
             requests:
               cpu: '100m'
-              memory: 50Mi
+              memory: 100Mi
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
       dnsPolicy: ClusterFirst

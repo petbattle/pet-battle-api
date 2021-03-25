@@ -13,6 +13,10 @@ image_repository: quay.io
 image_name: pet-battle-api
 image_namespace: petbattle
 image_version: latest
+hpa:
+  enabled: true
+  cpuTarget: 250m
+  memTarget: 500Mi
 # use the image specified above as tag (else tag overridden in pipeline say)
 istag:
   enabled: true
