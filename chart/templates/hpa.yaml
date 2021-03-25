@@ -23,4 +23,4 @@ spec:
         name: cpu
         target:
           type: AverageValue
-          averageValue: 500m
+          averageValue: 250m
