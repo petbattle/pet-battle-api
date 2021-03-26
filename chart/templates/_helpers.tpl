@@ -54,7 +54,9 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- define "mongodb.labels" -}}
 helm.sh/chart: {{ include "pet-battle-api.chart" . }}
 {{ include "mongodb.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
+{{- if .Values.image_version }}
+app.kubernetes.io/version: {{ .Values.image_version | quote }}
+{{- else }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
