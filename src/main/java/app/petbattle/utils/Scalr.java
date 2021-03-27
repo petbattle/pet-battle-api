@@ -201,7 +201,7 @@ import javax.swing.*;
  * the varargs-based method call.
  *
  * @author Riyad Kalla (software@thebuzzmedia.com)
- * @since 1.1
+ * @since  1.1
  */
 public class Scalr {
     /**
@@ -313,7 +313,8 @@ public class Scalr {
      */
     public static final ConvolveOp OP_ANTIALIAS = new ConvolveOp(
             new Kernel(3, 3, new float[] { .0f, .08f, .0f, .08f, .68f, .08f,
-                    .0f, .08f, .0f }), ConvolveOp.EDGE_NO_OP, null);
+                    .0f, .08f, .0f }),
+            ConvolveOp.EDGE_NO_OP, null);
 
     /**
      * A {@link RescaleOp} used to make any input image 10% darker.
@@ -359,7 +360,7 @@ public class Scalr {
      * Used to define the different scaling hints that the algorithm can use.
      *
      * @author Riyad Kalla (software@thebuzzmedia.com)
-     * @since 1.1
+     * @since  1.1
      */
     public static enum Method {
         /**
@@ -422,7 +423,7 @@ public class Scalr {
      * use.
      *
      * @author Riyad Kalla (software@thebuzzmedia.com)
-     * @since 3.1
+     * @since  3.1
      */
     public static enum Mode {
         /**
@@ -472,7 +473,7 @@ public class Scalr {
      * image during a resize operation.
      *
      * @author Riyad Kalla (software@thebuzzmedia.com)
-     * @since 3.2
+     * @since  3.2
      */
     public static enum Rotation {
         /**
@@ -592,28 +593,28 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image that will have the ops applied to it.
-     * @param ops
-     *            <code>1</code> or more ops to apply to the image.
+     * @param  src
+     *                                  The image that will have the ops applied to it.
+     * @param  ops
+     *                                  <code>1</code> or more ops to apply to the image.
      *
-     * @return a new {@link BufferedImage} that represents the <code>src</code>
-     *         with all the given operations applied to it.
+     * @return                          a new {@link BufferedImage} that represents the <code>src</code>
+     *                                  with all the given operations applied to it.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>ops</code> is <code>null</code> or empty.
+     *                                  if <code>ops</code> is <code>null</code> or empty.
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      */
     public static BufferedImage apply(BufferedImage src, BufferedImageOp... ops)
             throws IllegalArgumentException, ImagingOpException {
@@ -754,40 +755,40 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image to crop.
-     * @param width
-     *            The width of the bounding cropping box.
-     * @param height
-     *            The height of the bounding cropping box.
-     * @param ops
-     *            <code>0</code> or more ops to apply to the image. If
-     *            <code>null</code> or empty then <code>src</code> is return
-     *            unmodified.
+     * @param  src
+     *                                  The image to crop.
+     * @param  width
+     *                                  The width of the bounding cropping box.
+     * @param  height
+     *                                  The height of the bounding cropping box.
+     * @param  ops
+     *                                  <code>0</code> or more ops to apply to the image. If
+     *                                  <code>null</code> or empty then <code>src</code> is return
+     *                                  unmodified.
      *
-     * @return a new {@link BufferedImage} representing the cropped region of
-     *         the <code>src</code> image with any optional operations applied
-     *         to it.
+     * @return                          a new {@link BufferedImage} representing the cropped region of
+     *                                  the <code>src</code> image with any optional operations applied
+     *                                  to it.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if any coordinates of the bounding crop box is invalid within
-     *             the bounds of the <code>src</code> image (e.g. negative or
-     *             too big).
+     *                                  if any coordinates of the bounding crop box is invalid within
+     *                                  the bounds of the <code>src</code> image (e.g. negative or
+     *                                  too big).
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      */
     public static BufferedImage crop(BufferedImage src, int width, int height,
-                                     BufferedImageOp... ops) throws IllegalArgumentException,
+            BufferedImageOp... ops) throws IllegalArgumentException,
             ImagingOpException {
         return crop(src, 0, 0, width, height, ops);
     }
@@ -802,46 +803,46 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image to crop.
-     * @param x
-     *            The x-coordinate of the top-left corner of the bounding box
-     *            used for cropping.
-     * @param y
-     *            The y-coordinate of the top-left corner of the bounding box
-     *            used for cropping.
-     * @param width
-     *            The width of the bounding cropping box.
-     * @param height
-     *            The height of the bounding cropping box.
-     * @param ops
-     *            <code>0</code> or more ops to apply to the image. If
-     *            <code>null</code> or empty then <code>src</code> is return
-     *            unmodified.
+     * @param  src
+     *                                  The image to crop.
+     * @param  x
+     *                                  The x-coordinate of the top-left corner of the bounding box
+     *                                  used for cropping.
+     * @param  y
+     *                                  The y-coordinate of the top-left corner of the bounding box
+     *                                  used for cropping.
+     * @param  width
+     *                                  The width of the bounding cropping box.
+     * @param  height
+     *                                  The height of the bounding cropping box.
+     * @param  ops
+     *                                  <code>0</code> or more ops to apply to the image. If
+     *                                  <code>null</code> or empty then <code>src</code> is return
+     *                                  unmodified.
      *
-     * @return a new {@link BufferedImage} representing the cropped region of
-     *         the <code>src</code> image with any optional operations applied
-     *         to it.
+     * @return                          a new {@link BufferedImage} representing the cropped region of
+     *                                  the <code>src</code> image with any optional operations applied
+     *                                  to it.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if any coordinates of the bounding crop box is invalid within
-     *             the bounds of the <code>src</code> image (e.g. negative or
-     *             too big).
+     *                                  if any coordinates of the bounding crop box is invalid within
+     *                                  the bounds of the <code>src</code> image (e.g. negative or
+     *                                  too big).
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      */
     public static BufferedImage crop(BufferedImage src, int x, int y,
-                                     int width, int height, BufferedImageOp... ops)
+            int width, int height, BufferedImageOp... ops)
             throws IllegalArgumentException, ImagingOpException {
         long t = -1;
         if (DEBUG)
@@ -913,37 +914,37 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image the padding will be added to.
-     * @param padding
-     *            The number of pixels of padding to add to each side in the
-     *            resulting image. If this value is <code>0</code> then
-     *            <code>src</code> is returned unmodified.
-     * @param ops
-     *            <code>0</code> or more ops to apply to the image. If
-     *            <code>null</code> or empty then <code>src</code> is return
-     *            unmodified.
+     * @param  src
+     *                                  The image the padding will be added to.
+     * @param  padding
+     *                                  The number of pixels of padding to add to each side in the
+     *                                  resulting image. If this value is <code>0</code> then
+     *                                  <code>src</code> is returned unmodified.
+     * @param  ops
+     *                                  <code>0</code> or more ops to apply to the image. If
+     *                                  <code>null</code> or empty then <code>src</code> is return
+     *                                  unmodified.
      *
-     * @return a new {@link BufferedImage} representing <code>src</code> with
-     *         the given padding applied to it.
+     * @return                          a new {@link BufferedImage} representing <code>src</code> with
+     *                                  the given padding applied to it.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>padding</code> is &lt; <code>1</code>.
+     *                                  if <code>padding</code> is &lt; <code>1</code>.
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      */
     public static BufferedImage pad(BufferedImage src, int padding,
-                                    BufferedImageOp... ops) throws IllegalArgumentException,
+            BufferedImageOp... ops) throws IllegalArgumentException,
             ImagingOpException {
         return pad(src, padding, Color.BLACK);
     }
@@ -966,42 +967,42 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image the padding will be added to.
-     * @param padding
-     *            The number of pixels of padding to add to each side in the
-     *            resulting image. If this value is <code>0</code> then
-     *            <code>src</code> is returned unmodified.
-     * @param color
-     *            The color to fill the padded space with. {@link Color}s using
-     *            an alpha channel (i.e. transparency) are supported.
-     * @param ops
-     *            <code>0</code> or more ops to apply to the image. If
-     *            <code>null</code> or empty then <code>src</code> is return
-     *            unmodified.
+     * @param  src
+     *                                  The image the padding will be added to.
+     * @param  padding
+     *                                  The number of pixels of padding to add to each side in the
+     *                                  resulting image. If this value is <code>0</code> then
+     *                                  <code>src</code> is returned unmodified.
+     * @param  color
+     *                                  The color to fill the padded space with. {@link Color}s using
+     *                                  an alpha channel (i.e. transparency) are supported.
+     * @param  ops
+     *                                  <code>0</code> or more ops to apply to the image. If
+     *                                  <code>null</code> or empty then <code>src</code> is return
+     *                                  unmodified.
      *
-     * @return a new {@link BufferedImage} representing <code>src</code> with
-     *         the given padding applied to it.
+     * @return                          a new {@link BufferedImage} representing <code>src</code> with
+     *                                  the given padding applied to it.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>padding</code> is &lt; <code>1</code>.
+     *                                  if <code>padding</code> is &lt; <code>1</code>.
      * @throws IllegalArgumentException
-     *             if <code>color</code> is <code>null</code>.
+     *                                  if <code>color</code> is <code>null</code>.
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      */
     public static BufferedImage pad(BufferedImage src, int padding,
-                                    Color color, BufferedImageOp... ops)
+            Color color, BufferedImageOp... ops)
             throws IllegalArgumentException, ImagingOpException {
         long t = -1;
         if (DEBUG)
@@ -1096,36 +1097,36 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image that will be scaled.
-     * @param targetSize
-     *            The target width and height (square) that you wish the image
-     *            to fit within.
-     * @param ops
-     *            <code>0</code> or more optional image operations (e.g.
-     *            sharpen, blur, etc.) that can be applied to the final result
-     *            before returning the image.
+     * @param  src
+     *                                  The image that will be scaled.
+     * @param  targetSize
+     *                                  The target width and height (square) that you wish the image
+     *                                  to fit within.
+     * @param  ops
+     *                                  <code>0</code> or more optional image operations (e.g.
+     *                                  sharpen, blur, etc.) that can be applied to the final result
+     *                                  before returning the image.
      *
-     * @return a new {@link BufferedImage} representing the scaled
-     *         <code>src</code> image.
+     * @return                          a new {@link BufferedImage} representing the scaled
+     *                                  <code>src</code> image.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>targetSize</code> is &lt; 0.
+     *                                  if <code>targetSize</code> is &lt; 0.
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      */
     public static BufferedImage resize(BufferedImage src, int targetSize,
-                                       BufferedImageOp... ops) throws IllegalArgumentException,
+            BufferedImageOp... ops) throws IllegalArgumentException,
             ImagingOpException {
         return resize(src, Method.AUTOMATIC, Mode.AUTOMATIC, targetSize,
                 targetSize, ops);
@@ -1145,43 +1146,43 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image that will be scaled.
-     * @param scalingMethod
-     *            The method used for scaling the image; preferring speed to
-     *            quality or a balance of both.
-     * @param targetSize
-     *            The target width and height (square) that you wish the image
-     *            to fit within.
-     * @param ops
-     *            <code>0</code> or more optional image operations (e.g.
-     *            sharpen, blur, etc.) that can be applied to the final result
-     *            before returning the image.
+     * @param  src
+     *                                  The image that will be scaled.
+     * @param  scalingMethod
+     *                                  The method used for scaling the image; preferring speed to
+     *                                  quality or a balance of both.
+     * @param  targetSize
+     *                                  The target width and height (square) that you wish the image
+     *                                  to fit within.
+     * @param  ops
+     *                                  <code>0</code> or more optional image operations (e.g.
+     *                                  sharpen, blur, etc.) that can be applied to the final result
+     *                                  before returning the image.
      *
-     * @return a new {@link BufferedImage} representing the scaled
-     *         <code>src</code> image.
+     * @return                          a new {@link BufferedImage} representing the scaled
+     *                                  <code>src</code> image.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>scalingMethod</code> is <code>null</code>.
+     *                                  if <code>scalingMethod</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>targetSize</code> is &lt; 0.
+     *                                  if <code>targetSize</code> is &lt; 0.
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      *
-     * @see Method
+     * @see                             Method
      */
     public static BufferedImage resize(BufferedImage src, Method scalingMethod,
-                                       int targetSize, BufferedImageOp... ops)
+            int targetSize, BufferedImageOp... ops)
             throws IllegalArgumentException, ImagingOpException {
         return resize(src, scalingMethod, Mode.AUTOMATIC, targetSize,
                 targetSize, ops);
@@ -1202,50 +1203,50 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image that will be scaled.
-     * @param resizeMode
-     *            Used to indicate how imgscalr should calculate the final
-     *            target size for the image, either fitting the image to the
-     *            given width ({@link Mode#FIT_TO_WIDTH}) or fitting the image
-     *            to the given height ({@link Mode#FIT_TO_HEIGHT}). If
-     *            {@link Mode#AUTOMATIC} is passed in, imgscalr will calculate
-     *            proportional dimensions for the scaled image based on its
-     *            orientation (landscape, square or portrait). Unless you have
-     *            very specific size requirements, most of the time you just
-     *            want to use {@link Mode#AUTOMATIC} to "do the right thing".
-     * @param targetSize
-     *            The target width and height (square) that you wish the image
-     *            to fit within.
-     * @param ops
-     *            <code>0</code> or more optional image operations (e.g.
-     *            sharpen, blur, etc.) that can be applied to the final result
-     *            before returning the image.
+     * @param  src
+     *                                  The image that will be scaled.
+     * @param  resizeMode
+     *                                  Used to indicate how imgscalr should calculate the final
+     *                                  target size for the image, either fitting the image to the
+     *                                  given width ({@link Mode#FIT_TO_WIDTH}) or fitting the image
+     *                                  to the given height ({@link Mode#FIT_TO_HEIGHT}). If
+     *                                  {@link Mode#AUTOMATIC} is passed in, imgscalr will calculate
+     *                                  proportional dimensions for the scaled image based on its
+     *                                  orientation (landscape, square or portrait). Unless you have
+     *                                  very specific size requirements, most of the time you just
+     *                                  want to use {@link Mode#AUTOMATIC} to "do the right thing".
+     * @param  targetSize
+     *                                  The target width and height (square) that you wish the image
+     *                                  to fit within.
+     * @param  ops
+     *                                  <code>0</code> or more optional image operations (e.g.
+     *                                  sharpen, blur, etc.) that can be applied to the final result
+     *                                  before returning the image.
      *
-     * @return a new {@link BufferedImage} representing the scaled
-     *         <code>src</code> image.
+     * @return                          a new {@link BufferedImage} representing the scaled
+     *                                  <code>src</code> image.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>resizeMode</code> is <code>null</code>.
+     *                                  if <code>resizeMode</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>targetSize</code> is &lt; 0.
+     *                                  if <code>targetSize</code> is &lt; 0.
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      *
-     * @see Mode
+     * @see                             Mode
      */
     public static BufferedImage resize(BufferedImage src, Mode resizeMode,
-                                       int targetSize, BufferedImageOp... ops)
+            int targetSize, BufferedImageOp... ops)
             throws IllegalArgumentException, ImagingOpException {
         return resize(src, Method.AUTOMATIC, resizeMode, targetSize,
                 targetSize, ops);
@@ -1264,56 +1265,56 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image that will be scaled.
-     * @param scalingMethod
-     *            The method used for scaling the image; preferring speed to
-     *            quality or a balance of both.
-     * @param resizeMode
-     *            Used to indicate how imgscalr should calculate the final
-     *            target size for the image, either fitting the image to the
-     *            given width ({@link Mode#FIT_TO_WIDTH}) or fitting the image
-     *            to the given height ({@link Mode#FIT_TO_HEIGHT}). If
-     *            {@link Mode#AUTOMATIC} is passed in, imgscalr will calculate
-     *            proportional dimensions for the scaled image based on its
-     *            orientation (landscape, square or portrait). Unless you have
-     *            very specific size requirements, most of the time you just
-     *            want to use {@link Mode#AUTOMATIC} to "do the right thing".
-     * @param targetSize
-     *            The target width and height (square) that you wish the image
-     *            to fit within.
-     * @param ops
-     *            <code>0</code> or more optional image operations (e.g.
-     *            sharpen, blur, etc.) that can be applied to the final result
-     *            before returning the image.
+     * @param  src
+     *                                  The image that will be scaled.
+     * @param  scalingMethod
+     *                                  The method used for scaling the image; preferring speed to
+     *                                  quality or a balance of both.
+     * @param  resizeMode
+     *                                  Used to indicate how imgscalr should calculate the final
+     *                                  target size for the image, either fitting the image to the
+     *                                  given width ({@link Mode#FIT_TO_WIDTH}) or fitting the image
+     *                                  to the given height ({@link Mode#FIT_TO_HEIGHT}). If
+     *                                  {@link Mode#AUTOMATIC} is passed in, imgscalr will calculate
+     *                                  proportional dimensions for the scaled image based on its
+     *                                  orientation (landscape, square or portrait). Unless you have
+     *                                  very specific size requirements, most of the time you just
+     *                                  want to use {@link Mode#AUTOMATIC} to "do the right thing".
+     * @param  targetSize
+     *                                  The target width and height (square) that you wish the image
+     *                                  to fit within.
+     * @param  ops
+     *                                  <code>0</code> or more optional image operations (e.g.
+     *                                  sharpen, blur, etc.) that can be applied to the final result
+     *                                  before returning the image.
      *
-     * @return a new {@link BufferedImage} representing the scaled
-     *         <code>src</code> image.
+     * @return                          a new {@link BufferedImage} representing the scaled
+     *                                  <code>src</code> image.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>scalingMethod</code> is <code>null</code>.
+     *                                  if <code>scalingMethod</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>resizeMode</code> is <code>null</code>.
+     *                                  if <code>resizeMode</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>targetSize</code> is &lt; 0.
+     *                                  if <code>targetSize</code> is &lt; 0.
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      *
-     * @see Method
-     * @see Mode
+     * @see                             Method
+     * @see                             Mode
      */
     public static BufferedImage resize(BufferedImage src, Method scalingMethod,
-                                       Mode resizeMode, int targetSize, BufferedImageOp... ops)
+            Mode resizeMode, int targetSize, BufferedImageOp... ops)
             throws IllegalArgumentException, ImagingOpException {
         return resize(src, scalingMethod, resizeMode, targetSize, targetSize,
                 ops);
@@ -1338,38 +1339,38 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image that will be scaled.
-     * @param targetWidth
-     *            The target width that you wish the image to have.
-     * @param targetHeight
-     *            The target height that you wish the image to have.
-     * @param ops
-     *            <code>0</code> or more optional image operations (e.g.
-     *            sharpen, blur, etc.) that can be applied to the final result
-     *            before returning the image.
+     * @param  src
+     *                                  The image that will be scaled.
+     * @param  targetWidth
+     *                                  The target width that you wish the image to have.
+     * @param  targetHeight
+     *                                  The target height that you wish the image to have.
+     * @param  ops
+     *                                  <code>0</code> or more optional image operations (e.g.
+     *                                  sharpen, blur, etc.) that can be applied to the final result
+     *                                  before returning the image.
      *
-     * @return a new {@link BufferedImage} representing the scaled
-     *         <code>src</code> image.
+     * @return                          a new {@link BufferedImage} representing the scaled
+     *                                  <code>src</code> image.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>targetWidth</code> is &lt; 0 or if
-     *             <code>targetHeight</code> is &lt; 0.
+     *                                  if <code>targetWidth</code> is &lt; 0 or if
+     *                                  <code>targetHeight</code> is &lt; 0.
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      */
     public static BufferedImage resize(BufferedImage src, int targetWidth,
-                                       int targetHeight, BufferedImageOp... ops)
+            int targetHeight, BufferedImageOp... ops)
             throws IllegalArgumentException, ImagingOpException {
         return resize(src, Method.AUTOMATIC, Mode.AUTOMATIC, targetWidth,
                 targetHeight, ops);
@@ -1393,45 +1394,45 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image that will be scaled.
-     * @param scalingMethod
-     *            The method used for scaling the image; preferring speed to
-     *            quality or a balance of both.
-     * @param targetWidth
-     *            The target width that you wish the image to have.
-     * @param targetHeight
-     *            The target height that you wish the image to have.
-     * @param ops
-     *            <code>0</code> or more optional image operations (e.g.
-     *            sharpen, blur, etc.) that can be applied to the final result
-     *            before returning the image.
+     * @param  src
+     *                                  The image that will be scaled.
+     * @param  scalingMethod
+     *                                  The method used for scaling the image; preferring speed to
+     *                                  quality or a balance of both.
+     * @param  targetWidth
+     *                                  The target width that you wish the image to have.
+     * @param  targetHeight
+     *                                  The target height that you wish the image to have.
+     * @param  ops
+     *                                  <code>0</code> or more optional image operations (e.g.
+     *                                  sharpen, blur, etc.) that can be applied to the final result
+     *                                  before returning the image.
      *
-     * @return a new {@link BufferedImage} representing the scaled
-     *         <code>src</code> image.
+     * @return                          a new {@link BufferedImage} representing the scaled
+     *                                  <code>src</code> image.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>scalingMethod</code> is <code>null</code>.
+     *                                  if <code>scalingMethod</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>targetWidth</code> is &lt; 0 or if
-     *             <code>targetHeight</code> is &lt; 0.
+     *                                  if <code>targetWidth</code> is &lt; 0 or if
+     *                                  <code>targetHeight</code> is &lt; 0.
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      *
-     * @see Method
+     * @see                             Method
      */
     public static BufferedImage resize(BufferedImage src, Method scalingMethod,
-                                       int targetWidth, int targetHeight, BufferedImageOp... ops) {
+            int targetWidth, int targetHeight, BufferedImageOp... ops) {
         return resize(src, scalingMethod, Mode.AUTOMATIC, targetWidth,
                 targetHeight, ops);
     }
@@ -1455,52 +1456,52 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image that will be scaled.
-     * @param resizeMode
-     *            Used to indicate how imgscalr should calculate the final
-     *            target size for the image, either fitting the image to the
-     *            given width ({@link Mode#FIT_TO_WIDTH}) or fitting the image
-     *            to the given height ({@link Mode#FIT_TO_HEIGHT}). If
-     *            {@link Mode#AUTOMATIC} is passed in, imgscalr will calculate
-     *            proportional dimensions for the scaled image based on its
-     *            orientation (landscape, square or portrait). Unless you have
-     *            very specific size requirements, most of the time you just
-     *            want to use {@link Mode#AUTOMATIC} to "do the right thing".
-     * @param targetWidth
-     *            The target width that you wish the image to have.
-     * @param targetHeight
-     *            The target height that you wish the image to have.
-     * @param ops
-     *            <code>0</code> or more optional image operations (e.g.
-     *            sharpen, blur, etc.) that can be applied to the final result
-     *            before returning the image.
+     * @param  src
+     *                                  The image that will be scaled.
+     * @param  resizeMode
+     *                                  Used to indicate how imgscalr should calculate the final
+     *                                  target size for the image, either fitting the image to the
+     *                                  given width ({@link Mode#FIT_TO_WIDTH}) or fitting the image
+     *                                  to the given height ({@link Mode#FIT_TO_HEIGHT}). If
+     *                                  {@link Mode#AUTOMATIC} is passed in, imgscalr will calculate
+     *                                  proportional dimensions for the scaled image based on its
+     *                                  orientation (landscape, square or portrait). Unless you have
+     *                                  very specific size requirements, most of the time you just
+     *                                  want to use {@link Mode#AUTOMATIC} to "do the right thing".
+     * @param  targetWidth
+     *                                  The target width that you wish the image to have.
+     * @param  targetHeight
+     *                                  The target height that you wish the image to have.
+     * @param  ops
+     *                                  <code>0</code> or more optional image operations (e.g.
+     *                                  sharpen, blur, etc.) that can be applied to the final result
+     *                                  before returning the image.
      *
-     * @return a new {@link BufferedImage} representing the scaled
-     *         <code>src</code> image.
+     * @return                          a new {@link BufferedImage} representing the scaled
+     *                                  <code>src</code> image.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>resizeMode</code> is <code>null</code>.
+     *                                  if <code>resizeMode</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>targetWidth</code> is &lt; 0 or if
-     *             <code>targetHeight</code> is &lt; 0.
+     *                                  if <code>targetWidth</code> is &lt; 0 or if
+     *                                  <code>targetHeight</code> is &lt; 0.
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      *
-     * @see Mode
+     * @see                             Mode
      */
     public static BufferedImage resize(BufferedImage src, Mode resizeMode,
-                                       int targetWidth, int targetHeight, BufferedImageOp... ops)
+            int targetWidth, int targetHeight, BufferedImageOp... ops)
             throws IllegalArgumentException, ImagingOpException {
         return resize(src, Method.AUTOMATIC, resizeMode, targetWidth,
                 targetHeight, ops);
@@ -1524,59 +1525,59 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image that will be scaled.
-     * @param scalingMethod
-     *            The method used for scaling the image; preferring speed to
-     *            quality or a balance of both.
-     * @param resizeMode
-     *            Used to indicate how imgscalr should calculate the final
-     *            target size for the image, either fitting the image to the
-     *            given width ({@link Mode#FIT_TO_WIDTH}) or fitting the image
-     *            to the given height ({@link Mode#FIT_TO_HEIGHT}). If
-     *            {@link Mode#AUTOMATIC} is passed in, imgscalr will calculate
-     *            proportional dimensions for the scaled image based on its
-     *            orientation (landscape, square or portrait). Unless you have
-     *            very specific size requirements, most of the time you just
-     *            want to use {@link Mode#AUTOMATIC} to "do the right thing".
-     * @param targetWidth
-     *            The target width that you wish the image to have.
-     * @param targetHeight
-     *            The target height that you wish the image to have.
-     * @param ops
-     *            <code>0</code> or more optional image operations (e.g.
-     *            sharpen, blur, etc.) that can be applied to the final result
-     *            before returning the image.
+     * @param  src
+     *                                  The image that will be scaled.
+     * @param  scalingMethod
+     *                                  The method used for scaling the image; preferring speed to
+     *                                  quality or a balance of both.
+     * @param  resizeMode
+     *                                  Used to indicate how imgscalr should calculate the final
+     *                                  target size for the image, either fitting the image to the
+     *                                  given width ({@link Mode#FIT_TO_WIDTH}) or fitting the image
+     *                                  to the given height ({@link Mode#FIT_TO_HEIGHT}). If
+     *                                  {@link Mode#AUTOMATIC} is passed in, imgscalr will calculate
+     *                                  proportional dimensions for the scaled image based on its
+     *                                  orientation (landscape, square or portrait). Unless you have
+     *                                  very specific size requirements, most of the time you just
+     *                                  want to use {@link Mode#AUTOMATIC} to "do the right thing".
+     * @param  targetWidth
+     *                                  The target width that you wish the image to have.
+     * @param  targetHeight
+     *                                  The target height that you wish the image to have.
+     * @param  ops
+     *                                  <code>0</code> or more optional image operations (e.g.
+     *                                  sharpen, blur, etc.) that can be applied to the final result
+     *                                  before returning the image.
      *
-     * @return a new {@link BufferedImage} representing the scaled
-     *         <code>src</code> image.
+     * @return                          a new {@link BufferedImage} representing the scaled
+     *                                  <code>src</code> image.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>scalingMethod</code> is <code>null</code>.
+     *                                  if <code>scalingMethod</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>resizeMode</code> is <code>null</code>.
+     *                                  if <code>resizeMode</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>targetWidth</code> is &lt; 0 or if
-     *             <code>targetHeight</code> is &lt; 0.
+     *                                  if <code>targetWidth</code> is &lt; 0 or if
+     *                                  <code>targetHeight</code> is &lt; 0.
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      *
-     * @see Method
-     * @see Mode
+     * @see                             Method
+     * @see                             Mode
      */
     public static BufferedImage resize(BufferedImage src, Method scalingMethod,
-                                       Mode resizeMode, int targetWidth, int targetHeight,
-                                       BufferedImageOp... ops) throws IllegalArgumentException,
+            Mode resizeMode, int targetWidth, int targetHeight,
+            BufferedImageOp... ops) throws IllegalArgumentException,
             ImagingOpException {
         long t = -1;
         if (DEBUG)
@@ -1659,7 +1660,7 @@ public class Scalr {
                  * re-calculate a proportionally correct value based on the
                  * targetWidth.
                  */
-                targetHeight = (int)Math.ceil((float) targetWidth * ratio);
+                targetHeight = (int) Math.ceil((float) targetWidth * ratio);
 
                 if (DEBUG && originalTargetHeight != targetHeight)
                     log(1,
@@ -1769,37 +1770,37 @@ public class Scalr {
      * {@link BufferedImage#flush()} on the <code>src</code> to free up native
      * resources and make it easier for the GC to collect the unused image.
      *
-     * @param src
-     *            The image that will have the rotation applied to it.
-     * @param rotation
-     *            The rotation that will be applied to the image.
-     * @param ops
-     *            Zero or more optional image operations (e.g. sharpen, blur,
-     *            etc.) that can be applied to the final result before returning
-     *            the image.
+     * @param  src
+     *                                  The image that will have the rotation applied to it.
+     * @param  rotation
+     *                                  The rotation that will be applied to the image.
+     * @param  ops
+     *                                  Zero or more optional image operations (e.g. sharpen, blur,
+     *                                  etc.) that can be applied to the final result before returning
+     *                                  the image.
      *
-     * @return a new {@link BufferedImage} representing <code>src</code> rotated
-     *         by the given amount and any optional ops applied to it.
+     * @return                          a new {@link BufferedImage} representing <code>src</code> rotated
+     *                                  by the given amount and any optional ops applied to it.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      * @throws IllegalArgumentException
-     *             if <code>rotation</code> is <code>null</code>.
+     *                                  if <code>rotation</code> is <code>null</code>.
      * @throws ImagingOpException
-     *             if one of the given {@link BufferedImageOp}s fails to apply.
-     *             These exceptions bubble up from the inside of most of the
-     *             {@link BufferedImageOp} implementations and are explicitly
-     *             defined on the imgscalr API to make it easier for callers to
-     *             catch the exception (if they are passing along optional ops
-     *             to be applied). imgscalr takes detailed steps to avoid the
-     *             most common pitfalls that will cause {@link BufferedImageOp}s
-     *             to fail, even when using straight forward JDK-image
-     *             operations.
+     *                                  if one of the given {@link BufferedImageOp}s fails to apply.
+     *                                  These exceptions bubble up from the inside of most of the
+     *                                  {@link BufferedImageOp} implementations and are explicitly
+     *                                  defined on the imgscalr API to make it easier for callers to
+     *                                  catch the exception (if they are passing along optional ops
+     *                                  to be applied). imgscalr takes detailed steps to avoid the
+     *                                  most common pitfalls that will cause {@link BufferedImageOp}s
+     *                                  to fail, even when using straight forward JDK-image
+     *                                  operations.
      *
-     * @see Rotation
+     * @see                             Rotation
      */
     public static BufferedImage rotate(BufferedImage src, Rotation rotation,
-                                       BufferedImageOp... ops) throws IllegalArgumentException,
+            BufferedImageOp... ops) throws IllegalArgumentException,
             ImagingOpException {
         long t = -1;
         if (DEBUG)
@@ -1853,47 +1854,47 @@ public class Scalr {
         AffineTransform tx = new AffineTransform();
 
         switch (rotation) {
-            case CW_90:
-                /*
-                 * A 90 or -90 degree rotation will cause the height and width to
-                 * flip-flop from the original image to the rotated one.
-                 */
-                newWidth = src.getHeight();
-                newHeight = src.getWidth();
+        case CW_90:
+            /*
+             * A 90 or -90 degree rotation will cause the height and width to
+             * flip-flop from the original image to the rotated one.
+             */
+            newWidth = src.getHeight();
+            newHeight = src.getWidth();
 
-                // Reminder: newWidth == result.getHeight() at this point
-                tx.translate(newWidth, 0);
-                tx.quadrantRotate(1);
+            // Reminder: newWidth == result.getHeight() at this point
+            tx.translate(newWidth, 0);
+            tx.quadrantRotate(1);
 
-                break;
+            break;
 
-            case CW_270:
-                /*
-                 * A 90 or -90 degree rotation will cause the height and width to
-                 * flip-flop from the original image to the rotated one.
-                 */
-                newWidth = src.getHeight();
-                newHeight = src.getWidth();
+        case CW_270:
+            /*
+             * A 90 or -90 degree rotation will cause the height and width to
+             * flip-flop from the original image to the rotated one.
+             */
+            newWidth = src.getHeight();
+            newHeight = src.getWidth();
 
-                // Reminder: newHeight == result.getWidth() at this point
-                tx.translate(0, newHeight);
-                tx.quadrantRotate(3);
-                break;
+            // Reminder: newHeight == result.getWidth() at this point
+            tx.translate(0, newHeight);
+            tx.quadrantRotate(3);
+            break;
 
-            case CW_180:
-                tx.translate(newWidth, newHeight);
-                tx.quadrantRotate(2);
-                break;
+        case CW_180:
+            tx.translate(newWidth, newHeight);
+            tx.quadrantRotate(2);
+            break;
 
-            case FLIP_HORZ:
-                tx.translate(newWidth, 0);
-                tx.scale(-1.0, 1.0);
-                break;
+        case FLIP_HORZ:
+            tx.translate(newWidth, 0);
+            tx.scale(-1.0, 1.0);
+            break;
 
-            case FLIP_VERT:
-                tx.translate(0, newHeight);
-                tx.scale(1.0, -1.0);
-                break;
+        case FLIP_VERT:
+            tx.translate(0, newHeight);
+            tx.scale(1.0, -1.0);
+            break;
         }
 
         // Create our target image we will render the rotated result to.
@@ -1935,17 +1936,17 @@ public class Scalr {
      * spending time performing unnecessary auto-boxing calculations.
      *
      * @param depth
-     *            The indentation level of the log message.
+     *                The indentation level of the log message.
      * @param message
-     *            The log message in <a href=
-     *            "http://download.oracle.com/javase/6/docs/api/java/util/Formatter.html#syntax"
-     *            >format string syntax</a> that will be logged.
+     *                The log message in <a href=
+     *                "http://download.oracle.com/javase/6/docs/api/java/util/Formatter.html#syntax"
+     *                >format string syntax</a> that will be logged.
      * @param params
-     *            The parameters that will be swapped into all the place holders
-     *            in the original messages before being logged.
+     *                The parameters that will be swapped into all the place holders
+     *                in the original messages before being logged.
      *
-     * @see Scalr#LOG_PREFIX
-     * @see Scalr#LOG_PREFIX_PROPERTY_NAME
+     * @see           Scalr#LOG_PREFIX
+     * @see           Scalr#LOG_PREFIX_PROPERTY_NAME
      */
     protected static void log(int depth, String message, Object... params) {
         if (Scalr.DEBUG) {
@@ -1977,19 +1978,20 @@ public class Scalr {
      * Originally reported by Magnus Kvalheim from Movellas when scaling certain
      * GIF and PNG images.
      *
-     * @param src
-     *            The source image that will be analyzed to determine the most
-     *            optimal image type it can be rendered into.
+     * @param  src
+     *             The source image that will be analyzed to determine the most
+     *             optimal image type it can be rendered into.
      *
-     * @return a new {@link BufferedImage} representing the most optimal target
-     *         image type that <code>src</code> can be rendered into.
+     * @return     a new {@link BufferedImage} representing the most optimal target
+     *             image type that <code>src</code> can be rendered into.
      *
-     * @see <a
-     *      href="http://www.mail-archive.com/java2d-interest@capra.eng.sun.com/msg05621.html">How
-     *      Java2D handles poorly supported image types</a>
-     * @see <a
-     *      href="http://code.google.com/p/java-image-scaling/source/browse/trunk/src/main/java/com/mortennobel/imagescaling/MultiStepRescaleOp.java">Thanks
-     *      to Morten Nobel for implementation hint</a>
+     * @see        <a
+     *             href="http://www.mail-archive.com/java2d-interest@capra.eng.sun.com/msg05621.html">How
+     *             Java2D handles poorly supported image types</a>
+     * @see        <a
+     *             href=
+     *             "http://code.google.com/p/java-image-scaling/source/browse/trunk/src/main/java/com/mortennobel/imagescaling/MultiStepRescaleOp.java">Thanks
+     *             to Morten Nobel for implementation hint</a>
      */
     protected static BufferedImage createOptimalImage(BufferedImage src) {
         return createOptimalImage(src, src.getWidth(), src.getHeight());
@@ -2013,29 +2015,31 @@ public class Scalr {
      * Originally reported by Magnus Kvalheim from Movellas when scaling certain
      * GIF and PNG images.
      *
-     * @param src
-     *            The source image that will be analyzed to determine the most
-     *            optimal image type it can be rendered into.
-     * @param width
-     *            The width of the newly created resulting image.
-     * @param height
-     *            The height of the newly created resulting image.
+     * @param  src
+     *                                  The source image that will be analyzed to determine the most
+     *                                  optimal image type it can be rendered into.
+     * @param  width
+     *                                  The width of the newly created resulting image.
+     * @param  height
+     *                                  The height of the newly created resulting image.
      *
-     * @return a new {@link BufferedImage} representing the most optimal target
-     *         image type that <code>src</code> can be rendered into.
+     * @return                          a new {@link BufferedImage} representing the most optimal target
+     *                                  image type that <code>src</code> can be rendered into.
      *
      * @throws IllegalArgumentException
-     *             if <code>width</code> or <code>height</code> are &lt; 0.
+     *                                  if <code>width</code> or <code>height</code> are &lt; 0.
      *
-     * @see <a
-     *      href="http://www.mail-archive.com/java2d-interest@capra.eng.sun.com/msg05621.html">How
-     *      Java2D handles poorly supported image types</a>
-     * @see <a
-     *      href="http://code.google.com/p/java-image-scaling/source/browse/trunk/src/main/java/com/mortennobel/imagescaling/MultiStepRescaleOp.java">Thanks
-     *      to Morten Nobel for implementation hint</a>
+     * @see                             <a
+     *                                  href=
+     *                                  "http://www.mail-archive.com/java2d-interest@capra.eng.sun.com/msg05621.html">How
+     *                                  Java2D handles poorly supported image types</a>
+     * @see                             <a
+     *                                  href=
+     *                                  "http://code.google.com/p/java-image-scaling/source/browse/trunk/src/main/java/com/mortennobel/imagescaling/MultiStepRescaleOp.java">Thanks
+     *                                  to Morten Nobel for implementation hint</a>
      */
     protected static BufferedImage createOptimalImage(BufferedImage src,
-                                                      int width, int height) throws IllegalArgumentException {
+            int width, int height) throws IllegalArgumentException {
         if (width <= 0 || height <= 0)
             throw new IllegalArgumentException("width [" + width
                     + "] and height [" + height + "] must be > 0");
@@ -2065,16 +2069,16 @@ public class Scalr {
      * of Java2D to images being completely corrupted and just returned as solid
      * black.
      *
-     * @param src
-     *            The image to copy (if necessary) into an optimally typed
-     *            {@link BufferedImage}.
+     * @param  src
+     *                                  The image to copy (if necessary) into an optimally typed
+     *                                  {@link BufferedImage}.
      *
-     * @return a representation of the <code>src</code> image in an optimally
-     *         typed {@link BufferedImage}, otherwise <code>src</code> if it was
-     *         already of an optimal type.
+     * @return                          a representation of the <code>src</code> image in an optimally
+     *                                  typed {@link BufferedImage}, otherwise <code>src</code> if it was
+     *                                  already of an optimal type.
      *
      * @throws IllegalArgumentException
-     *             if <code>src</code> is <code>null</code>.
+     *                                  if <code>src</code> is <code>null</code>.
      */
     protected static BufferedImage copyToOptimalImage(BufferedImage src)
             throws IllegalArgumentException {
@@ -2109,21 +2113,21 @@ public class Scalr {
      * image: landscape or square images use their width and portrait-oriented
      * images use their height.
      *
-     * @param targetWidth
-     *            The target width for the scaled image.
-     * @param targetHeight
-     *            The target height for the scaled image.
-     * @param ratio
-     *            A height/width ratio used to determine the orientation of the
-     *            image so the primary dimension (width or height) can be
-     *            selected to test if it is greater than or less than a
-     *            particular threshold.
+     * @param  targetWidth
+     *                      The target width for the scaled image.
+     * @param  targetHeight
+     *                      The target height for the scaled image.
+     * @param  ratio
+     *                      A height/width ratio used to determine the orientation of the
+     *                      image so the primary dimension (width or height) can be
+     *                      selected to test if it is greater than or less than a
+     *                      particular threshold.
      *
-     * @return the fastest {@link Method} suited for scaling the image to the
-     *         specified dimensions while maintaining a good-looking result.
+     * @return              the fastest {@link Method} suited for scaling the image to the
+     *                      specified dimensions while maintaining a good-looking result.
      */
     protected static Method determineScalingMethod(int targetWidth,
-                                                   int targetHeight, float ratio) {
+            int targetHeight, float ratio) {
         // Get the primary dimension based on the orientation of the image
         int length = (ratio <= 1 ? targetWidth : targetHeight);
 
@@ -2150,22 +2154,22 @@ public class Scalr {
      * <code>Graphics2D.drawImage(...)</code> to scale the given image with the
      * given interpolation hint.
      *
-     * @param src
-     *            The image that will be scaled.
-     * @param targetWidth
-     *            The target width for the scaled image.
-     * @param targetHeight
-     *            The target height for the scaled image.
-     * @param interpolationHintValue
-     *            The {@link RenderingHints} interpolation value used to
-     *            indicate the method that {@link Graphics2D} should use when
-     *            scaling the image.
+     * @param  src
+     *                                The image that will be scaled.
+     * @param  targetWidth
+     *                                The target width for the scaled image.
+     * @param  targetHeight
+     *                                The target height for the scaled image.
+     * @param  interpolationHintValue
+     *                                The {@link RenderingHints} interpolation value used to
+     *                                indicate the method that {@link Graphics2D} should use when
+     *                                scaling the image.
      *
-     * @return the result of scaling the original <code>src</code> to the given
-     *         dimensions using the given interpolation method.
+     * @return                        the result of scaling the original <code>src</code> to the given
+     *                                dimensions using the given interpolation method.
      */
     protected static BufferedImage scaleImage(BufferedImage src,
-                                              int targetWidth, int targetHeight, Object interpolationHintValue) {
+            int targetWidth, int targetHeight, Object interpolationHintValue) {
         // Setup the rendering resources to match the source image's
         BufferedImage result = createOptimalImage(src, targetWidth,
                 targetHeight);
@@ -2195,26 +2199,26 @@ public class Scalr {
      * well as the explicit "flush()" operation on the interim BufferedImage
      * instances to avoid resource leaking.
      *
-     * @param src
-     *            The image that will be scaled.
-     * @param targetWidth
-     *            The target width for the scaled image.
-     * @param targetHeight
-     *            The target height for the scaled image.
-     * @param scalingMethod
-     *            The scaling method specified by the user (or calculated by
-     *            imgscalr) to use for this incremental scaling operation.
-     * @param interpolationHintValue
-     *            The {@link RenderingHints} interpolation value used to
-     *            indicate the method that {@link Graphics2D} should use when
-     *            scaling the image.
+     * @param  src
+     *                                The image that will be scaled.
+     * @param  targetWidth
+     *                                The target width for the scaled image.
+     * @param  targetHeight
+     *                                The target height for the scaled image.
+     * @param  scalingMethod
+     *                                The scaling method specified by the user (or calculated by
+     *                                imgscalr) to use for this incremental scaling operation.
+     * @param  interpolationHintValue
+     *                                The {@link RenderingHints} interpolation value used to
+     *                                indicate the method that {@link Graphics2D} should use when
+     *                                scaling the image.
      *
-     * @return an image scaled to the given dimensions using the given rendering
-     *         hint.
+     * @return                        an image scaled to the given dimensions using the given rendering
+     *                                hint.
      */
     protected static BufferedImage scaleImageIncrementally(BufferedImage src,
-                                                           int targetWidth, int targetHeight, Method scalingMethod,
-                                                           Object interpolationHintValue) {
+            int targetWidth, int targetHeight, Method scalingMethod,
+            Object interpolationHintValue) {
         boolean hasReassignedSrc = false;
         int incrementCount = 0;
         int currentWidth = src.getWidth();

@@ -75,7 +75,8 @@ public class Cat extends ReactivePanacheMongoEntity {
             BufferedImage _tmp = ImageIO.read(is);
             BufferedImage scaledImage = Scalr.resize(_tmp, 300); // Scale image
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            BufferedImage newImage = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(), BufferedImage.TYPE_INT_RGB);
+            BufferedImage newImage = new BufferedImage(scaledImage.getWidth(), scaledImage.getHeight(),
+                    BufferedImage.TYPE_INT_RGB);
             newImage.createGraphics().drawImage(scaledImage, 0, 0, null);
             ImageIO.write(newImage, "jpeg", baos);
             baos.flush();
@@ -87,7 +88,6 @@ public class Cat extends ReactivePanacheMongoEntity {
             e.printStackTrace();
         }
     }
-
 
     protected String getUrlSafeImage() {
         String p = "^data:image/([^;]*);base64,?";

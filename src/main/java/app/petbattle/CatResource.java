@@ -53,13 +53,9 @@ public class CatResource {
      * @return
      */
     @GET
-    @Operation(operationId = "list",
-            summary = "get all cats",
-            description = "This operation retrieves all cats from the database that are safe for work",
-            deprecated = false,
-            hidden = false)
+     @Operation(operationId = "list", summary = "get all cats", description = "This operation retrieves all cats from the database that are safe for work", deprecated = false, hidden = false)
     public Uni<List<Cat>> list() {
-        return Cat.find(ISSFF,true).list();
+        return Cat.find(ISSFF, true).list();
     }
 
     /**
@@ -69,13 +65,9 @@ public class CatResource {
      */
     @GET
     @Path("/ids")
-    @Operation(operationId = "ids",
-            summary = "get all cat ids",
-            description = "This operation retrieves all cat ids from the database",
-            deprecated = false,
-            hidden = false)
+    @Operation(operationId = "ids", summary = "get all cat ids", description = "This operation retrieves all cat ids from the database", deprecated = false, hidden = false)
     public Uni<List<CatId>> catids() {
-        return Cat.find(ISSFF,true).project(CatId.class).list();
+        return Cat.find(ISSFF, true).project(CatId.class).list();
     }
 
     /**
@@ -85,11 +77,7 @@ public class CatResource {
      */
     @GET
     @Path("/topcats")
-    @Operation(operationId = "topcats",
-            summary = "get sorted list of top 3 cats by count descending",
-            description = "This operation retrieves top 3 cats from the database sorted by count descending",
-            deprecated = false,
-            hidden = false)
+    @Operation(operationId = "topcats", summary = "get sorted list of top 3 cats by count descending", description = "This operation retrieves top 3 cats from the database sorted by count descending", deprecated = false, hidden = false)
     public Uni<List<Cat>> topcats() {
         return Cat.find(ISSFF, Sort.by("count").descending(), true).page(Page.ofSize(3)).list();
     }
@@ -97,16 +85,12 @@ public class CatResource {
     /**
      * Find cat by id
      *
-     * @param id
+     * @param  id
      * @return
      */
     @GET
     @Path("/{id}")
-    @Operation(operationId = "getById",
-            summary = "get cat by id",
-            description = "This operation retrieves a cat by id from the database",
-            deprecated = false,
-            hidden = false)
+    @Operation(operationId = "getById", summary = "get cat by id", description = "This operation retrieves a cat by id from the database", deprecated = false, hidden = false)
     public Uni<Cat> get(@PathParam("id") String id) {
         return Cat.findById(new ObjectId(id));
     }
@@ -114,27 +98,14 @@ public class CatResource {
     /**
      * Create or Update a Cat
      *
-     * @param cat
+     * @param  cat
      * @return
      */
     @POST
-    @Operation(operationId = "createOrUpdate",
-            summary = "create or update cat",
-            description = "This operation creates or updates a cat (if id supplied)",
-            deprecated = false,
-            hidden = false)
-    @APIResponses(
-            value = {
-                    @APIResponse(
-                            responseCode = "400",
-                            description = "Bad data",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class))),
-                    @APIResponse(
-                            responseCode = "201",
-                            description = "cat created or updated OK",
-                            content = @Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = Response.class)))})
+    @Operation(operationId = "createOrUpdate", summary = "create or update cat", description = "This operation creates or updates a cat (if id supplied)", deprecated = false, hidden = false)
+    @APIResponses(value = {
+            @APIResponse(responseCode = "400", description = "Bad data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
+            @APIResponse(responseCode = "201", description = "cat created or updated OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))) })
     //@Metered(unit = MetricUnits.PER_SECOND, name = "cats-uploaded", description = "Frequency of cats uploaded")
     public Response create(Cat cat) {
         cat.vote();
@@ -149,16 +120,12 @@ public class CatResource {
     /**
      * Delete a cat by id
      *
-     * @param id
+     * @param  id
      * @return
      */
     @DELETE
     @Path("/{id}")
-    @Operation(operationId = "delete",
-            summary = "delete cat by id",
-            description = "This operation deletes a cat by id",
-            deprecated = false,
-            hidden = false)
+    @Operation(operationId = "delete", summary = "delete cat by id", description = "This operation deletes a cat by id", deprecated = false, hidden = false)
     public Uni<Boolean> delete(@PathParam("id") String id) {
         return Cat.deleteById(new ObjectId(id));
     }
@@ -170,11 +137,7 @@ public class CatResource {
      */
     @GET
     @Path("/count")
-    @Operation(operationId = "count",
-            summary = "count all cats",
-            description = "This operation returns a count of all cats in the database",
-            deprecated = false,
-            hidden = false)
+    @Operation(operationId = "count", summary = "count all cats", description = "This operation returns a count of all cats in the database", deprecated = false, hidden = false)
     public Uni<Long> count() {
         return Cat.count();
     }
@@ -186,11 +149,7 @@ public class CatResource {
      */
     @DELETE
     @Path("/kittykiller")
-    @Operation(operationId = "kittykiller",
-            summary = "⚡ remove all cats ⚡",
-            description = "This operation deletes all cats from the database",
-            deprecated = false,
-            hidden = false)
+    @Operation(operationId = "kittykiller", summary = "⚡ remove all cats ⚡", description = "This operation deletes all cats from the database", deprecated = false, hidden = false)
     public Uni<Long> deleteAll() {
         return Cat.deleteAll();
     }
@@ -198,26 +157,21 @@ public class CatResource {
     /**
      * Generate a datatable used in the default webpage for this app. Handy for viewing all images without the UI
      *
-     * @param draw
-     * @param start
-     * @param length
-     * @param searchVal
+     * @param  draw
+     * @param  start
+     * @param  length
+     * @param  searchVal
      * @return
      */
     @GET
     @Path("/datatable")
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(operationId = "datatable",
-            summary = "datatable cats by id",
-            description = "This operation returns a datatable of cats - https://www.datatables.net/",
-            deprecated = false,
-            hidden = false)
+    @Operation(operationId = "datatable", summary = "datatable cats by id", description = "This operation returns a datatable of cats - https://www.datatables.net/", deprecated = false, hidden = false)
     public DataTable datatable(
             @QueryParam(value = "draw") @DefaultValue("1") int draw,
             @QueryParam(value = "start") @DefaultValue("0") int start,
             @QueryParam(value = "length") @DefaultValue("10") int length,
-            @QueryParam(value = "search[value]") String searchVal
-    ) {
+            @QueryParam(value = "search[value]") String searchVal) {
         // Begin result
         DataTable result = new DataTable();
         result.setDraw(draw);
@@ -248,15 +202,12 @@ public class CatResource {
      */
     @GET
     @Path("/loadlitter")
-    @Operation(operationId = "loadlitter",
-            summary = "preload db with cats",
-            description = "This operation adds some cats to the database if it is empty",
-            deprecated = false,
-            hidden = false)
+    @Operation(operationId = "loadlitter", summary = "preload db with cats", description = "This operation adds some cats to the database if it is empty", deprecated = false, hidden = false)
     public static void loadlitter() {
         if (Cat.count().await().indefinitely() > 0)
             return;
-        final List<String> catList = Arrays.asList("cat1.jpeg", "cat2.jpeg", "cat3.jpeg", "cat4.jpeg", "cat5.jpeg", "cat6.jpeg", "cat7.jpeg", "cat8.jpeg", "cat9.jpeg", "cat10.jpeg", "cat11.jpeg", "cat12.jpeg", "dog1.jpeg");
+        final List<String> catList = Arrays.asList("cat1.jpeg", "cat2.jpeg", "cat3.jpeg", "cat4.jpeg", "cat5.jpeg", "cat6.jpeg",
+                "cat7.jpeg", "cat8.jpeg", "cat9.jpeg", "cat10.jpeg", "cat11.jpeg", "cat12.jpeg", "dog1.jpeg");
         for (String tc : catList) {
             try {
                 InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(tc);
@@ -302,7 +253,8 @@ public class CatResource {
             NSFFRequest nsffRequest = new NSFFRequest(list);
             //log.info("{}", nsffRequest);
 
-            Uni<NSFFResponse> nsff = Uni.createFrom().item(callNsff(nsffRequest)).runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
+            Uni<NSFFResponse> nsff = Uni.createFrom().item(callNsff(nsffRequest))
+                    .runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
             nsff.onItem().invoke(nsffResponse -> {
                 log.info("{}", nsffResponse);
                 boolean isff = nsffResponse.isSff(nsffLimit);
