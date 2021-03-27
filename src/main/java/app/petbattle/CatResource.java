@@ -53,7 +53,7 @@ public class CatResource {
      * @return
      */
     @GET
-     @Operation(operationId = "list", summary = "get all cats", description = "This operation retrieves all cats from the database that are safe for work", deprecated = false, hidden = false)
+    @Operation(operationId = "list", summary = "get all cats", description = "This operation retrieves all cats from the database that are safe for work", deprecated = false, hidden = false)
     public Uni<List<Cat>> list() {
         return Cat.find(ISSFF, true).list();
     }

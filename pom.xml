@@ -114,6 +114,10 @@
                 <version>${formatter-maven-plugin.version}</version>
                 <configuration>
                     <configFile>eclipse-formatter-config.xml</configFile>
+                    <excludes>
+                        <exclude>**/*CatInstance.java</exclude>
+                        <exclude>**/*CatApplication.java</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
