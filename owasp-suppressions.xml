@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <suppress>
+        <filePath regex="true">.*\bquarkus-mutiny-1.12.2.Final.jar</filePath>
+        <cve>CVE-2013-0136</cve>
+        <cve>CVE-2018-15529</cve>
+    </suppress>
+    <suppress>
+        <filePath regex="true">.*\bmongodb-driver-core-4.1.0.jar</filePath>
+        <cve>CVE-2021-20328</cve>
+    </suppress>
+    <suppress>
+        <filePath regex="true">.*\bmutiny-context-propagation-0.13.0.jar</filePath>
+        <cve>CVE-2013-0136</cve>
+        <cve>CVE-2018-15529</cve>
+    </suppress>
+    <suppress>
+        <filePath regex="true">.*\bnetty-transport-4.1.49.Final.jar</filePath>
+        <cve>CVE-2021-21290</cve>
+        <cve>CVE-2021-21295</cve>
+    </suppress>
+    <suppress>
+        <filePath regex="true">.*\bquarkus-resteasy-mutiny-common-1.12.2.Final.jar</filePath>
+        <cve>CVE-2011-5245</cve>
+        <cve>CVE-2012-0818</cve>
+        <cve>CVE-2013-0136</cve>
+        <cve>CVE-2016-9606</cve>
+        <cve>CVE-2018-15529</cve>
+        <cve>CVE-2020-25633<cve>
+    </suppress>
+    <suppress>
+        <filePath regex="true">.*\bquarkus-resteasy-server-common-1.12.2.Final.jar</filePath>
+        <cve>CVE-2011-5245</cve>
+        <cve>CVE-2012-0818</cve>
+        <cve>CVE-2016-9606</cve>
+        <cve>CVE-2020-25633<cve>
+    </suppress>
+    <suppress>
+        <filePath regex="true">.*\bquarkus-security-1.1.3.Final.jar</filePath>
+        <cve>CVE-2017-18640</cve>
+        <cve>CVE-2019-14900</cve>
+        <cve>CVE-2020-10693</cve>
+        <cve>CVE-2020-13692</cve>
+        <cve>CVE-2020-13956</cve>
+        <cve>CVE-2020-1714</cve>
+        <cve>CVE-2020-1728</cve>
+        <cve>CVE-2020-25638</cve>
+        <cve>CVE-2020-25649</cve>
+        <cve>CVE-2020-8908</cve>
+    </suppress>
+</suppressions>

@@ -171,6 +171,9 @@
                 <configuration>
                     <format>ALL</format>
                     <outputDirectory>${dependency.check.report.dir}</outputDirectory>
+                    <suppressionFiles>
+                        <suppressionFile>owasp-suppressions.xml</suppressionFile>
+                    </suppressionFiles>
                 </configuration>
             </plugin>
             <plugin>
