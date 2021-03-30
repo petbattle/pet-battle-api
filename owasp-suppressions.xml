@@ -33,7 +33,7 @@
         <cve>CVE-2011-5245</cve>
         <cve>CVE-2012-0818</cve>
         <cve>CVE-2016-9606</cve>
-        <cve>CVE-2020-25633<cve>
+        <cve>CVE-2020-25633</cve>
     </suppress>
     <suppress>
         <filePath regex="true">.*\bquarkus-security-1.1.3.Final.jar</filePath>
