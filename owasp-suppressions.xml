@@ -10,12 +10,17 @@
         <cve>CVE-2021-20328</cve>
     </suppress>
     <suppress>
-        <filePath regex="true">.*\bmutiny-context-propagation-0.13.0.jar</filePath>
+        <filePath regex="true">.*\bmutiny-0.13.0.jar</filePath>
         <cve>CVE-2013-0136</cve>
         <cve>CVE-2018-15529</cve>
     </suppress>
     <suppress>
-        <filePath regex="true">.*\bnetty-transport-4.1.49.Final.jar</filePath>
+        <filePath regex="true">.*\bmutiny-.*\b-0.13.0.jar</filePath>
+        <cve>CVE-2013-0136</cve>
+        <cve>CVE-2018-15529</cve>
+    </suppress>
+    <suppress>
+        <filePath regex="true">.*\bnetty-.*\b-4.1.49.Final.jar</filePath>
         <cve>CVE-2021-21290</cve>
         <cve>CVE-2021-21295</cve>
     </suppress>
@@ -29,7 +34,14 @@
         <cve>CVE-2020-25633</cve>
     </suppress>
     <suppress>
-        <filePath regex="true">.*\bquarkus-resteasy-server-common-1.12.2.Final.jar</filePath>
+        <filePath regex="true">.*\bquarkus-resteasy-.*\b-1.12.2.Final.jar</filePath>
+        <cve>CVE-2011-5245</cve>
+        <cve>CVE-2012-0818</cve>
+        <cve>CVE-2016-9606</cve>
+        <cve>CVE-2020-25633</cve>
+    </suppress>
+    <suppress>
+        <filePath regex="true">.*\bquarkus-resteasy-1.12.2.Final.jar</filePath>
         <cve>CVE-2011-5245</cve>
         <cve>CVE-2012-0818</cve>
         <cve>CVE-2016-9606</cve>
