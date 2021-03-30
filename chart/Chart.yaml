@@ -4,7 +4,7 @@ description: Pet Battle API
 type: application
 version: 1.0.14
 appVersion: 1.0.0
-home: https://eformat.github.io/helm-charts
+home: https://petbattle.github.io/helm-charts
 icon: https://avatars1.githubusercontent.com/u/68044996?s=200&v=4
 kubeVersion: '>=1.11.0-0'
 keywords:
