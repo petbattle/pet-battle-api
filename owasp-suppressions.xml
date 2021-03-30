@@ -26,7 +26,7 @@
         <cve>CVE-2013-0136</cve>
         <cve>CVE-2016-9606</cve>
         <cve>CVE-2018-15529</cve>
-        <cve>CVE-2020-25633<cve>
+        <cve>CVE-2020-25633</cve>
     </suppress>
     <suppress>
         <filePath regex="true">.*\bquarkus-resteasy-server-common-1.12.2.Final.jar</filePath>
