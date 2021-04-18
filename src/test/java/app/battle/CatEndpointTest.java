@@ -1,5 +1,8 @@
 package app.battle;
 
+import io.qameta.allure.Epic;
+import io.qameta.allure.Feature;
+import io.qameta.allure.Story;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
@@ -13,11 +16,14 @@ import static org.hamcrest.CoreMatchers.*;
 
 @QuarkusTest
 @QuarkusTestResource(MongoTestResource.class)
+@Epic("Pet Battle")
+@Feature("PetEndpointTest")
 class CatEndpointTest {
 
     private static final Logger log = LoggerFactory.getLogger("CatEndpointTest");
 
     @Test
+    @Story("Test get all pets")
     void testCats() {
         RestAssured.given()
                 .log().all()
@@ -33,6 +39,7 @@ class CatEndpointTest {
     }
 
     @Test
+    @Story("Test get all pet id's")
     void testCatIds() {
         RestAssured.given()
                 .log().all()
@@ -46,6 +53,7 @@ class CatEndpointTest {
     }
 
     @Test
+    @Story("Test top 3 pets")
     void testTopCats() {
         RestAssured.given()
                 .log().all()
@@ -57,6 +65,7 @@ class CatEndpointTest {
     }
 
     @Test
+    @Story("Test get pet by id")
     void testCatById() {
         Response response = RestAssured.given()
                 .log().all()
@@ -80,6 +89,7 @@ class CatEndpointTest {
     }
 
     @Test
+    @Story("Test pet count")
     void testCatCount() {
         RestAssured.given()
                 .log().all()
@@ -114,6 +124,7 @@ class CatEndpointTest {
     }
 
     @Test
+    @Story("Test pet create")
     void testCatCreate() {
         CatInstance catInstance = new CatInstance();
 
@@ -129,6 +140,7 @@ class CatEndpointTest {
     }
 
     @Test
+    @Story("Test pet delete")
     void testCatDelete() {
         Response response = RestAssured.given()
                 .log().all()
@@ -152,6 +164,7 @@ class CatEndpointTest {
     }
 
     @Test
+    @Story("Test pet datatable")
     void testDatatable() {
         RestAssured.given()
                 .log().all()
