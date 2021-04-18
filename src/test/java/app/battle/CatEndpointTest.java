@@ -20,8 +20,10 @@ class CatEndpointTest {
     @Test
     void testCats() {
         RestAssured.given()
+                .log().all()
                 .when().get("/cats")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body("id", everyItem(is(notNullValue())))
                 .body("image", everyItem(is(notNullValue())))
@@ -33,8 +35,10 @@ class CatEndpointTest {
     @Test
     void testCatIds() {
         RestAssured.given()
+                .log().all()
                 .when().get("/cats/ids")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body("id", everyItem(is(notNullValue())))
                 .body("vote", everyItem(is(notNullValue())))
@@ -44,8 +48,10 @@ class CatEndpointTest {
     @Test
     void testTopCats() {
         RestAssured.given()
+                .log().all()
                 .when().get("/cats/topcats")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body("size()", is(3));
     }
@@ -53,8 +59,10 @@ class CatEndpointTest {
     @Test
     void testCatById() {
         Response response = RestAssured.given()
+                .log().all()
                 .when().get("/cats/ids")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body("[0]", is(notNullValue()))
                 .extract()
@@ -63,8 +71,10 @@ class CatEndpointTest {
         final String id = response.path("[0].id");
 
         RestAssured.given()
+                .log().all()
                 .when().get("/cats/" + id)
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body("id", is(id));
     }
@@ -72,25 +82,33 @@ class CatEndpointTest {
     @Test
     void testCatCount() {
         RestAssured.given()
+                .log().all()
                 .when().delete("/cats/kittykiller")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body(is(notNullValue()));
 
         RestAssured.given()
+                .log().all()
                 .when().get("/cats/count")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body(is("0"));
 
         RestAssured.given()
+                .log().all()
                 .when().get("/cats/loadlitter")
                 .then()
+                .log().all()
                 .statusCode(204);
 
         RestAssured.given()
+                .log().all()
                 .when().get("/cats/count")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body(is("13"));
     }
@@ -102,8 +120,10 @@ class CatEndpointTest {
         RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(catInstance.cat)
+                .log().all()
                 .when().post("/cats")
                 .then()
+                .log().all()
                 .statusCode(201)
                 .body(is(notNullValue()));
     }
@@ -111,8 +131,10 @@ class CatEndpointTest {
     @Test
     void testCatDelete() {
         Response response = RestAssured.given()
+                .log().all()
                 .when().get("/cats/ids")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body("[0]", is(notNullValue()))
                 .extract()
@@ -121,8 +143,10 @@ class CatEndpointTest {
         final String id = response.path("[0].id");
 
         RestAssured.given()
+                .log().all()
                 .when().delete("/cats/" + id)
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body(is(notNullValue()));
     }
@@ -130,8 +154,10 @@ class CatEndpointTest {
     @Test
     void testDatatable() {
         RestAssured.given()
+                .log().all()
                 .when().get("/cats/datatable")
                 .then()
+                .log().all()
                 .statusCode(200)
                 .body("size()", is(4));
     }

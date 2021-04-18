@@ -2,7 +2,6 @@ package app.battle;
 
 import app.petbattle.Cat;
 import io.quarkus.panache.mock.PanacheMock;
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.smallrye.mutiny.Uni;
 import org.junit.jupiter.api.Assertions;
