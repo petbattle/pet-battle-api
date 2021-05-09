@@ -19,7 +19,7 @@
         <quarkus.platform.group-id>io.quarkus</quarkus.platform.group-id>
         <surefire-plugin.version>2.22.1</surefire-plugin.version>
         <jacoco.version>0.8.6</jacoco.version>
-        <dependency-check-maven.version>6.0.2</dependency-check-maven.version>
+        <dependency-check-maven.version>6.1.6</dependency-check-maven.version>
         <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
         <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
