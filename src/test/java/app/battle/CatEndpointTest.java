@@ -109,7 +109,7 @@ class CatEndpointTest {
 
         RestAssured.given()
                 .log().all()
-                .when().get("/cats/loadlitter")
+                .when().get("/cats/load/litter")
                 .then()
                 .log().all()
                 .statusCode(204);

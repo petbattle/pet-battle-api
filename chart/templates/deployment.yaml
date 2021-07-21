@@ -104,7 +104,7 @@ spec:
           name: {{ include "pet-battle-api.name" . }}
           livenessProbe:
             httpGet:
-              path: /health/live
+              path: /q/health/live
               port: 8080
               scheme: HTTP
             timeoutSeconds: 1
@@ -118,7 +118,7 @@ spec:
               protocol: TCP
           readinessProbe:
             httpGet:
-              path: /health/ready
+              path: /q/health/ready
               port: 8080
               scheme: HTTP
             timeoutSeconds: 1

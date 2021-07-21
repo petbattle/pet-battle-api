@@ -6,6 +6,7 @@ import app.petbattle.rest.client.NSFFService;
 import io.quarkus.mongodb.panache.reactive.ReactivePanacheQuery;
 import io.quarkus.panache.common.Page;
 import io.quarkus.panache.common.Sort;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
 import org.bson.types.ObjectId;
@@ -102,6 +103,7 @@ public class CatResource {
      * @return
      */
     @POST
+    @Blocking
     @Operation(operationId = "createOrUpdate", summary = "create or update cat", description = "This operation creates or updates a cat (if id supplied)", deprecated = false, hidden = false)
     @APIResponses(value = {
             @APIResponse(responseCode = "400", description = "Bad data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
@@ -164,6 +166,7 @@ public class CatResource {
      * @return
      */
     @GET
+    @Blocking
     @Path("/datatable")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(operationId = "datatable", summary = "datatable cats by id", description = "This operation returns a datatable of cats - https://www.datatables.net/", deprecated = false, hidden = false)
@@ -201,9 +204,10 @@ public class CatResource {
      * Statically load images in resources folder at startup
      */
     @GET
-    @Path("/loadlitter")
+    @Blocking
+    @Path("/load/litter")
     @Operation(operationId = "loadlitter", summary = "preload db with cats", description = "This operation adds some cats to the database if it is empty", deprecated = false, hidden = false)
-    public static void loadlitter() {
+    public void loadlitter() {
         if (Cat.count().await().indefinitely() > 0)
             return;
         final List<String> catList = Arrays.asList("cat1.jpeg", "cat2.jpeg", "cat3.jpeg", "cat4.jpeg", "cat5.jpeg", "cat6.jpeg",

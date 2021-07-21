@@ -10,7 +10,8 @@ import javax.enterprise.event.Observes;
 public class CatLifecyle {
 
     void onStart(@Observes StartupEvent ev) {
-        CatResource.loadlitter();
+        CatResource catResource = new CatResource();
+        catResource.loadlitter();
     }
 
     void onStop(@Observes ShutdownEvent ev) {
