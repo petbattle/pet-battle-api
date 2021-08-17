@@ -20,11 +20,10 @@
         <surefire-plugin.version>2.22.1</surefire-plugin.version>
         <jacoco.version>0.8.6</jacoco.version>
         <dependency-check-maven.version>6.1.6</dependency-check-maven.version>
-        <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
         <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/jacoco-report/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <sonar.jacoco.reportsPaths>${project.build.directory}/jacoco.exec</sonar.jacoco.reportsPaths>
         <aspectj.version>1.9.6</aspectj.version>
         <allure-maven.version>2.10.0</allure-maven.version>
@@ -103,6 +102,11 @@
             <groupId>io.qameta.allure</groupId>
             <artifactId>allure-junit5</artifactId>
             <version>2.13.8</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jacoco</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -280,19 +284,7 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <destFile>${sonar.jacoco.reportsPaths}</destFile>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <dataFile>${sonar.jacoco.reportsPaths}</dataFile>
-                            <outputEncoding>UTF-8</outputEncoding>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <exclClassLoaders>*QuarkusClassLoader</exclClassLoaders>
                         </configuration>
                     </execution>
                 </executions>
