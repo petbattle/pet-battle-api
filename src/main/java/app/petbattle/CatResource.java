@@ -55,8 +55,26 @@ public class CatResource {
      */
     @GET
     @Operation(operationId = "list", summary = "get all cats", description = "This operation retrieves all cats from the database that are safe for work", deprecated = false, hidden = false)
-    public Uni<List<Cat>> list() {
-        return Cat.find(ISSFF, true).list();
+    public Response list(@QueryParam(value = "failMe") int code) throws Exception {
+        // failMe is for sre testing
+        switch (code) {
+            case 400:
+            case 401:
+            case 403:
+            case 404:
+            case 405:
+            case 408:
+            case 429:
+            case 500:
+            case 501:
+            case 502:
+            case 503:
+            case 504:
+                return Response.status(code).build();
+            default:
+                break;
+        }
+        return Response.ok().entity(Cat.find(ISSFF, true).list().await().indefinitely()).build();
     }
 
     /**
