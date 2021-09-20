@@ -58,21 +58,21 @@ public class CatResource {
     public Response list(@QueryParam(value = "failMe") int code) throws Exception {
         // failMe is for sre testing
         switch (code) {
-            case 400:
-            case 401:
-            case 403:
-            case 404:
-            case 405:
-            case 408:
-            case 429:
-            case 500:
-            case 501:
-            case 502:
-            case 503:
-            case 504:
-                return Response.status(code).build();
-            default:
-                break;
+        case 400:
+        case 401:
+        case 403:
+        case 404:
+        case 405:
+        case 408:
+        case 429:
+        case 500:
+        case 501:
+        case 502:
+        case 503:
+        case 504:
+            return Response.status(code).build();
+        default:
+            break;
         }
         return Response.ok().entity(Cat.find(ISSFF, true).list().await().indefinitely()).build();
     }
@@ -104,7 +104,7 @@ public class CatResource {
     /**
      * Find cat by id
      *
-     * @param id
+     * @param  id
      * @return
      */
     @GET
@@ -117,7 +117,7 @@ public class CatResource {
     /**
      * Create or Update a Cat
      *
-     * @param cat
+     * @param  cat
      * @return
      */
     @POST
@@ -125,7 +125,7 @@ public class CatResource {
     @Operation(operationId = "createOrUpdate", summary = "create or update cat", description = "This operation creates or updates a cat (if id supplied)", deprecated = false, hidden = false)
     @APIResponses(value = {
             @APIResponse(responseCode = "400", description = "Bad data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))),
-            @APIResponse(responseCode = "201", description = "cat created or updated OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class)))})
+            @APIResponse(responseCode = "201", description = "cat created or updated OK", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Response.class))) })
     //@Metered(unit = MetricUnits.PER_SECOND, name = "cats-uploaded", description = "Frequency of cats uploaded")
     public Response create(Cat cat) {
         cat.vote();
@@ -140,7 +140,7 @@ public class CatResource {
     /**
      * Delete a cat by id
      *
-     * @param id
+     * @param  id
      * @return
      */
     @DELETE
@@ -177,10 +177,10 @@ public class CatResource {
     /**
      * Generate a datatable used in the default webpage for this app. Handy for viewing all images without the UI
      *
-     * @param draw
-     * @param start
-     * @param length
-     * @param searchVal
+     * @param  draw
+     * @param  start
+     * @param  length
+     * @param  searchVal
      * @return
      */
     @GET

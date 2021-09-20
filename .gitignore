@@ -40,3 +40,4 @@ Chart.lock
 .factorypath
 .allure
 allure-results
+ajcore.*
