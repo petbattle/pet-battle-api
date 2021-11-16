@@ -8,8 +8,8 @@
     <version>1.1.0</version>
     <properties>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <maven.project.info.reports.plugin>3.1.1</maven.project.info.reports.plugin>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -20,10 +20,12 @@
         <surefire-plugin.version>2.22.1</surefire-plugin.version>
         <jacoco.version>0.8.8-SNAPSHOT</jacoco.version>
         <dependency-check-maven.version>6.1.6</dependency-check-maven.version>
-        <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
+        <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/dependency-check-report.html
+        </sonar.dependencyCheck.htmlReportPath>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/jacoco-report/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/jacoco-report/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
         <aspectj.version>1.9.7</aspectj.version>
         <allure-maven.version>2.10.0</allure-maven.version>
         <formatter-maven-plugin.version>2.11.0</formatter-maven-plugin.version>
@@ -31,6 +33,13 @@
         <checkstyle-maven-plugin.version>3.1.2</checkstyle-maven-plugin.version>
         <checkstyle.version>8.41</checkstyle.version>
     </properties>
+    <repositories>
+        <repository>
+            <id>sonatype</id>
+            <name>sonatype</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+    </repositories>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -224,7 +233,8 @@
                 <configuration>
                     <testFailureIgnore>false</testFailureIgnore>
                     <argLine>
-                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar" ${argLine}
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                        ${argLine}
                     </argLine>
                     <properties>
                         <property>

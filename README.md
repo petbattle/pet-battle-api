@@ -27,7 +27,7 @@ java -Dquarkus-profile=dev -jar ./target/pet-battle-api-1.0-SNAPSHOT-runner
 ```
 OR
 ```
-podman run -e QUARKUS_PROFILE=dev -e quarkus.mongodb.connection-string=mongodb://localhost:27017 quay.io/eformat/pet-battle-api:latest
+podman run -e QUARKUS_PROFILE=dev -e quarkus.mongodb.connection-string=mongodb://localhost:27017 quay.io/petbattle/pet-battle-api:latest
 ```
 
 See Makefile for container targets:
@@ -52,8 +52,8 @@ helm template --dependency-update cats -f chart/values.yaml chart | oc apply -f-
 
 OR from deployed chart
 ```
-helm repo add https://eformat.github.io/helm-charts
-helm install pet-battle-api https://eformat.github.io/helm-charts/pet-battle-api-0.0.2.tgz 
+helm repo add https://petbattle.github.io/helm-charts
+helm install pet-battle-api https://petbattle.github.io/helm-charts/pet-battle-api-1.1.0.tgz 
 ```
 
 `With mongodb replicaset` (TODO: replicaset commented out for now but works ok)
@@ -78,7 +78,7 @@ oc apply -f src/main/kubernetes/install.yaml
 ```bash
 oc new-project cats
 oc new-app mongodb-persistent -p MONGODB_DATABASE=cats
-oc new-build --name=cats quay.io/quarkus/ubi-quarkus-native-s2i:20.0.0-java8~https://github.com/eformat/pet-battle-api
+oc new-build --name=cats quay.io/quarkus/ubi-quarkus-native-s2i:21.3.0-java17~https://github.com/petbattle/pet-battle-api
 oc new-app cats
 oc expose svc cats
 oc set env --from=secret/mongodb dc/cats
