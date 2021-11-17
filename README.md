@@ -125,6 +125,11 @@ Test
 mvn test
 ```
 
+View test coverage report
+```bash
+xdg-open target/jacoco-report/index.html
+```
+
 Test manually
 ```bash
 export CATID=5e69e003a765314bf6d04281
