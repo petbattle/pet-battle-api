@@ -75,23 +75,51 @@ oc apply -f src/main/kubernetes/install.yaml
 ```
 
 ### Build and Deploy on OpenShift using s2i.
+
+Deploy Mongo
 ```bash
 oc new-project cats
+oc apply -n openshift -f mongodb-persistent.yml
 oc new-app mongodb-persistent -p MONGODB_DATABASE=cats
-oc new-build --name=cats quay.io/quarkus/ubi-quarkus-native-s2i:21.3.0-java17~https://github.com/petbattle/pet-battle-api
-oc new-app cats
-oc expose svc cats
-oc set env --from=secret/mongodb dc/cats
 ```
 
-Note: the latest quarkus nightly build is available here https://oss.sonatype.org/content/repositories/snapshots - you may want to use a released version
+We are going to use a 2-step build process - see [here](https://eformat.github.io/ubi-mvn-builder) for more details.
+
+Create the builder image to build our code.
 ```bash
-<quarkus.version>999-SNAPSHOT</quarkus.version>
+oc new-build --name=cats-build \
+  quay.io/eformat/ubi-mvn-builder:latest~https://github.com/petbattle/pet-battle-api \
+  -e MAVEN_BUILD_OPTS="-Dquarkus.package.type=fast-jar -DskipTests" \
+  -e MAVEN_CLEAR_REPO="true"
 ```
 
-If local nexus deployed to OpenShift
+(optional) If local nexus deployed to OpenShift, use this env.var
 ```bash
 oc set env bc/cats MAVEN_MIRROR_URL=http://nexus.nexus.svc.cluster.local:8081/repository/maven-public/
+```
+
+Once complete, create the runtime image.
+```bash
+oc new-build --name=cats \
+  --build-arg BUILD_IMAGE=image-registry.openshift-image-registry.svc:5000/$(oc project -q)/cats-build:latest \
+  --strategy docker --dockerfile - < Dockerfile.s2i
+```
+
+Set triggers in case we change the build image:
+```bash
+oc set triggers bc/cats --from-image=$(oc project -q)/cats-build:latest
+```
+
+Deploy the app:
+```bash
+oc new-app cats \
+  -e DATABASE_SERVICE_HOST=mongodb \
+  -e DATABASE_SERVICE_PORT=27017 \
+  -e DATABASE_NAME=cats
+oc set env --from=secret/mongodb deployments/cats
+oc expose svc/cats
+oc patch route/cats \
+      --type=json -p '[{"op":"add", "path":"/spec/tls", "value":{"termination":"edge","insecureEdgeTerminationPolicy":"Redirect"}}]'
 ```
 
 ### Swagger available at
