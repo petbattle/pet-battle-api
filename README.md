@@ -88,7 +88,7 @@ oc new-build --name=cats-build \
 
 (optional) If local nexus deployed to OpenShift, use this env.var
 ```bash
-oc set env bc/cats MAVEN_MIRROR_URL=http://nexus.nexus.svc.cluster.local:8081/repository/maven-public/
+oc set env bc/cats-build MAVEN_MIRROR_URL=http://nexus.nexus.svc.cluster.local:8081/repository/maven-public/
 ```
 
 Once complete, create the runtime image.
