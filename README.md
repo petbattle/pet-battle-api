@@ -67,13 +67,6 @@ SCCUID=${SCC%%/*}
 helm template foobar -f chart/values.yaml --set mongodb-replicaset.securityContext.fsGroup=$SCCUID --set mongodb-replicaset.securityContext.runAsUser=$SCCUID --set mongodb-replicaset.persistentVolume.storageClass=gp2 --set mongodb-replicaset.persistentVolume.size=1Gi chart | oc apply -f-
 ```
 
-### Deploy mongodb and prebuilt application on OpenShift
-```bash
-oc new-project cats
-oc new-app mongodb-persistent -p MONGODB_DATABASE=cats
-oc apply -f src/main/kubernetes/install.yaml
-```
-
 ### Build and Deploy on OpenShift using s2i.
 
 Deploy Mongo
