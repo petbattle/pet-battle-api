@@ -122,6 +122,11 @@ http://cats-cats.apps.<cluster-domain>/swagger-ui
 
 Test
 ```bash
+mvn test
+```
+
+Test manually
+```bash
 export CATID=5e69e003a765314bf6d04281
 export HOST=0.0.0.0:8080
 
