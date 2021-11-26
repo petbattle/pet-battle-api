@@ -35,7 +35,7 @@ mongodbTemplate:
     adminPassword: password
     user: user
     password: password
-  image: mongodb:3.6
+  image: registry.access.redhat.com/rhscl/mongodb-36-rhel7:latest
   storage: 1Gi
 # mongodb subchart values (not used at present)
 mongodb-replicaset:

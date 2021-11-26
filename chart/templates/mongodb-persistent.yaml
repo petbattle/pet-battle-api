@@ -51,6 +51,26 @@ spec:
     requests:
       storage: {{ .Values.mongodbTemplate.storage | quote }}
 ---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: {{ include "mongodb.fullname" . }}
+  creationTimestamp: null
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - name: latest
+      annotations: null
+      from:
+        kind: DockerImage
+        name: {{ .Values.mongodbTemplate.image | quote }}
+      generation: 1
+      importPolicy:
+        insecure: true
+      referencePolicy:
+        type: Source
+---
 apiVersion: apps.openshift.io/v1
 kind: DeploymentConfig
 metadata:
@@ -136,8 +156,7 @@ spec:
           - mongodb
         from:
           kind: ImageStreamTag
-          name: {{ .Values.mongodbTemplate.image | quote }}
-          namespace: openshift
+          name: {{ include "mongodb.fullname" . }}:latest
         lastTriggeredImage: ""
       type: ImageChange
     - type: ConfigChange
