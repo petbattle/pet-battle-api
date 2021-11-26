@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: template.openshift.io/v1
 kind: Template
 labels:
   template: mongodb-persistent-template
@@ -74,6 +74,25 @@ objects:
     resources:
       requests:
         storage: ${VOLUME_CAPACITY_DB}
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    name: ${MONGODB_IMAGE}
+    creationTimestamp: null
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+      - name: latest
+        annotations: null
+        from:
+          kind: DockerImage
+          name: "registry.access.redhat.com/rhscl/mongodb-36-rhel7:${MONGODB_VERSION}"
+        generation: 1
+        importPolicy:
+          insecure: true
+        referencePolicy:
+          type: Source
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -156,7 +175,6 @@ objects:
         from:
           kind: ImageStreamTag
           name: ${MONGODB_IMAGE}:${MONGODB_VERSION}
-          namespace: ${NAMESPACE}
         lastTriggeredImage: ""
       type: ImageChange
     - type: ConfigChange
@@ -167,10 +185,6 @@ parameters:
   name: MEMORY_LIMIT
   required: true
   value: 512Mi
-- description: The OpenShift Namespace where the ImageStream resides.
-  displayName: Namespace
-  name: NAMESPACE
-  value: openshift
 - description: The name of the OpenShift Service exposed for the database.
   displayName: Database Service Name
   name: DATABASE_SERVICE_NAME
@@ -212,9 +226,9 @@ parameters:
 - description: The name of the MongoDB imagestream to be used
   displayName: Name of MongoDB Image
   name: MONGODB_IMAGE
-  value: mongodb
-- description: Version of MongoDB image to be used (3.4.x or latest).
+  value:  mongodb-36-rhel7
+- description: Version of MongoDB image to be used
   displayName: Version of MongoDB Image
   name: MONGODB_VERSION
   required: true
-  value: "3.6"
+  value: "latest"
