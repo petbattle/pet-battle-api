@@ -84,11 +84,9 @@ objects:
       local: false
     tags:
       - name: latest
-        annotations: null
         from:
           kind: DockerImage
           name: "registry.access.redhat.com/rhscl/mongodb-36-rhel7:${MONGODB_VERSION}"
-        generation: 1
         importPolicy:
           insecure: true
         referencePolicy:

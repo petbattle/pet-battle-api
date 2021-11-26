@@ -61,11 +61,9 @@ spec:
     local: false
   tags:
     - name: latest
-      annotations: null
       from:
         kind: DockerImage
         name: {{ .Values.mongodbTemplate.image | quote }}
-      generation: 1
       importPolicy:
         insecure: true
       referencePolicy:
