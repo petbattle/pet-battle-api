@@ -1,7 +1,6 @@
 package app.petbattle;
 
 import app.petbattle.utils.Scalr;
-import io.quarkus.mongodb.panache.MongoEntity;
 import io.quarkus.mongodb.panache.reactive.ReactivePanacheMongoEntity;
 
 import javax.imageio.ImageIO;
@@ -12,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 
-@MongoEntity(collection = "cats")
 public class Cat extends ReactivePanacheMongoEntity {
 
     public Integer count;

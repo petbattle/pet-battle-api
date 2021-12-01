@@ -1,6 +1,6 @@
 package app.petbattle;
 
-import io.quarkus.mongodb.panache.ProjectionFor;
+import io.quarkus.mongodb.panache.common.ProjectionFor;
 import org.bson.types.ObjectId;
 
 @ProjectionFor(Cat.class)
