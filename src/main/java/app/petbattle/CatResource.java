@@ -247,6 +247,7 @@ public class CatResource {
                 cat.persistOrUpdate().await().indefinitely();
 
             } catch (IOException e) {
+                // Remove the stack trace - https://rht-labs.com/tech-exercise/#/3-revenge-of-the-automated-testing/4b-tekton
                 e.printStackTrace();
             }
         }
