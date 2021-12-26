@@ -54,48 +54,48 @@ spec:
             - name: NSFF_LIMIT
               value: {{ .Values.nsff.limit | default 0.6 | quote }}
 {{- if .Values.mongodbTemplate.enabled }}
-            - name: DATABASE_ADMIN_PASSWORD
+            - name: MONGODB_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: database-admin-password
                   name: {{ include "mongodb.fullname" . }}
-            - name: DATABASE_NAME
+            - name: MONGODB_DATABASE
               valueFrom:
                 secretKeyRef:
                   key: database-name
                   name: {{ include "mongodb.fullname" . }}
-            - name: DATABASE_PASSWORD
+            - name: MONGODB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: database-password
                   name: {{ include "mongodb.fullname" . }}
-            - name: DATABASE_USER
+            - name: MONGODB_USER
               valueFrom:
                 secretKeyRef:
                   key: database-user
                   name: {{ include "mongodb.fullname" . }}
-            - name: DATABASE_SERVICE_HOST
+            - name: MONGODB_SERVICE_HOST
               value: {{ include "mongodb.fullname" . }}
-            - name: DATABASE_SERVICE_PORT
+            - name: MONGODB_SERVICE_PORT
               value: '27017'
 {{- else }}
-            - name: DATABASE_ADMIN_PASSWORD
+            - name: MONGODB_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: password
                   name: cats-mongodb-replicaset-admin
-            - name: DATABASE_NAME
+            - name: MONGODB_DATABASE
               value: "test"
-            - name: DATABASE_SERVICE_HOST
+            - name: MONGODB_SERVICE_HOST
               value: {{ printf "%s-%s" "pet-battle-api" "mongodb-replicaset" | quote }}
-            - name: DATABSE_SERVICE_PORT
+            - name: MONGODB_SERVICE_PORT
               value: '27017'
-            - name: DATABASE_PASSWORD
+            - name: MONGODB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: password
                   name: cats-mongodb-replicaset-admin
-            - name: DATABASE_USER
+            - name: MONGODB_USER
               valueFrom:
                 secretKeyRef:
                   key: user
