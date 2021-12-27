@@ -26,6 +26,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.*;
 
@@ -47,6 +48,8 @@ public class CatResource {
 
     @ConfigProperty(name = "app.petbattle.nsff.limit", defaultValue = "0.6")
     Double nsffLimit = 0.6;
+
+    private Random rand = new SecureRandom();
 
     /**
      * List all Cats including images
@@ -230,7 +233,6 @@ public class CatResource {
             return;
         final List<String> catList = Arrays.asList("cat1.jpeg", "cat2.jpeg", "cat3.jpeg", "cat4.jpeg", "cat5.jpeg", "cat6.jpeg",
                 "cat7.jpeg", "cat8.jpeg", "cat9.jpeg", "cat10.jpeg", "cat11.jpeg", "cat12.jpeg", "dog1.jpeg");
-        Random rand = new Random();
         for (String tc : catList) {
             try {
                 InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(tc);
