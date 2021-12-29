@@ -44,3 +44,8 @@ podman-run:
 
 podman-stop:
 	podman-compose -f docker-compose.yml down
+
+# JReleaser - for jar file loading into openshift
+release:
+	mvn clean package -Dquarkus.package.type=uber-jar -DskipTests
+	mvn -Prelease jreleaser:full-release
