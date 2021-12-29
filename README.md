@@ -67,6 +67,24 @@ SCCUID=${SCC%%/*}
 helm template foobar -f chart/values.yaml --set mongodb-replicaset.securityContext.fsGroup=$SCCUID --set mongodb-replicaset.securityContext.runAsUser=$SCCUID --set mongodb-replicaset.persistentVolume.storageClass=gp2 --set mongodb-replicaset.persistentVolume.size=1Gi chart | oc apply -f-
 ```
 
+### Deploy OpenShift using JAR
+
+OpenShift has a cool feature where you can easily deploy an appl in development using [a JAR file](http://openshift.github.io/openshift-origin-design/designs/developer/4.8/upload-jar-file/)
+
+There are two artifacts you will need in the [Release](https://github.com/petbattle/pet-battle-api/releases) folder
+
+1. From `Developer` perspective `Add` YAML file - `mongodb-persistent.yml` - drag-n-drop this to create the MongoDB template.
+2. Instantiate the mongo database instance, use `catuser`, `password` and `cats` as the database parameters:
+![images/drag-n-drop-mongo.png](images/drag-n-drop-mongo.png)
+3. Import JDK 17 image builder if it does not exist:
+```bash
+oc -n openshift import-image java:openjdk-17 --from=registry.access.redhat.com/ubi8/openjdk-17:1.10-5 --confirm
+oc -n openshift annotate istag java:openjdk-17 supports='java:17,java' tags='builder,java,openjdk'
+```
+4. From `Topology` view drag-n-drop the `pet-battle-api-<version>-runner.jar` to build and create the app deployment. Use the `openjdk-17` Builder image version drop down imported in (3)
+![images/drag-n-drop-app.png](images/drag-n-drop-app.png)
+5. Wait for application to deploy and try it out.
+
 ### Build and Deploy on OpenShift using s2i.
 
 Deploy Mongo
@@ -171,6 +189,6 @@ oc delete dc,svc,route,is -lapp=cats
 ```
 OR
 ```git exclude
-helm uninstall pet-battle-api
+helm delete pet-battle-api
 ```
 
