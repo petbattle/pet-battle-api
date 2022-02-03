@@ -45,9 +45,11 @@ jobs:
       #    and modify them (or add more) to build your code if your project
       #    uses a compiled language
 
+      - uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
       - run: |
-          sudo apt-get install openjdk-17-jdk
-          export JAVA_HOME=$(/usr/libexec/java_home -v 17)
           make compile
 
       - name: Perform CodeQL Analysis
