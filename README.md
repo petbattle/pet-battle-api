@@ -73,7 +73,7 @@ SCCUID=${SCC%%/*}
 helm template foobar -f chart/values.yaml --set mongodb-replicaset.securityContext.fsGroup=$SCCUID --set mongodb-replicaset.securityContext.runAsUser=$SCCUID --set mongodb-replicaset.persistentVolume.storageClass=gp2 --set mongodb-replicaset.persistentVolume.size=1Gi chart | oc apply -f-
 ```
 
-### Deploy OpenShift using JAR
+### Deploy to OpenShift using a JAR
 
 OpenShift has a cool feature where you can easily deploy an appl in development using [a JAR file](http://openshift.github.io/openshift-origin-design/designs/developer/4.8/upload-jar-file/)
 
