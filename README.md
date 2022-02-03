@@ -30,6 +30,12 @@ OR
 podman run -e QUARKUS_PROFILE=dev -e quarkus.mongodb.connection-string=mongodb://localhost:27017 quay.io/petbattle/pet-battle-api:latest
 ```
 
+OR we can also run a podman `pod` as opposed to single containers:
+```
+podman run -d --pod new:pb -p 27017:27017 -p8080:8080 -p8443:8443 mongo:latest
+podman run -d --pod pb -e quarkus.mongodb.connection-string=mongodb://localhost:27017 quay.io/eformat/pet-battle-api:latest
+```
+
 See Makefile for container targets:
 ```
 make podman-build
