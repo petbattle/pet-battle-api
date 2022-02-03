@@ -15,6 +15,10 @@ IMG := $(REPOSITORY):latest
 compile:
 	mvn -s settings.xml clean package -DskipTests
 
+# test
+test:
+	mvn -s settings.xml clean test
+
 # Podman Login
 podman-login:
 	@podman login -u $(DOCKER_USER) -p $(DOCKER_PASSWORD) $(REGISTRY)
