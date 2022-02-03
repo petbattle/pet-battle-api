@@ -36,7 +36,7 @@ jobs:
           builder_image: 'registry.access.redhat.com/ubi8/openjdk-17:latest'
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.TAGS }}
-          log_level: 5
+          log_level: 2
           include_git: true
 
       # Build runtime image from s2i image output
