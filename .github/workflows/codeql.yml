@@ -46,6 +46,7 @@ jobs:
       #    uses a compiled language
 
       - run: |
+          sudo apt-get install openjdk-17-jdk
           make compile
 
       - name: Perform CodeQL Analysis
