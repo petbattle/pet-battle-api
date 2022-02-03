@@ -1,4 +1,5 @@
 [![Build containers](https://github.com/petbattle/pet-battle-api/actions/workflows/build_container.yaml/badge.svg?branch=master)](https://github.com/petbattle/pet-battle-api/actions/workflows/build_container.yaml)
+[![Code scanning - action](https://github.com/petbattle/pet-battle-api/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/petbattle/pet-battle-api/actions/workflows/codeql.yml)
 
 # pet-battle-api
 
