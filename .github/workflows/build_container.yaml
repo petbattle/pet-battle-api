@@ -53,7 +53,7 @@ jobs:
         uses: redhat-actions/podman-login@v1
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
+          username: ${{ secrets.QUAY_USER }}
           password: ${{ secrets.QUAY_TOKEN }}     # quay.io
       #   password: ${{ secrets.GITHUB_TOKEN }}   # ghcr.io
 
