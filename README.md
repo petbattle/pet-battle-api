@@ -86,7 +86,7 @@ There are two artifacts you will need in the [Release](https://github.com/petbat
 ![images/drag-n-drop-mongo.png](images/drag-n-drop-mongo.png)
 3. Import JDK 17 image builder if it does not exist:
 ```bash
-oc -n openshift import-image java:openjdk-17 --from=registry.access.redhat.com/ubi8/openjdk-17:1.10-5 --confirm
+oc -n openshift import-image java:openjdk-17 --from=registry.access.redhat.com/ubi8/openjdk-17:latest --confirm
 oc -n openshift annotate istag java:openjdk-17 supports='java:17,java' tags='builder,java,openjdk'
 ```
 4. From `Topology` view drag-n-drop the `pet-battle-api-<version>-runner.jar` to build and create the app deployment. Use the `openjdk-17` Builder image version drop down imported in (3)
