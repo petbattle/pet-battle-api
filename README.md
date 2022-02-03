@@ -1,3 +1,5 @@
+[![Build containers](https://github.com/petbattle/pet-battle-api/actions/workflows/build_container.yaml/badge.svg?branch=master)](https://github.com/petbattle/pet-battle-api/actions/workflows/build_container.yaml)
+
 # pet-battle-api
 
 A reactive back end for [pet battle](https://github.com/petbattle/pet-battle) based on the quarkus reactive mutiny framework with mongodb and panache. 
