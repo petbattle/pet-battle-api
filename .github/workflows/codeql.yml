@@ -47,6 +47,7 @@ jobs:
 
       - run: |
           sudo apt-get install openjdk-17-jdk
+          export JAVA_HOME=$(/usr/libexec/java_home -v 17)
           make compile
 
       - name: Perform CodeQL Analysis
