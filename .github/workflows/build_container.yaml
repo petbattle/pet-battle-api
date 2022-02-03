@@ -1,0 +1,66 @@
+name: Build containers
+
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - 'README.md'
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - 'README.md'
+  workflow_dispatch:
+
+env:
+  REGISTRY: quay.io
+  IMAGE_NAME: ${{ github.repository }}
+  TAGS: latest
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # Setup S2i and Build container image from source
+      - name: Setup and Build
+        id: build_image
+        uses: eformat/s2i-build@feature-include-git
+        with:
+          path_context: '.'
+          # Builder image for a java project
+          builder_image: 'registry.access.redhat.com/ubi8/openjdk-17:latest'
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+          log_level: 5
+          include_git: true
+
+      # Build runtime image from s2i image output
+      - name: Buildah Action
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+          containerfiles: |
+            ./Dockerfile.actions
+
+      # Login to Registry
+      - name: Log in to the Container registry
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.QUAY_TOKEN }}     # quay.io
+      #   password: ${{ secrets.GITHUB_TOKEN }}   # ghcr.io
+
+      - name: Push to Container Repository
+        id: push-to-registry
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ env.IMAGE_NAME }}
+          tags: ${{ env.TAGS }}
+          registry: ${{ env.REGISTRY }}

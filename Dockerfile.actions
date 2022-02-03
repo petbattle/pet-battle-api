@@ -1,0 +1,12 @@
+FROM quay.io/eformat/ubi-mvn-runtime-jvm:latest
+
+ENV DEPLOY=/deployments
+ARG BUILD_IMAGE=docker-daemon:eformat/pet-battle-api:latest
+
+# copy artifacts
+COPY --chown=1001:0 --from=${BUILD_IMAGE} /deployments/lib/ ${DEPLOY}/lib/
+COPY --chown=1001:0 --from=${BUILD_IMAGE} /deployments/*.jar ${DEPLOY}/
+COPY --chown=1001:0 --from=${BUILD_IMAGE} /deployments/app/ ${DEPLOY}/app/
+COPY --chown=1001:0 --from=${BUILD_IMAGE} /deployments/quarkus ${DEPLOY}/quarkus/
+
+EXPOSE 8080 8443
