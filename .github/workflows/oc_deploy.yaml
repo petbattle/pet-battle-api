@@ -1,0 +1,46 @@
+name: Deploy Me to OpenShift
+
+on:
+  workflow_dispatch:
+    inputs:
+      ocpAPI:
+        description: 'OpenShift API endpoint (e.g. oc whoami --show-server)'
+        required: true
+      ocpToken:
+        description: 'OpenShift Token (e.g. oc whoami --show-token)'
+        required: true
+      s2iBuilder:
+        description: 'OpenShift S2I Builder Image Name'
+        required: true
+        default: 'java:openjdk-17'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Install OpenShift CLI
+        uses: redhat-actions/oc-installer@v1
+
+      - name: Authenticate with OpenShift
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ github.event.inputs.ocpAPI }}
+          openshift_token: ${{ github.event.inputs.ocpToken }}
+          insecure_skip_tls_verify: true
+
+      - name: Install App from Source
+        shell: bash
+        run: |
+          repo=${{ github.repository }}
+          _repoUrl=${{ github.repositoryUrl }}
+          repoUrl=https:${_repoUrl##git:}
+          oc new-project ${repo##*/} || true
+          if ! oc -n ${repo##*/} new-app --name=${repo##*/} ${{ github.event.inputs.s2iBuilder }}~${repoUrl} --strategy=source >log 2>&1; then
+            oc -n ${repo##*/} start-build ${repo##*/}
+          fi

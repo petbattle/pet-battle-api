@@ -1,6 +1,8 @@
 [![Build containers](https://github.com/petbattle/pet-battle-api/actions/workflows/build_container.yaml/badge.svg?branch=master)](https://github.com/petbattle/pet-battle-api/actions/workflows/build_container.yaml)
 [![Code scanning - action](https://github.com/petbattle/pet-battle-api/actions/workflows/codeql.yml/badge.svg?branch=master)](https://github.com/petbattle/pet-battle-api/actions/workflows/codeql.yml)
 
+[![button](https://raw.githubusercontent.com/eformat/launch-service/master/static/img/launchbutton_light.svg)](https://github.com/petbattle/pet-battle-api/actions/workflows/oc_deploy.yaml)
+
 # pet-battle-api
 
 A reactive back end for [pet battle](https://github.com/petbattle/pet-battle) based on the quarkus reactive mutiny framework with mongodb and panache. 
