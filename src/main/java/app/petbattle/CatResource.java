@@ -214,7 +214,7 @@ public class CatResource {
         int page_number = start / length;
         filteredCats.page(page_number, length);
 
-        result.setData(filteredCats.stream().collectItems().asList().await().atMost(Duration.ofSeconds(1)));
+        result.setData(filteredCats.stream().collect().asList().await().atMost(Duration.ofSeconds(1)));
         result.setRecordsFiltered(filteredCats.count().await().atMost(Duration.ofSeconds(1)));
         result.setRecordsTotal(Cat.count().await().atMost(Duration.ofSeconds(1)));
 
