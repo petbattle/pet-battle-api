@@ -19,6 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      - name: Add mask
+        run: |
+          echo "::add-mask::${{ github.event.inputs.ocpToken }}"
+
       - name: Checkout repo
         uses: actions/checkout@v2
         with:
