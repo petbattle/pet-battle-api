@@ -3,12 +3,6 @@ name: Deploy Me to OpenShift
 on:
   workflow_dispatch:
     inputs:
-      ocpAPI:
-        description: 'OpenShift API endpoint (e.g. oc whoami --show-server)'
-        required: true
-      ocpToken:
-        description: 'OpenShift Token (e.g. oc whoami --show-token)'
-        required: true
       s2iBuilder:
         description: 'OpenShift S2I Builder Image Name'
         required: true
@@ -18,11 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
-      - name: Add mask
-        run: |
-          echo "::add-mask::${{ github.event.inputs.ocpToken }}"
-          echo "::add-mask::${{ github.event.inputs.ocpAPI }}"
 
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -35,8 +24,9 @@ jobs:
       - name: Authenticate with OpenShift
         uses: redhat-actions/oc-login@v1
         with:
-          openshift_server_url: ${{ github.event.inputs.ocpAPI }}
-          openshift_token: ${{ github.event.inputs.ocpToken }}
+          openshift_server_url: ${{ secrets.OCP_SERVER }}
+          openshift_username: ${{ secrets.OCP_USER }}
+          openshift_password: ${{ secrets.OCP_PASSWORD }}
           insecure_skip_tls_verify: true
 
       - name: Install App from Source
