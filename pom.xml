@@ -19,7 +19,7 @@
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
         <surefire.plugin.version>2.22.2</surefire.plugin.version>
         <allure.junit5>2.17.2</allure.junit5>
-        <jacoco.version>0.8.8-SNAPSHOT</jacoco.version>
+        <jacoco.version>0.8.8</jacoco.version>
         <dependency-check-maven.version>6.1.6</dependency-check-maven.version>
         <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/dependency-check-report.html
         </sonar.dependencyCheck.htmlReportPath>
@@ -35,19 +35,6 @@
         <checkstyle.version>8.41</checkstyle.version>
         <git-commit-id-maven-plugin.version>5.0.0</git-commit-id-maven-plugin.version>
     </properties>
-    <repositories>
-        <repository>
-            <id>sonatype</id>
-            <name>sonatype</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
     <dependencyManagement>
         <dependencies>
             <dependency>
