@@ -7,33 +7,35 @@
     <artifactId>pet-battle-api</artifactId>
     <version>1.2.1</version>
     <properties>
-        <compiler-plugin.version>3.8.1</compiler-plugin.version>
+        <compiler-plugin.version>3.10.1</compiler-plugin.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.parameters>true</maven.compiler.parameters>
-        <maven.project.info.reports.plugin>3.1.2</maven.project.info.reports.plugin>
+        <maven.project.info.reports.plugin>3.3.0</maven.project.info.reports.plugin>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus.platform.version>2.9.0.Final</quarkus.platform.version>
+        <quarkus.platform.version>2.8.3.Final</quarkus.platform.version>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <surefire.plugin.version>2.22.2</surefire.plugin.version>
-        <allure.junit5>2.17.2</allure.junit5>
+        <surefire.plugin.version>3.0.0-M6</surefire.plugin.version>
+        <allure.junit5>2.17.3</allure.junit5>
         <jacoco.version>0.8.8</jacoco.version>
-        <dependency-check-maven.version>6.1.6</dependency-check-maven.version>
+        <dependency-check-maven.version>7.1.0</dependency-check-maven.version>
         <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/dependency-check-report.html
         </sonar.dependencyCheck.htmlReportPath>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/jacoco-report/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
-        <aspectj.version>1.9.7</aspectj.version>
-        <allure-maven.version>2.10.0</allure-maven.version>
-        <formatter-maven-plugin.version>2.11.0</formatter-maven-plugin.version>
-        <impsort-maven-plugin.version>1.3.2</impsort-maven-plugin.version>
+        <aspectj.version>1.9.9.1</aspectj.version>
+        <allure-maven.version>2.11.2</allure-maven.version>
+        <formatter-maven-plugin.version>2.18.0</formatter-maven-plugin.version>
+        <impsort-maven-plugin.version>1.6.2</impsort-maven-plugin.version>
         <checkstyle-maven-plugin.version>3.1.2</checkstyle-maven-plugin.version>
-        <checkstyle.version>8.41</checkstyle.version>
+        <checkstyle.version>10.2</checkstyle.version>
         <git-commit-id-maven-plugin.version>5.0.0</git-commit-id-maven-plugin.version>
+        <junit-platform-surefire-provider.version>1.3.2</junit-platform-surefire-provider.version>
+        <jreleaser-maven-plugin.version>1.0.0</jreleaser-maven-plugin.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -230,31 +232,14 @@
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                         ${argLine}
                     </argLine>
-                    <properties>
-                        <property>
-                            <name>listener</name>
-                            <value>io.qameta.allure.junit5.AllureJunit5</value>
-                        </property>
-                    </properties>
-                    <systemProperties>
+                    <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-                        <property>
-                            <name>junit.jupiter.extensions.autodetection.enabled</name>
-                            <value>true</value>
-                        </property>
-                        <property>
-                            <name>allure.results.directory</name>
-                            <value>${project.build.directory}/allure-results</value>
-                        </property>
+                        <maven.home>${maven.home}</maven.home>
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
                         <reportFormat>plain</reportFormat>
-                    </systemProperties>
+                    </systemPropertyVariables>
                 </configuration>
                 <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.2.0</version>
-                    </dependency>
                     <dependency>
                         <groupId>org.aspectj</groupId>
                         <artifactId>aspectjweaver</artifactId>
@@ -317,7 +302,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.2.0</version>
             </plugin>
         </plugins>
     </reporting>
@@ -359,7 +344,7 @@
                     <plugin>
                         <groupId>org.jreleaser</groupId>
                         <artifactId>jreleaser-maven-plugin</artifactId>
-                        <version>0.10.0</version>
+                        <version>${jreleaser-maven-plugin.version}</version>
                         <configuration>
                             <jreleaser>
                                 <release>
