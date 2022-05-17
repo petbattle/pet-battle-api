@@ -61,18 +61,7 @@ public class CatResource {
     public Response list(@QueryParam(value = "failMe") int code) throws Exception {
         // failMe is for sre testing
         switch (code) {
-        case 400:
-        case 401:
-        case 403:
-        case 404:
-        case 405:
-        case 408:
-        case 429:
-        case 500:
-        case 501:
-        case 502:
-        case 503:
-        case 504:
+        case 400, 401, 403, 404, 405, 408, 429, 500, 501, 502, 503, 504:
             return Response.status(code).build();
         default:
             break;
