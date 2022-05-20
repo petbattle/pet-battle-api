@@ -1,6 +1,6 @@
 package app.battle;
 
-import io.qameta.allure.Attachment;
+import io.qameta.allure.Allure;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
@@ -27,11 +27,9 @@ public class LogCatchListener implements TestExecutionListener {
         }
     }
 
-    @SuppressWarnings("UnusedReturnValue")
-    @Attachment(value = "Test Log", type = "text/plain")
-    public String stopCatch() {
+    public void stopCatch() {
         String result = MultithreadedConsoleOutputCatcher.getContent();
         //MultithreadedConsoleOutputCatcher.stopCatch();
-        return result;
+        Allure.addAttachment("Test Log", "text/plain", result);
     }
 }
