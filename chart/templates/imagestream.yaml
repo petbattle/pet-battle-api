@@ -16,6 +16,7 @@ spec:
       from:
         kind: DockerImage
         name: {{ .Values.image_repository }}/{{ .Values.image_namespace }}/{{ .Values.image_name }}:{{ .Values.image_version }}
-      importPolicy: {}
+      importPolicy:
+        scheduled: true
       name: {{ .Values.image_version }}
 {{ end }}
