@@ -17,7 +17,7 @@
         <quarkus.platform.version>2.10.1.Final</quarkus.platform.version>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <surefire.plugin.version>3.0.0-M6</surefire.plugin.version>
+        <surefire.plugin.version>3.0.0-M7</surefire.plugin.version>
         <allure.junit5>2.18.0</allure.junit5>
         <jacoco.plugin.version>0.8.8</jacoco.plugin.version>
         <dependency-check-maven.version>7.1.0</dependency-check-maven.version>
