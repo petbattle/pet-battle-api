@@ -73,3 +73,6 @@ istio:
   enabled: false
   mtls: true
   domain: apps.hivec.sandbox209.opentlc.com
+
+prometheusrules:
+  severity: warning

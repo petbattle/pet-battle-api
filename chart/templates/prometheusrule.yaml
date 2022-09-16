@@ -1,0 +1,17 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: pb-api-alerts
+  namespace: {{ .Release.Namespace }}
+spec:
+  groups:
+  - name: petbattle-api.rules
+    rules:
+    - alert: PetBattleApiNotAvailable
+      annotations:
+        message: 'Pet Battle API in namespace {{ .Release.Namespace }} is not available for the last 1 minutes.'
+      expr: (1 - absent(kube_pod_status_ready{condition="true",namespace="{{ .Release.Namespace }}"} * on(pod) group_left(label_app_kubernetes_io_component) kube_pod_labels{label_app_kubernetes_io_component="pet-battle-api",namespace="{{ .Release.Namespace }}"})) == 0
+      for: 1m
+      labels:
+        severity: {{ .Values.prometheusrules.severity | default "critical" }}
