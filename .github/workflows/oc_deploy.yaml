@@ -6,7 +6,7 @@ on:
       s2iBuilder:
         description: 'OpenShift S2I Builder Image Name'
         required: true
-        default: 'java:openjdk-17'
+        default: 'java:openjdk-17-ubi8'
 
 jobs:
   build:
