@@ -24,7 +24,7 @@ podman run --name mongo -p 27017:27017 mongo:latest
 
 Application:
 ```bash
-mvn -s settings.xml compile quarkus:dev
+mvn -s settings.xml quarkus:dev
 ```
 OR
 ```
