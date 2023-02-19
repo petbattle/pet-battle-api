@@ -33,6 +33,10 @@
         <checkstyle.version>10.4</checkstyle.version>
         <git-commit-id-maven-plugin.version>5.0.0</git-commit-id-maven-plugin.version>
         <jreleaser-maven-plugin.version>1.0.0</jreleaser-maven-plugin.version>
+        <jmeter.endpoint>http://localhost:8080</jmeter.endpoint>
+        <jmeter.threads>10</jmeter.threads>
+        <jmeter.duration>60</jmeter.duration>
+        <jmeter.throughput>300</jmeter.throughput>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -244,6 +248,49 @@
                 <version>${compiler-plugin.version}</version>
                 <configuration>
                     <parameters>${maven.compiler.parameters}</parameters>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.lazerycode.jmeter</groupId>
+                <artifactId>jmeter-maven-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <!-- Generate JMeter configuration -->
+                    <execution>
+                        <id>configuration</id>
+                        <goals>
+                            <goal>configure</goal>
+                        </goals>
+                    </execution>
+                    <!-- Run JMeter tests -->
+                    <execution>
+                        <id>jmeter-test</id>
+                        <goals>
+                            <goal>jmeter</goal>
+                        </goals>
+                        <configuration>
+                            <selectedConfiguration>configuration</selectedConfiguration>
+                        </configuration>
+                    </execution>
+                    <!-- Fail build on errors in test -->
+                    <execution>
+                        <id>jmeter-result</id>
+                        <goals>
+                            <goal>results</goal>
+                        </goals>
+                        <configuration>
+                            <selectedConfiguration>configuration</selectedConfiguration>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <propertiesUser>
+                        <URL>${jmeter.endpoint}</URL>
+                        <THREADS>${jmeter.threads}</THREADS>
+                        <DURATION>${jmeter.duration}</DURATION>
+                        <THROUGHPUT>${jmeter.throughput}</THROUGHPUT>
+                    </propertiesUser>
+                    <errorRateThresholdInPercent>0.1</errorRateThresholdInPercent>
                 </configuration>
             </plugin>
         </plugins>

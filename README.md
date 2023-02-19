@@ -144,14 +144,38 @@ oc patch route/cats \
       --type=json -p '[{"op":"add", "path":"/spec/tls", "value":{"termination":"edge","insecureEdgeTerminationPolicy":"Redirect"}}]'
 ```
 
-### Swagger available at
+Swagger is available at:
+
 ```bash
-http://cats-cats.apps.<cluster-domain>/swagger-ui
+http://cats-cats.apps.<cluster-domain>/swagger-ui 
 ```
 
-Test
+### Testing
+
+Run the unit tests.
+
 ```bash
-mvn test
+mvn clean test
+```
+
+> **NOTE:** When running jmeter you need to have the pet-battle-api service is up running.
+
+Run the unit and jmeter performance tests.
+
+```bash
+mvn clean verify
+```
+
+Run just the jmeter performance test.
+
+```bash
+mvn jmeter:jmeter
+```
+
+Run the jmeter performance test in the gui.
+
+```bash
+mvn jmeter:configure jmeter:gui -DguiTestFile=src/test/jmeter/pet-battle-api-jmeter.jmx
 ```
 
 View test coverage report
