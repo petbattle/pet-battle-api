@@ -6,6 +6,22 @@
     <groupId>org.acme</groupId>
     <artifactId>pet-battle-api</artifactId>
     <version>1.4.7</version>
+    <description>PetBattle API</description>
+    <inceptionYear>2020</inceptionYear>
+    <url>https://github.com/petbattle</url>
+    <developers>
+        <developer>
+            <id>eformat</id>
+            <name>Mike Hepburn</name>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <properties>
         <compiler-plugin.version>3.10.1</compiler-plugin.version>
         <maven.compiler.source>17</maven.compiler.source>
