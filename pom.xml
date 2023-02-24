@@ -36,12 +36,10 @@
         <surefire.plugin.version>3.0.0-M9</surefire.plugin.version>
         <allure.junit5>2.20.1</allure.junit5>
         <dependency-check-maven.version>7.3.0</dependency-check-maven.version>
-        <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/dependency-check-report.html
-        </sonar.dependencyCheck.htmlReportPath>
+        <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/jacoco-report/jacoco.xml
-        </sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/jacoco-report/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
         <allure-maven.version>2.11.2</allure-maven.version>
         <formatter-maven-plugin.version>2.21.0</formatter-maven-plugin.version>
         <impsort-maven-plugin.version>1.7.0</impsort-maven-plugin.version>
