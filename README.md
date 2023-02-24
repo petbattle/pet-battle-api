@@ -49,6 +49,39 @@ make podman-stop
 make podman-push
 ```
 
+#### Jkube remote-dev OpenShift
+
+Create a project
+
+```bash
+oc new-project cats 
+```
+
+Deploy MongoDB
+
+```bash
+oc apply -f mongodb-persistent.yml
+oc new-app mongodb-persistent -p MONGODB_DATABASE=cats -p MONGODB_USER=catuser -p MONGODB_PASSWORD=password -p MONGODB_ADMIN_PASSWORD=password 
+```
+
+Build and deploy application on OpenShift using Jkube-s2i
+
+```bash
+mvn clean package oc:build oc:resource oc:apply
+```
+
+Start the jkube remote service in OpenShift (this will port-forward to localhost)
+
+```bash
+mvn oc:remote-dev
+```
+
+Start developing locally (but connected to remote environment!) we use a profile to setup DB connection as if it were local
+
+```bash
+mvn quarkus:dev -Dquarkus.profile=jkube
+```
+
 ### Helm3
 
 New project

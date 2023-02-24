@@ -37,6 +37,9 @@
         <jmeter.threads>10</jmeter.threads>
         <jmeter.duration>60</jmeter.duration>
         <jmeter.throughput>300</jmeter.throughput>
+        <jkube.version>1.11.0</jkube.version>
+        <jkube.build.switchToDeployment>true</jkube.build.switchToDeployment>
+        <jkube.enricher.jkube-project-label.group>petbattle</jkube.enricher.jkube-project-label.group>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -206,6 +209,28 @@
                     <suppressionFiles>
                         <suppressionFile>owasp-suppressions.xml</suppressionFile>
                     </suppressionFiles>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.eclipse.jkube</groupId>
+                <artifactId>openshift-maven-plugin</artifactId>
+                <version>${jkube.version}</version>
+                <configuration>
+                    <remoteDevelopment>
+                        <localServices>
+                            <localService>
+                                <serviceName>pet-battle-api</serviceName>
+                                <port>8080</port>
+                            </localService>
+                        </localServices>
+                        <remoteServices>
+                            <remoteService>
+                                <hostname>mongodb</hostname>
+                                <port>27017</port>
+                                <localPort>27017</localPort>
+                            </remoteService>
+                        </remoteServices>
+                    </remoteDevelopment>
                 </configuration>
             </plugin>
             <plugin>
