@@ -7,6 +7,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.mapper.ObjectMapperType;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -172,7 +173,7 @@ class CatEndpointTest {
                 .then()
                 .log().all()
                 .statusCode(200)
-                .body("size()", is(4));
+                .body("size()", is(5));
     }
 
 }

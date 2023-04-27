@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.acme</groupId>
     <artifactId>pet-battle-api</artifactId>
-    <version>1.4.7</version>
+    <version>1.5.0</version>
     <description>PetBattle API</description>
     <inceptionYear>2020</inceptionYear>
     <url>https://github.com/petbattle</url>
@@ -30,10 +30,10 @@
         <maven.project.info.reports.plugin>3.4.1</maven.project.info.reports.plugin>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <quarkus.platform.version>2.16.6.Final</quarkus.platform.version>
+        <quarkus.platform.version>3.0.1.Final</quarkus.platform.version>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <surefire.plugin.version>3.0.0-M9</surefire.plugin.version>
+        <surefire.plugin.version>3.0.0</surefire.plugin.version>
         <allure.junit5>2.20.1</allure.junit5>
         <dependency-check-maven.version>7.3.0</dependency-check-maven.version>
         <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
@@ -73,7 +73,7 @@
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-resteasy-reactive-jsonb</artifactId>
+            <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>

@@ -1,12 +1,11 @@
 package app.petbattle.utils;
 
-import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.StartupEvent;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 import java.io.InputStream;
 import java.util.Properties;
 
