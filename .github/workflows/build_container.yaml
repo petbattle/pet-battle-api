@@ -50,7 +50,7 @@ jobs:
 
       # Login to Registry
       - name: Log in to the Container registry
-          uses: redhat-actions/podman-login@v1
+        uses: redhat-actions/podman-login@v1
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.QUAY_USER }}      # ${{ github.actor }} - for ghcr.io
