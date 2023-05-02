@@ -50,7 +50,7 @@ jobs:
 
       # Login to Registry
       - name: Log in to the Container registry
-        uses: redhat-actions/podman-login@v1
+          uses: redhat-actions/podman-login@v1
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.QUAY_USER }}      # ${{ github.actor }} - for ghcr.io
@@ -64,3 +64,23 @@ jobs:
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.TAGS }}
           registry: ${{ env.REGISTRY }}
+
+      # Provenance signing image
+      - name: Install cosign
+        uses: sigstore/cosign-installer@c3667d99424e7e6047999fb6246c0da843953c65 # v3.0.1
+        with:
+          cosign-release: 'v2.0.0'
+
+      - name: Write signing key to disk (only needed for `cosign sign --key`)
+        run: echo "${{ secrets.SIGNING_SECRET }}" > cosign.key
+
+      - name: Sign container image with annotations from our environment
+          run: |
+            cosign sign --key cosign.key \
+              -a "repo=${{ github.repository }}" \
+              -a "workflow=${{ github.workflow }}" \
+              -a "ref=${{ github.sha }}" \
+              -y \
+              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
+          env:
+            COSIGN_PASSWORD: ""
