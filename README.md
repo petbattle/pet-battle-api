@@ -278,6 +278,6 @@ The public key is also available online: <https://raw.githubusercontent.com/petb
 To verify an image:
 
 ```shell
-curl --progress-bar -o cosign.pub https://gitlab.com/petbattle/pet-battle-api/-/raw/main/cosign.pub
+curl --progress-bar -o cosign.pub https://raw.githubusercontent.com/petbattle/pet-battle-api/master/cosign.pub
 cosign verify --key cosign.pub quay.io/petbattle/pet-battle-api:latest
 ```
