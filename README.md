@@ -273,7 +273,7 @@ dFFy7WrlLfd+YG0NzA/RM3D9uQrUYEjPcU5hH8cBoe7AjVg/k/qO58+Qjg==
 -----END PUBLIC KEY-----
 ```
 
-The public key is also available online: <https://gitlab.com/petbattle/pet-battle-api/-/raw/main/cosign.pub>
+The public key is also available online: <https://raw.githubusercontent.com/petbattle/pet-battle-api/master/cosign.pub>
 
 To verify an image:
 
