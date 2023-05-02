@@ -260,3 +260,24 @@ OR
 helm delete pet-battle-api
 ```
 
+### Signature
+
+The public key of [pet-battel-api images](https://quay.io/repository/petbattle/pet-battle-api)
+
+[Cosign](https://github.com/sigstore/cosign) public key:
+
+```shell
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEpQLELVwfM8hcPxqY5xBk5sGdjFDi
+dFFy7WrlLfd+YG0NzA/RM3D9uQrUYEjPcU5hH8cBoe7AjVg/k/qO58+Qjg==
+-----END PUBLIC KEY-----
+```
+
+The public key is also available online: <https://gitlab.com/petbattle/pet-battle-api/-/raw/main/cosign.pub>
+
+To verify an image:
+
+```shell
+curl --progress-bar -o cosign.pub https://gitlab.com/petbattle/pet-battle-api/-/raw/main/cosign.pub
+cosign verify --key cosign.pub quay.io/petbattle/pet-battle-api:latest
+```
