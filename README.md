@@ -262,7 +262,7 @@ helm delete pet-battle-api
 
 ### Signature
 
-The public key of [pet-battel-api images](https://quay.io/repository/petbattle/pet-battle-api)
+The public key of [pet-battle-api images](https://quay.io/repository/petbattle/pet-battle-api)
 
 [Cosign](https://github.com/sigstore/cosign) public key:
 
