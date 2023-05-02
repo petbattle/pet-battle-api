@@ -10,7 +10,6 @@ on:
     paths-ignore:
       - 'README.md'
   workflow_dispatch:
-    inputs: []
 
 env:
   REGISTRY: quay.io
@@ -76,12 +75,12 @@ jobs:
         run: echo "${{ secrets.SIGNING_SECRET }}" > cosign.key
 
       - name: Sign container image with annotations from our environment
-          run: |
-            cosign sign --key cosign.key \
-              -a "repo=${{ github.repository }}" \
-              -a "workflow=${{ github.workflow }}" \
-              -a "ref=${{ github.sha }}" \
-              -y \
-              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
-          env:
-            COSIGN_PASSWORD: ""
+        run: |
+          cosign sign --key cosign.key \
+            -a "repo=${{ github.repository }}" \
+            -a "workflow=${{ github.workflow }}" \
+            -a "ref=${{ github.sha }}" \
+            -y \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
+        env:
+          COSIGN_PASSWORD: ""
