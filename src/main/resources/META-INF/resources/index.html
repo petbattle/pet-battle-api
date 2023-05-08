@@ -124,7 +124,7 @@
         <ul>
             <li><a href="/q/swagger-ui">Open API Documentation</a></li>
             <li><a href="/q/health">Health</a></li>
-            <li><div id="metrics"><a href="/q/metrics">Metrics</a></div></li>
+            <li><a href="/metrics">Metrics</a></li>
         </ul>
 
         <div class="left-column">
@@ -206,20 +206,6 @@
       ]
     });
 
-    // set metrics mime type for html display
-    $('#metrics a').on('click', function() {
-        $.ajax({
-            headers: {
-                Accept: "text/plain; charset=utf-8",
-            },
-            url: '/q/metrics',
-            success: function(data){
-                var win = window.open("metrics", "_blank");
-                win.document.write(data)
-            }
-        })
-        return false;
-   })
 </script>
 
 </body>
