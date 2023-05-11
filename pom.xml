@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.acme</groupId>
     <artifactId>pet-battle-api</artifactId>
-    <version>1.5.0</version>
+    <version>1.5.1</version>
     <description>PetBattle API</description>
     <inceptionYear>2020</inceptionYear>
     <url>https://github.com/petbattle</url>
@@ -27,31 +27,31 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.parameters>true</maven.compiler.parameters>
-        <maven.project.info.reports.plugin>3.4.1</maven.project.info.reports.plugin>
+        <maven.project.info.reports.plugin>3.4.3</maven.project.info.reports.plugin>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <quarkus.platform.version>3.0.2.Final</quarkus.platform.version>
         <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
         <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
-        <surefire.plugin.version>3.0.0-M9</surefire.plugin.version>
-        <allure.junit5>2.20.1</allure.junit5>
+        <surefire.plugin.version>3.1.0</surefire.plugin.version>
+        <allure.junit5>2.22.0</allure.junit5>
         <dependency-check-maven.version>7.3.0</dependency-check-maven.version>
         <sonar.dependencyCheck.htmlReportPath>${project.build.directory}/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.coverage.jacoco.xmlReportPaths>${project.build.directory}/jacoco-report/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-        <allure-maven.version>2.11.2</allure-maven.version>
-        <formatter-maven-plugin.version>2.21.0</formatter-maven-plugin.version>
-        <impsort-maven-plugin.version>1.7.0</impsort-maven-plugin.version>
-        <checkstyle-maven-plugin.version>3.2.0</checkstyle-maven-plugin.version>
-        <checkstyle.version>10.4</checkstyle.version>
+        <allure-maven.version>2.12.0</allure-maven.version>
+        <formatter-maven-plugin.version>2.22.0</formatter-maven-plugin.version>
+        <impsort-maven-plugin.version>1.8.0</impsort-maven-plugin.version>
+        <checkstyle-maven-plugin.version>3.2.2</checkstyle-maven-plugin.version>
+        <checkstyle.version>10.11.0</checkstyle.version>
         <git-commit-id-maven-plugin.version>5.0.0</git-commit-id-maven-plugin.version>
-        <jreleaser-maven-plugin.version>1.0.0</jreleaser-maven-plugin.version>
+        <jreleaser-maven-plugin.version>1.6.0</jreleaser-maven-plugin.version>
         <jmeter.endpoint>http://localhost:8080</jmeter.endpoint>
         <jmeter.threads>10</jmeter.threads>
         <jmeter.duration>60</jmeter.duration>
         <jmeter.throughput>300</jmeter.throughput>
-        <jkube.version>1.11.0</jkube.version>
+        <jkube.version>1.12.0</jkube.version>
         <jkube.build.switchToDeployment>true</jkube.build.switchToDeployment>
         <jkube.enricher.jkube-project-label.group>petbattle</jkube.enricher.jkube-project-label.group>
     </properties>

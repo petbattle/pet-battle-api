@@ -12,4 +12,4 @@ spec:
       scheme: http
   selector:
     matchLabels:
-    {{- include "pet-battle-api.labels" . | nindent 6 }}
+      deploymentconfig: {{ include "pet-battle-api.fullname" . }}
