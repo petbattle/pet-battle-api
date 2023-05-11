@@ -412,6 +412,9 @@
                                         <artifact>
                                             <path>mongodb-persistent.yml</path>
                                         </artifact>
+                                        <artifact>
+                                            <path>cosign.pub</path>
+                                        </artifact>
                                     </artifacts>
                                 </files>
                             </jreleaser>
