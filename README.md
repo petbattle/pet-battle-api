@@ -281,3 +281,17 @@ To verify an image:
 curl --progress-bar -o cosign.pub https://raw.githubusercontent.com/petbattle/pet-battle-api/master/cosign.pub
 cosign verify --key cosign.pub quay.io/petbattle/pet-battle-api:latest
 ```
+
+SBOM generated using [syft](https://github.com/anchore/syft). 
+
+Verify signed SBOM:
+
+```bash
+cosign verify --key cosign.pub --attachment sbom quay.io/petbattle/pet-battle-api:latest
+```
+
+Verify SBOM attestation:
+
+```bash
+cosign verify-attestation --key cosign.pub quay.io/petbattle/pet-battle-api:latest
+```
