@@ -97,7 +97,7 @@ jobs:
 
       - name: Attach SBOM to image
         run: |
-          cosign attach sbom --sbom ${{ steps.syft.output-file }} \
+          cosign attach sbom --sbom ${{ steps.syft.output-file }}/pet-battle-api.sbom \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
         env:
           COSIGN_PASSWORD: ""
