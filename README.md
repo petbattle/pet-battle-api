@@ -295,3 +295,16 @@ Verify SBOM attestation:
 ```bash
 cosign verify-attestation --key cosign.pub quay.io/petbattle/pet-battle-api:latest
 ```
+
+You may also like to use:
+
+```bash
+cosign tree quay.io/petbattle/pet-battle-api:latest
+📦 Supply Chain Security Related artifacts for an image: quay.io/petbattle/pet-battle-api:latest
+└── 💾 Attestations for an image tag: quay.io/petbattle/pet-battle-api:sha256-ce4f9101b2bf09e89605012c3eb6a4bbeaaee82cd51c1af55a4b4f622b11d504.att
+   └── 🍒 sha256:c61c9c15f782670c6e521a4f09482ced2854387d6c5fa39378c37d296ff3a181
+└── 🔐 Signatures for an image tag: quay.io/petbattle/pet-battle-api:sha256-ce4f9101b2bf09e89605012c3eb6a4bbeaaee82cd51c1af55a4b4f622b11d504.sig
+   └── 🍒 sha256:d45e1aa311163335366032bf901eea430c72eb870e386c1359e4ae17bfc4af3d
+└── 📦 SBOMs for an image tag: quay.io/petbattle/pet-battle-api:sha256-ce4f9101b2bf09e89605012c3eb6a4bbeaaee82cd51c1af55a4b4f622b11d504.sbom
+   └── 🍒 sha256:3cd8b8f7f181414447e1035ee681aebd41a1d3608e8eaecf2c516d36ee4df45c
+```
