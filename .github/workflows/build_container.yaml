@@ -105,8 +105,8 @@ jobs:
       - name: Sign SBOM
         run: |
           cosign sign --key cosign.key \
+            --yes \
             --attachment sbom \
-            -y \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
         env:
           COSIGN_PASSWORD: ""
@@ -114,8 +114,8 @@ jobs:
       - name: Attest SBOM to public rekor
         run: |
           cosign attest --key cosign.key \
+            --yes \
             --predicate \
-            -y \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
         env:
           COSIGN_PASSWORD: ""
