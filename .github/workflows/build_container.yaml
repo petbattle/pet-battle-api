@@ -88,16 +88,16 @@ jobs:
       # Provenance SBOM and attestation
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
-        id: syft
         with:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
           registry-username: ${{ secrets.QUAY_USER }}
           registry-password: ${{ secrets.QUAY_TOKEN }}
           artifact-name: pet-battle-api.sbom
+          output-file: /tmp
 
       - name: Attach SBOM to image
         run: |
-          cosign attach sbom --sbom ${{ steps.syft.output-file }}/pet-battle-api.sbom \
+          cosign attach sbom --sbom /tmp/pet-battle-api.sbom \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
         env:
           COSIGN_PASSWORD: ""
