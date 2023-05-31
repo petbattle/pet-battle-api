@@ -112,7 +112,7 @@ jobs:
 
       - name: Attest SBOM to public rekor
         run: |
-          cosign attest --key cosign.key \
+          cosign attest --yes --key cosign.key \
             --predicate /tmp/pet-battle-api.sbom \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
         env:
