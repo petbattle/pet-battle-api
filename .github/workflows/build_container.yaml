@@ -97,7 +97,7 @@ jobs:
       - name: Attach SBOM to image
         run: |
           cosign attach sbom --sbom pet-battle-api.sbom \
-            -y \
+            --yes \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
         env:
           COSIGN_PASSWORD: ""
