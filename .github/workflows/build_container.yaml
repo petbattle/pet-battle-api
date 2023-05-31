@@ -67,16 +67,60 @@ jobs:
 
       # Provenance signing image
       - name: Install cosign
-        uses: sigstore/cosign-installer@c3667d99424e7e6047999fb6246c0da843953c65 # v3.0.1
+        uses: sigstore/cosign-installer@v3
         with:
           cosign-release: 'v2.0.0'
 
-      - name: Write signing key to disk (only needed for `cosign sign --key`)
+      - name: Write signing key to disk
         run: echo "${{ secrets.SIGNING_SECRET }}" > cosign.key
 
-      - name: Sign container image with annotations from our environment
+      - name: Sign container image
         run: |
           cosign sign --key cosign.key \
+            -a "repo=${{ github.repository }}" \
+            -a "workflow=${{ github.workflow }}" \
+            -a "ref=${{ github.sha }}" \
+            -y \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
+        env:
+          COSIGN_PASSWORD: ""
+
+      # Provenance SBOM and attestation
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
+          registry-username: ${{ secrets.QUAY_USER }}
+          registry-password: ${{ secrets.QUAY_TOKEN }}
+          artifact-name: pet-battle-api.sbom
+
+      - name: Attach SBOM to image
+        run: |
+          cosign attach sbom --sbom pet-battle-api.sbom \
+            -a "repo=${{ github.repository }}" \
+            -a "workflow=${{ github.workflow }}" \
+            -a "ref=${{ github.sha }}" \
+            -y \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
+        env:
+          COSIGN_PASSWORD: ""
+
+      - name: Sign SBOM
+        run: |
+          cosign sign --key cosign.key \
+            --attachment sbom \
+            -a "repo=${{ github.repository }}" \
+            -a "workflow=${{ github.workflow }}" \
+            -a "ref=${{ github.sha }}" \
+            -y \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
+        env:
+          COSIGN_PASSWORD: ""
+
+      - name: Attest SBOM to public rekor
+        run: |
+          cosign attest --key cosign.key \
+            --predicate \
             -a "repo=${{ github.repository }}" \
             -a "workflow=${{ github.workflow }}" \
             -a "ref=${{ github.sha }}" \
