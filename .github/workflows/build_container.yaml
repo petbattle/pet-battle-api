@@ -92,8 +92,7 @@ jobs:
           image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAGS }}
           registry-username: ${{ secrets.QUAY_USER }}
           registry-password: ${{ secrets.QUAY_TOKEN }}
-          artifact-name: pet-battle-api.sbom
-          output-file: /tmp
+          output-file: /tmp/pet-battle-api.sbom
 
       - name: Attach SBOM to image
         run: |
