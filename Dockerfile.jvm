@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8/openjdk-17-runtime:latest
+FROM registry.access.redhat.com/ubi9/openjdk-17-runtime:latest
 
 ARG build_url=default
 ARG git_commit=default
