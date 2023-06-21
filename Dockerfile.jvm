@@ -13,8 +13,8 @@ ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en'
 USER root
 # Install java and the run-java script
 # Also set up permissions for user `1001`
-RUN microdnf install curl ca-certificates \
-    && microdnf update \
+RUN microdnf -y install ca-certificates \
+    && microdnf -y update \
     && microdnf clean all \
     && curl https://repo1.maven.org/maven2/io/fabric8/run-java-sh/${RUN_JAVA_VERSION}/run-java-sh-${RUN_JAVA_VERSION}-sh.sh -o /deployments/run-java.sh \
     && chown 185 /deployments/run-java.sh \
