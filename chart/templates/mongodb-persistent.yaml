@@ -83,6 +83,12 @@ spec:
     {{- include "mongodb.selectorLabels" . | nindent 4 }}
   strategy:
     type: Recreate
+    resources:
+      limits:
+        memory: 250Mi
+      requests:
+        cpu: 250m
+        memory: 250Mi
   template:
     metadata:
       labels:
