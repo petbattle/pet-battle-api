@@ -24,8 +24,8 @@
     </licenses>
     <properties>
         <compiler-plugin.version>3.11.0</compiler-plugin.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.parameters>true</maven.compiler.parameters>
         <maven.project.info.reports.plugin>3.4.3</maven.project.info.reports.plugin>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
