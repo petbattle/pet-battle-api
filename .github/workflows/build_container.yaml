@@ -38,6 +38,8 @@ jobs:
           tags: ${{ env.TAGS }}
           log_level: 2
           include_git: true
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
 
       # Build runtime image from s2i image output
       - name: Buildah Action
