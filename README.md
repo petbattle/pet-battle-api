@@ -61,7 +61,7 @@ Deploy MongoDB
 
 ```bash
 oc apply -f mongodb-persistent.yml
-oc new-app mongodb-persistent -p MONGODB_DATABASE=cats -p MONGODB_USER=catuser -p MONGODB_PASSWORD=password -p MONGODB_ADMIN_PASSWORD=password 
+oc new-app mongodb-persistent -p MONGODB_DATABASE=cats -p MONGODB_USER=catuser -p MONGODB_PASSWORD=password -p MONGODB_ADMIN_PASSWORD=password
 ```
 
 Build and deploy application on OpenShift using Jkube-s2i
@@ -120,10 +120,10 @@ There are two artifacts you will need in the [Release](https://github.com/petbat
 1. From `Developer` perspective `Add` YAML file - `mongodb-persistent.yml` - drag-n-drop this to create the MongoDB template.
 2. Instantiate the mongo database instance, use `catuser`, `password` and `cats` as the database parameters:
 ![images/drag-n-drop-mongo.png](images/drag-n-drop-mongo.png)
-3. Import JDK 17 image builder if it does not exist:
+3. Import JDK 21 image builder if it does not exist:
 ```bash
-oc -n openshift import-image java:openjdk-17 --from=registry.access.redhat.com/ubi8/openjdk-17:latest --confirm
-oc -n openshift annotate istag java:openjdk-17 supports='java:17,java' tags='builder,java,openjdk'
+oc -n openshift import-image java:openjdk-21 --from=registry.access.redhat.com/ubi9/openjdk-21:latest --confirm
+oc -n openshift annotate istag java:openjdk-21 supports='java:21,java' tags='builder,java,openjdk'
 ```
 4. From `Topology` view drag-n-drop the `pet-battle-api-<version>-runner.jar` to build and create the app deployment. Use the `openjdk-17` Builder image version drop down imported in (3)
 ![images/drag-n-drop-app.png](images/drag-n-drop-app.png)
@@ -135,7 +135,7 @@ Deploy Mongo
 ```bash
 oc new-project cats
 oc apply -n openshift -f mongodb-persistent.yml
-oc new-app mongodb-persistent -p MONGODB_DATABASE=cats
+oc new-app mongodb-persistent -p MONGODB_DATABASE=cats -p MONGODB_USER=catuser -p MONGODB_PASSWORD=password -p MONGODB_ADMIN_PASSWORD=password
 ```
 
 We are going to use a 2-step build process - see [here](https://eformat.github.io/ubi-mvn-builder) for more details.
@@ -168,10 +168,12 @@ oc set triggers bc/cats --from-image=$(oc project -q)/cats-build:latest
 Deploy the app:
 ```bash
 oc new-app cats \
-  -e DATABASE_SERVICE_HOST=mongodb \
-  -e DATABASE_SERVICE_PORT=27017 \
-  -e DATABASE_NAME=cats
-oc set env --from=secret/mongodb deployments/cats
+  -e MONGODB_SERVICE_HOST=mongodb \
+  -e MONGODB_SERVICE_PORT=27017 \
+  -e MONGODB_DATABASE=cats \
+  -e MONGODB_USER=catuser \
+  -e MONGODB_PASSWORD=password \
+  -e MONGODB_ADMIN_PASSWORD=password  
 oc expose svc/cats
 oc patch route/cats \
       --type=json -p '[{"op":"add", "path":"/spec/tls", "value":{"termination":"edge","insecureEdgeTerminationPolicy":"Redirect"}}]'
