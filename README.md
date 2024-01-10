@@ -125,7 +125,7 @@ There are two artifacts you will need in the [Release](https://github.com/petbat
 oc -n openshift import-image java:openjdk-21 --from=registry.access.redhat.com/ubi9/openjdk-21:latest --confirm
 oc -n openshift annotate istag java:openjdk-21 supports='java:21,java' tags='builder,java,openjdk'
 ```
-4. From `Topology` view drag-n-drop the `pet-battle-api-<version>-runner.jar` to build and create the app deployment. Use the `openjdk-17` Builder image version drop down imported in (3)
+4. From `Topology` view drag-n-drop the `pet-battle-api-<version>-runner.jar` to build and create the app deployment. Use the `openjdk-21` Builder image version drop down imported in (3)
 ![images/drag-n-drop-app.png](images/drag-n-drop-app.png)
 5. Wait for application to deploy and try it out.
 

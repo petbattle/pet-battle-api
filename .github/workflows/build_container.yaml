@@ -33,7 +33,7 @@ jobs:
         with:
           path_context: '.'
           # Builder image for a java project
-          builder_image: 'registry.access.redhat.com/ubi9/openjdk-17:latest'
+          builder_image: 'registry.access.redhat.com/ubi9/openjdk-21:latest'
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.TAGS }}
           log_level: 2
