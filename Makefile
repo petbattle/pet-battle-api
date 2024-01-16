@@ -15,6 +15,9 @@ IMG := $(REPOSITORY):latest
 compile:
 	mvn -s settings.xml clean package -DskipTests
 
+compile-native:
+	mvn -s settings.xml clean package -DskipTests -P native
+
 # test
 test:
 	mvn -s settings.xml clean test
@@ -30,6 +33,9 @@ podman-build-nocompile:
 # Build the oci image
 podman-build: compile
 	podman build . -t ${IMG} -f Dockerfile.jvm
+
+podman-build-native: compile-native
+	podman build . -t ${IMG} -f Dockerfile.native
 
 # Push the oci image
 podman-push: podman-build
