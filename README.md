@@ -49,6 +49,12 @@ make podman-stop
 make podman-push
 ```
 
+Native quarkus build can be run and run using:
+```
+make podman-build-native
+./target/pet-battle-api-1.6.0-runner
+```
+
 #### Jkube remote-dev OpenShift
 
 Create a project
