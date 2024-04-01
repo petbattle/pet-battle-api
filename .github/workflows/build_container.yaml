@@ -33,14 +33,11 @@ jobs:
         with:
           path_context: '.'
           # Builder image for a java project
-          # builder_image: 'registry.access.redhat.com/ubi9/openjdk-21:latest'
-          builder_image: 'quay.io/eformat/ubi-mvn-builder:latest'
+          builder_image: 'registry.access.redhat.com/ubi9/openjdk-21:latest'
           image: ${{ env.IMAGE_NAME }}
           tags: ${{ env.TAGS }}
           log_level: 2
           include_git: true
-          username: ${{ secrets.QUAY_USER }}      # ${{ github.actor }} - for ghcr.io
-          password: ${{ secrets.QUAY_TOKEN }}     # quay.io
 
       # Build runtime image from s2i image output
       - name: Buildah Action
