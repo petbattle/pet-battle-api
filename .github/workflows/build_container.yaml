@@ -39,6 +39,8 @@ jobs:
           tags: ${{ env.TAGS }}
           log_level: 2
           include_git: true
+          username: ${{ secrets.QUAY_USER }}      # ${{ github.actor }} - for ghcr.io
+          password: ${{ secrets.QUAY_TOKEN }}     # quay.io
 
       # Build runtime image from s2i image output
       - name: Buildah Action
