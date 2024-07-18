@@ -39,6 +39,12 @@ jobs:
           log_level: 2
           include_git: true
 
+      - name: List docker images
+        run: |
+          docker --version
+          docker info
+          docker image ls
+
       # Build runtime image from s2i image output
       - name: Buildah Action
         uses: redhat-actions/buildah-build@v2
