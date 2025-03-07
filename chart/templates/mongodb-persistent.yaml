@@ -106,12 +106,17 @@ spec:
                 secretKeyRef:
                   key: database-password
                   name: {{ include "mongodb.fullname" . }}
-            - name: MONGODB_ADMIN_PASSWORD
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  key: database-user
+                  name: {{ include "mongodb.fullname" . }}
+            - name: MONGO_INITDB_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   key: database-admin-password
                   name: {{ include "mongodb.fullname" . }}
-            - name: MONGODB_DATABASE
+            - name: MONGODB_DB
               valueFrom:
                 secretKeyRef:
                   key: database-name
@@ -133,8 +138,7 @@ spec:
                 - /bin/sh
                 - -i
                 - -c
-                - mongo 127.0.0.1:27017/$MONGODB_DATABASE -u $MONGODB_USER -p $MONGODB_PASSWORD
-                  --eval="quit()"
+                - mongosh 127.0.0.1:27017/$MONGODB_DATABASE --eval="quit()"
             initialDelaySeconds: 3
             timeoutSeconds: 1
           resources:
@@ -148,7 +152,7 @@ spec:
             privileged: false
           terminationMessagePath: /dev/termination-log
           volumeMounts:
-            - mountPath: /var/lib/mongodb/data
+            - mountPath: /data/db
               name: mongodb-data
       dnsPolicy: ClusterFirst
       restartPolicy: Always
