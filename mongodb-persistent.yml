@@ -86,7 +86,7 @@ objects:
       - name: latest
         from:
           kind: DockerImage
-          name: "registry.access.redhat.com/rhscl/mongodb-36-rhel7:${MONGODB_VERSION}"
+          name: "docker.io/mongodb/mongodb-community-server:${MONGODB_VERSION}" # registry.access.redhat.com/rhscl/mongodb-36-rhel7:${MONGODB_VERSION}"
         importPolicy:
           insecure: true
         referencePolicy:
@@ -121,13 +121,18 @@ objects:
               secretKeyRef:
                 key: database-password
                 name: ${DATABASE_SERVICE_NAME}
-          - name: MONGODB_ADMIN_PASSWORD
+          - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: database-user
+                name: ${DATABASE_SERVICE_NAME}
+          - name: MONGO_INITDB_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
                 key: database-admin-password
                 name: ${DATABASE_SERVICE_NAME}
-          - name: MONGODB_DATABASE
-            value: ${MONGODB_DATABASE}
+          - name: MONGODB_DB
+            value: ${MONGODB_DB}
           image: ' '
           imagePullPolicy: IfNotPresent
           livenessProbe:
@@ -135,6 +140,17 @@ objects:
             tcpSocket:
               port: 27017
             timeoutSeconds: 1
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                - /bin/bash
+                - -i
+                - -c
+                - |
+                  if ( $(sleep 5 && mongosh -u $MONGO_INITDB_ROOT_USERNAME -p $MONGO_INITDB_ROOT_PASSWORD --eval="use $MONGODB_DB" --eval='db.getUsers().users.length == 0') ); then
+                    sleep 5 && mongosh -u $MONGO_INITDB_ROOT_USERNAME -p $MONGO_INITDB_ROOT_PASSWORD --eval="use $MONGODB_DB" --eval='db.createUser( {"pwd":"$MONGODB_PASSWORD","roles":["readWrite","dbAdmin"],"user":"$MONGODB_USER"} )'
+                  fi
           name: mongodb
           ports:
           - containerPort: 27017
@@ -202,9 +218,9 @@ parameters:
   required: true
 - description: Name of the MongoDB database accessed.
   displayName: MongoDB Database Name
-  name: MONGODB_DATABASE
+  name: MONGODB_DB
   required: true
-  value: sampledb
+  value: cats
 - description: Password for the database admin user.
   displayName: MongoDB Admin Password
   from: '[a-zA-Z0-9]{16}'
@@ -224,7 +240,7 @@ parameters:
 - description: The name of the MongoDB imagestream to be used
   displayName: Name of MongoDB Image
   name: MONGODB_IMAGE
-  value:  mongodb-36-rhel7
+  value:  mongodb
 - description: Version of MongoDB image to be used
   displayName: Version of MongoDB Image
   name: MONGODB_VERSION

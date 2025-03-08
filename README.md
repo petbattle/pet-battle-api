@@ -19,7 +19,7 @@ make podman-run
 
 Database:
 ```
-podman run --name mongo -p 27017:27017 mongo:latest
+podman run --name mongo -p 27017:27017 docker.io/mongodb/mongodb-community-server:latest
 ```
 
 Application:
@@ -67,7 +67,7 @@ Deploy MongoDB
 
 ```bash
 oc apply -f mongodb-persistent.yml
-oc new-app mongodb-persistent -p MONGODB_DATABASE=cats -p MONGODB_USER=catuser -p MONGODB_PASSWORD=password -p MONGODB_ADMIN_PASSWORD=password
+oc new-app mongodb-persistent -p MONGODB_DB=cats -p MONGODB_USER=catuser -p MONGODB_PASSWORD=password -p MONGODB_ADMIN_PASSWORD=password
 ```
 
 Build and deploy application on OpenShift using Jkube-s2i
