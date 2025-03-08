@@ -132,6 +132,17 @@ spec:
           ports:
             - containerPort: 27017
               protocol: TCP
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                - /bin/bash
+                - -i
+                - -c
+                - |
+                  if ( $({{ .Values.mongodbTemplate.init }} --eval='db.getUsers().users.length == 0') ); then
+                    {{ .Values.mongodbTemplate.init }} --eval='db.createUser( {{ .Values.mongodbTemplate.initJson | toJson }} )'
+                  fi
           readinessProbe:
             exec:
               command:

@@ -37,6 +37,12 @@ mongodbTemplate:
     password: password
   image: docker.io/mongodb/mongodb-community-server:latest # registry.access.redhat.com/rhscl/mongodb-36-rhel7:latest
   storage: 1Gi
+#  init: 'exit 0'
+  init: 'sleep 5 && mongosh -u $MONGO_INITDB_ROOT_USERNAME -p $MONGO_INITDB_ROOT_PASSWORD --eval="use cats"'
+  initJson:
+    user: user
+    pwd: password
+    roles: [ 'readWrite', 'dbAdmin' ]
 # mongodb subchart values (not used at present)
 mongodb-replicaset:
   securityContext:
